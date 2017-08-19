@@ -86,6 +86,7 @@
     <Compile Include="Assets\Scripts\SpaceBendingObject.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Shaders\MultiCurvedUnrolledRtBG.shader" />
     <None Include="Assets\Shaders\MultiCurvedUnrolledWave.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
