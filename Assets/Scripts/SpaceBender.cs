@@ -28,6 +28,9 @@ public class SpaceBender : MonoBehaviour
 	public float colorChangeDurationSecs;
 	private float _elpasedSeconds;
 
+	public float forwardAngle;
+	private float previousAngle;
+
 	private bool set;
 
 	private void Awake()
@@ -37,7 +40,8 @@ public class SpaceBender : MonoBehaviour
 		{
 			_objectArray[i] = new Vector4(0, 0, 0, 0);
 
-			if (i < 4) {
+			if (i < 4)
+			{
 				_ripples[i] = new Vector4(0, 0, 0, 0);
 			}
 		}
@@ -50,12 +54,14 @@ public class SpaceBender : MonoBehaviour
 	private IEnumerator Ripple()
 	{
 		var radius = 0f;
-		while (true) {
+		while (true)
+		{
 			var x = 0f;
 			var y = 2f;
 			var weight = -2f;
 
-			while (radius < 16f) {
+			while (radius < 16f)
+			{
 				radius += 0.05f;
 				_ripples[0] = new Vector4(x, y, radius, weight);
 				multiCurvedSpaceMaterial.SetVectorArray("_Ripples", _ripples);
@@ -71,6 +77,22 @@ public class SpaceBender : MonoBehaviour
 		ScrollSpeedChanged();
 		BulletWeightChanged();
 		multiCurvedSpaceMaterial.SetVectorArray("_Ripples", _ripples);
+		SetMaterialMatrix();
+	}
+
+	private void SetMaterialMatrix()
+	{
+		multiCurvedSpaceMaterial.SetMatrix("_UVRotationMatrix", GetRotationMatrix());
+		previousAngle = forwardAngle;
+	}
+
+	private Matrix4x4 GetRotationMatrix()
+	{
+		var angleInRad = forwardAngle * Mathf.Deg2Rad;
+		var c = Mathf.Cos(angleInRad);
+		var s = Mathf.Sin(angleInRad);
+
+		return new Matrix4x4(new Vector4(c, -s), new Vector4(s, c), Vector4.zero, Vector4.zero);
 	}
 
 	public void SetPosition(Vector4 posAndWeight)
@@ -85,13 +107,18 @@ public class SpaceBender : MonoBehaviour
 			_arrayLength = 1;
 		}
 	}
-	
+
 	private void LateUpdate()
 	{
 		ResetNotUsedElements();
 		multiCurvedSpaceMaterial.SetVectorArray("_Array", _objectArray);
 		_arrLimitReached = false;
 		_arrayLength = 0;
+
+		if (!Mathf.Approximately(forwardAngle, previousAngle))
+		{
+			SetMaterialMatrix();
+		}
 	}
 
 	private void ResetNotUsedElements()

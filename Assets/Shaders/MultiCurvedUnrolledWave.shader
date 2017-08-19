@@ -5,7 +5,8 @@
 		_ScrollSpeedX("Scroll speed x", float) = 0.0
 		_ScrollSpeedY("Scroll speed y", float) = 0.0
 		_MainTex("Texture", 2D) = "white" {}
-		_MaxWeight("Max weight", float) = 0.0
+
+		_UVDistance("UV Distance of BG", float) = 10.0
 
 		[PerRendererData]
 		_TintColor("Tint color", color) = (1, 1, 1, 1)
@@ -30,9 +31,12 @@
 				float _ScrollSpeedX;
 				float _ScrollSpeedY;
 
+				float4x4 _UVRotationMatrix;
+				float _UVDistance;
+
 				sampler2D _MainTex;
-				half _MaxWeight;
 				float4 _TintColor;
+				float4 _ObjectWorldPos;
 
 				struct vertexInput
 				{
@@ -45,6 +49,13 @@
 					float4 pos : SV_POSITION;
 					float2 tex : TEXCOORD0;
 				};
+		
+				float2 CalculateWorldSpaceUV(float4 worldSpacePos)
+				{
+					float2 tex = worldSpacePos.xy / _UVDistance;
+					tex.y *= _ProjectionParams.x;
+					return mul(_UVRotationMatrix, tex) + frac(_Time.y * float2(_ScrollSpeedX, _ScrollSpeedY));
+				}
 
 				vertexOutput vert(vertexInput input)
 				{
@@ -68,8 +79,10 @@
 					worldSpacePos.z += weight;
 
 					vertexOutput o;
+
 					o.pos = mul(UNITY_MATRIX_VP, worldSpacePos);
-					o.tex.xy = input.texcoord.xy + frac(_Time.y * float2(_ScrollSpeedX, _ScrollSpeedY));
+					o.tex = CalculateWorldSpaceUV(worldSpacePos);
+
 					return o;
 				}
 
