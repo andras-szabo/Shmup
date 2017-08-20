@@ -220,7 +220,6 @@ MonoBehaviour:
   midTintColor: {r: 1, g: 0.33823532, b: 0.33823532, a: 0}
   endTintColor: {r: 0.42647058, g: 1, b: 0.57281935, a: 0}
   colorChangeDurationSecs: 2
-  forwardAngle: 0
 --- !u!1 &316160805
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,7 +701,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!23 &954676891
 MeshRenderer:
@@ -1067,7 +1066,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!23 &1369531059
 MeshRenderer:

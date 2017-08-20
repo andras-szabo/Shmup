@@ -59,15 +59,14 @@
 
 				float _CentreY;
 				float _MaxDelta;
-				float _RotationAngle;
+				float _RotationAngleInRadians;
 
 				float2x2 GetUVRotMatrix(float2 worldPos)
 				{
 					float dy = clamp(worldPos.y - _CentreY, 0, _MaxDelta);
-					float angle = lerp(0, _RotationAngle, dy / _MaxDelta);
-					float angleInRad = radians(angle);
+					float angle = lerp(0, _RotationAngleInRadians, dy / _MaxDelta);
 					float s, c;
-					sincos(angleInRad, s, c);
+					sincos(angle, s, c);
 					return float2x2(c, -s, s, c);
 				}
 		

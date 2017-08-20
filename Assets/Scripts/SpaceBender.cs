@@ -95,7 +95,7 @@ public class SpaceBender : MonoBehaviour
 		multiCurvedSpaceMaterial.SetVectorArray("_Array", _objectArray);
 		_arrLimitReached = false;
 		_arrayLength = 0;
-		multiCurvedSpaceMaterial.SetFloat("_RotationAngle", Mathf.Sin(Time.timeSinceLevelLoad / 8f) * 72f); 
+		multiCurvedSpaceMaterial.SetFloat("_RotationAngleInRadians", Mathf.Deg2Rad * Mathf.Sin(Time.timeSinceLevelLoad / 8f) * 72f); 
 	}
 
 	private void ResetNotUsedElements()

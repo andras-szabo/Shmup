@@ -76,7 +76,7 @@ Material:
     - _ProtectedAreaRadius: 5
     - _RotationAngle: 29.110794
     - _ScrollSpeedX: 0
-    - _ScrollSpeedY: -0.46151376
+    - _ScrollSpeedY: -0.37414932
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -87,4 +87,4 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ObjectWorldPos: {r: 0, g: 0, b: 0, a: 0}
-    - _TintColor: {r: 0.5629383, g: 0.8425373, b: 0.51700157, a: 0}
+    - _TintColor: {r: 0.6139662, g: 0.34778225, b: 0.87163764, a: 0}
