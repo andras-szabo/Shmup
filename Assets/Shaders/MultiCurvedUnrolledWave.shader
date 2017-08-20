@@ -8,10 +8,9 @@
 
 		_UVDistance("UV Distance of BG", float) = 10.0
 
-		_MaxDistanceToCurve("Max dst to curve", float) = 5
-		_MaxDistanceToCentre("Max dst to centre", float) = 10
-		_ProtectedAreaRadius("Protected area radius", float) = 2
-		_CurveStrength("Curve strength", float) = 1
+		_RotationAngle("Rot angle", float) = 0.0
+		_MaxDelta("Max delta", float) = 5.0
+		_CentreY("Centre Y", float) = 5.0
 
 		[PerRendererData]
 		_TintColor("Tint color", color) = (1, 1, 1, 1)
@@ -25,6 +24,7 @@
 				#pragma vertex vert
 				#pragma fragment frag
 				#include "UnityCG.cginc"
+				#include "HLSLSupport.cginc"
 
 				#define MAX_WEIGHTED_OBJECTS 16
 				#define MAX_RIPPLES 4
@@ -57,33 +57,29 @@
 					float2 tex : TEXCOORD0;
 				};
 
-				float _MaxDistanceToCurve;
-				float _MaxDistanceToCentre;
-				float _ProtectedAreaRadius;
-				float _CurveStrength;
+				float _CentreY;
+				float _MaxDelta;
+				float _RotationAngle;
 
-				float CalculateCurvatureDelta(float2 worldPos)
+				float2x2 GetUVRotMatrix(float2 worldPos)
 				{
-					float2 vectorToCurveOrigin = _CurveOrigin.xy - worldPos;
-					float len = length(vectorToCurveOrigin);
-					float distanceToCurve = clamp(len, 0, _MaxDistanceToCurve);
-					float curveFactor = lerp(0, 1, distanceToCurve / _MaxDistanceToCurve);
-					return curveFactor * _CurveStrength * -sign(vectorToCurveOrigin.x);
+					float dy = clamp(worldPos.y - _CentreY, 0, _MaxDelta);
+					float angle = lerp(0, _RotationAngle, dy / _MaxDelta);
+					float angleInRad = radians(angle);
+					float s, c;
+					sincos(angleInRad, s, c);
+					return float2x2(c, -s, s, c);
 				}
 		
 				float2 CalculateWorldSpaceUV(float4 worldSpacePos)
 				{
 					float2 tex = worldSpacePos.xy / _UVDistance;
-					tex.y *= _ProjectionParams.x;
-					return mul(_UVRotationMatrix, tex) + frac(_Time.y * float2(_ScrollSpeedX, _ScrollSpeedY));
+					return mul(GetUVRotMatrix(worldSpacePos.xy), tex) + frac(_Time.y * float2(_ScrollSpeedX, _ScrollSpeedY * _ProjectionParams.x));
 				}
 
 				vertexOutput vert(vertexInput input)
 				{
 					float4 worldSpacePos = mul(unity_ObjectToWorld, input.vertex);
-
-					float texDelta = CalculateCurvatureDelta(worldSpacePos.xy);
-
 					float weight = 0;
 
 					[unroll] for (int i = 0; i < MAX_WEIGHTED_OBJECTS; ++i)
@@ -104,7 +100,8 @@
 
 					vertexOutput o;
 					o.pos = mul(UNITY_MATRIX_VP, worldSpacePos);
-					o.tex = CalculateWorldSpaceUV(worldSpacePos + float4(texDelta, 0, 0, 0));
+					o.tex = CalculateWorldSpaceUV(worldSpacePos);
+					o.tex.y *= _ProjectionParams.x;
 
 					return o;
 				}

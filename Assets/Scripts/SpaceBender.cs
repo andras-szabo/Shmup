@@ -28,9 +28,6 @@ public class SpaceBender : MonoBehaviour
 	public float colorChangeDurationSecs;
 	private float _elpasedSeconds;
 
-	public float forwardAngle;
-	private float previousAngle;
-
 	private bool set;
 
 	private void Awake()
@@ -77,22 +74,6 @@ public class SpaceBender : MonoBehaviour
 		ScrollSpeedChanged();
 		BulletWeightChanged();
 		multiCurvedSpaceMaterial.SetVectorArray("_Ripples", _ripples);
-		SetMaterialMatrix();
-	}
-
-	private void SetMaterialMatrix()
-	{
-		multiCurvedSpaceMaterial.SetMatrix("_UVRotationMatrix", GetRotationMatrix());
-		previousAngle = forwardAngle;
-	}
-
-	private Matrix4x4 GetRotationMatrix()
-	{
-		var angleInRad = forwardAngle * Mathf.Deg2Rad;
-		var c = Mathf.Cos(angleInRad);
-		var s = Mathf.Sin(angleInRad);
-
-		return new Matrix4x4(new Vector4(c, -s), new Vector4(s, c), Vector4.zero, Vector4.zero);
 	}
 
 	public void SetPosition(Vector4 posAndWeight)
@@ -114,11 +95,7 @@ public class SpaceBender : MonoBehaviour
 		multiCurvedSpaceMaterial.SetVectorArray("_Array", _objectArray);
 		_arrLimitReached = false;
 		_arrayLength = 0;
-
-		if (!Mathf.Approximately(forwardAngle, previousAngle))
-		{
-			SetMaterialMatrix();
-		}
+		multiCurvedSpaceMaterial.SetFloat("_RotationAngle", Mathf.Sin(Time.timeSinceLevelLoad / 8f) * 72f); 
 	}
 
 	private void ResetNotUsedElements()
@@ -140,7 +117,11 @@ public class SpaceBender : MonoBehaviour
 
 	public void ScrollSpeedChanged()
 	{
-		multiCurvedSpaceMaterial.SetFloat("_ScrollSpeedY", scrollSpeedSlider.value);
+		var speed = scrollSpeedSlider.value;
+		#if UNITY_ANDROID && !UNITY_EDITOR
+		speed *= -1f;
+		#endif		
+		multiCurvedSpaceMaterial.SetFloat("_ScrollSpeedY", speed);
 	}
 
 	public void BulletWeightChanged()

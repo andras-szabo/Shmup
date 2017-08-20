@@ -56,6 +56,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
+    - _CentreY: -6
     - _CurveStrength: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -64,6 +65,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _MaxDelta: 18
     - _MaxDistanceToCentre: 10
     - _MaxDistanceToCurve: 2
     - _MaxWeight: 2
@@ -72,8 +74,9 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ProtectedAreaRadius: 5
+    - _RotationAngle: 29.110794
     - _ScrollSpeedX: 0
-    - _ScrollSpeedY: -1.1758332
+    - _ScrollSpeedY: -0.46151376
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -84,4 +87,4 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ObjectWorldPos: {r: 0, g: 0, b: 0, a: 0}
-    - _TintColor: {r: 0.7708774, g: 0.32987475, b: 0.6669098, a: 0}
+    - _TintColor: {r: 0.5629383, g: 0.8425373, b: 0.51700157, a: 0}
