@@ -10,6 +10,8 @@
 
 		_MaxDistanceToCurve("Max dst to curve", float) = 5
 		_MaxDistanceToCentre("Max dst to centre", float) = 10
+		_ProtectedAreaRadius("Protected area radius", float) = 2
+		_CurveStrength("Curve strength", float) = 1
 
 		[PerRendererData]
 		_TintColor("Tint color", color) = (1, 1, 1, 1)
@@ -57,18 +59,16 @@
 
 				float _MaxDistanceToCurve;
 				float _MaxDistanceToCentre;
+				float _ProtectedAreaRadius;
+				float _CurveStrength;
 
 				float CalculateCurvatureDelta(float2 worldPos)
 				{
-					float2 diff = worldPos - _CurveOrigin.xy;
-
-					float distanceToCurve = clamp(length(diff), 0, _MaxDistanceToCurve);
-					float curveFactor = lerp(1, 0, distanceToCurve / _MaxDistanceToCurve);
-
-					float distanceToCentre = clamp(length(worldPos - float2(0, 2)), 0, _MaxDistanceToCentre);
-					float curvability = lerp(0, 2, distanceToCentre / _MaxDistanceToCentre);
-
-					return distanceToCurve.x * curveFactor * curvability * sign(diff.x);
+					float2 vectorToCurveOrigin = _CurveOrigin.xy - worldPos;
+					float len = length(vectorToCurveOrigin);
+					float distanceToCurve = clamp(len, 0, _MaxDistanceToCurve);
+					float curveFactor = lerp(0, 1, distanceToCurve / _MaxDistanceToCurve);
+					return curveFactor * _CurveStrength * -sign(vectorToCurveOrigin.x);
 				}
 		
 				float2 CalculateWorldSpaceUV(float4 worldSpacePos)
@@ -82,7 +82,7 @@
 				{
 					float4 worldSpacePos = mul(unity_ObjectToWorld, input.vertex);
 
-					float texDeltaX = CalculateCurvatureDelta(worldSpacePos.xy);
+					float texDelta = CalculateCurvatureDelta(worldSpacePos.xy);
 
 					float weight = 0;
 
@@ -104,7 +104,7 @@
 
 					vertexOutput o;
 					o.pos = mul(UNITY_MATRIX_VP, worldSpacePos);
-					o.tex = CalculateWorldSpaceUV(worldSpacePos + float4(texDeltaX, 0, 0, 0));
+					o.tex = CalculateWorldSpaceUV(worldSpacePos + float4(texDelta, 0, 0, 0));
 
 					return o;
 				}
