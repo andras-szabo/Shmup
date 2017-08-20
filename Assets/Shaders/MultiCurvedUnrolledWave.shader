@@ -8,6 +8,9 @@
 
 		_UVDistance("UV Distance of BG", float) = 10.0
 
+		_MaxDistanceToCurve("Max dst to curve", float) = 5
+		_MaxDistanceToCentre("Max dst to centre", float) = 10
+
 		[PerRendererData]
 		_TintColor("Tint color", color) = (1, 1, 1, 1)
 	}
@@ -27,6 +30,8 @@
 
 				float4 _Array[MAX_WEIGHTED_OBJECTS];
 				float4 _Ripples[MAX_RIPPLES];
+
+				float4 _CurveOrigin;
 
 				float _ScrollSpeedX;
 				float _ScrollSpeedY;
@@ -49,6 +54,22 @@
 					float4 pos : SV_POSITION;
 					float2 tex : TEXCOORD0;
 				};
+
+				float _MaxDistanceToCurve;
+				float _MaxDistanceToCentre;
+
+				float CalculateCurvatureDelta(float2 worldPos)
+				{
+					float2 diff = worldPos - _CurveOrigin.xy;
+
+					float distanceToCurve = clamp(length(diff), 0, _MaxDistanceToCurve);
+					float curveFactor = lerp(1, 0, distanceToCurve / _MaxDistanceToCurve);
+
+					float distanceToCentre = clamp(length(worldPos - float2(0, 2)), 0, _MaxDistanceToCentre);
+					float curvability = lerp(0, 2, distanceToCentre / _MaxDistanceToCentre);
+
+					return distanceToCurve.x * curveFactor * curvability * sign(diff.x);
+				}
 		
 				float2 CalculateWorldSpaceUV(float4 worldSpacePos)
 				{
@@ -60,6 +81,9 @@
 				vertexOutput vert(vertexInput input)
 				{
 					float4 worldSpacePos = mul(unity_ObjectToWorld, input.vertex);
+
+					float texDeltaX = CalculateCurvatureDelta(worldSpacePos.xy);
+
 					float weight = 0;
 
 					[unroll] for (int i = 0; i < MAX_WEIGHTED_OBJECTS; ++i)
@@ -79,9 +103,8 @@
 					worldSpacePos.z += weight;
 
 					vertexOutput o;
-
 					o.pos = mul(UNITY_MATRIX_VP, worldSpacePos);
-					o.tex = CalculateWorldSpaceUV(worldSpacePos);
+					o.tex = CalculateWorldSpaceUV(worldSpacePos + float4(texDeltaX, 0, 0, 0));
 
 					return o;
 				}
