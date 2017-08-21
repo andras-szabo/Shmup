@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\BasicEnemy.cs" />
     <Compile Include="Assets\Scripts\BulletPool.cs" />
     <Compile Include="Assets\Scripts\BulletSpawner.cs" />
+    <Compile Include="Assets\Scripts\Damage.cs" />
     <Compile Include="Assets\Scripts\MonoWithCachedTransform.cs" />
     <Compile Include="Assets\Scripts\ShipController.cs" />
     <Compile Include="Assets\Scripts\SpaceBender.cs" />
