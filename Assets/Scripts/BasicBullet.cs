@@ -10,7 +10,7 @@ public interface IPoolable
 	GameObject GameObject { get; }
 }
 
-public class BasicBullet : MonoBehaviour, IPoolable 
+public class BasicBullet : MonoBehaviour, IPoolable
 {
 	private Transform _cachedTransform;
 	public Transform CachedTransform
@@ -24,7 +24,7 @@ public class BasicBullet : MonoBehaviour, IPoolable
 	public GameObject GameObject
 	{
 		get
-		{ 
+		{
 			return this.gameObject;
 		}
 	}
@@ -41,6 +41,11 @@ public class BasicBullet : MonoBehaviour, IPoolable
 	{
 		_rb = GetComponent<Rigidbody>();
 		SetStartVelocity();
+	}
+
+	private void OnTriggerEnter(Collider other)
+	{
+		Despawn();
 	}
 
 	public void SetStartVelocity()
@@ -61,7 +66,7 @@ public class BasicBullet : MonoBehaviour, IPoolable
 	}
 
 	public void SetPool(BulletPool pool)
-	{ 
+	{
 		_pool = pool;
 	}
 
@@ -69,14 +74,19 @@ public class BasicBullet : MonoBehaviour, IPoolable
 	{
 		if (_elapsedSeconds >= lifespan)
 		{
-			if (_pool != null)
-			{ 
-				_pool.Despawn(this);	
-			}
-			else
-			{
-				UnityEngine.Object.Destroy(this.gameObject);
-			}
+			Despawn();
+		}
+	}
+
+	private void Despawn()
+	{
+		if (_pool != null)
+		{
+			_pool.Despawn(this);
+		}
+		else
+		{
+			Object.Destroy(this.gameObject);
 		}
 	}
 }
