@@ -87,6 +87,7 @@
     <Compile Include="Assets\Scripts\ShipController.cs" />
     <Compile Include="Assets\Scripts\SpaceBender.cs" />
     <Compile Include="Assets\Scripts\SpaceBendingObject.cs" />
+    <Compile Include="Assets\Scripts\TestMover.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\MultiCurvedUnrolledRtBG.shader" />

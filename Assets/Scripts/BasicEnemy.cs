@@ -2,7 +2,7 @@
 
 public class BasicEnemy : MonoWithCachedTransform
 {
-	public Renderer renderer;
+	public Renderer enemyRenderer;
 
 	public Material normalMaterial;
 	public Material hitMaterial;
@@ -57,6 +57,6 @@ public class BasicEnemy : MonoWithCachedTransform
 
 	private void SwapMaterials(bool hit)
 	{
-		renderer.material = hit ? hitMaterial : normalMaterial;
+		enemyRenderer.material = hit ? hitMaterial : normalMaterial;
 	}
 }
