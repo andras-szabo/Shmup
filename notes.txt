@@ -1,0 +1,28 @@
+2017.08.23.
+
+	So how should movement happen? Coordinates are given in viewport
+	space (0,0) - (1,1), and get tweaked such that they don't use the full
+	viewport, but instead try to scale gradually, keeping a bit closer
+	to the original 9:16 reference resolution.
+
+	So that's good, I can have a set of coordinates and ask the dude to
+	go there.
+
+	=> actually it'd be better to get the coordinates converted, for
+	internal use, into world coordinates, because then we cna make easier
+	comparison with current coords; and calculate e.g. deltas. But
+	that's a bit beside the point.
+
+	The point is: so I have coordinates: I have to go there. Question,
+	how. Do we use DoTween?
+		- actually I'm inclined to say yes, let's not
+		reinvent the wheel, instead find out more about it,
+		and see how we can use it to its fullest potential.
+	
+	=> so in this case we just launch a tween, with params supplied
+	with the command, e.g:
+
+	move (0.1, 0.635) <deltaT> <easing> <additional_params>
+
+	
+
