@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneHourShmup", "OneHourShmup.csproj", "{7CF1117F-82DB-85B3-2A4D-DF45D4A151B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneHourShmup.Editor", "OneHourShmup.Editor.csproj", "{F4707EEC-3959-AFD3-981D-2AC3208CA8BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{7CF1117F-82DB-85B3-2A4D-DF45D4A151B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CF1117F-82DB-85B3-2A4D-DF45D4A151B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CF1117F-82DB-85B3-2A4D-DF45D4A151B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4707EEC-3959-AFD3-981D-2AC3208CA8BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4707EEC-3959-AFD3-981D-2AC3208CA8BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4707EEC-3959-AFD3-981D-2AC3208CA8BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4707EEC-3959-AFD3-981D-2AC3208CA8BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
