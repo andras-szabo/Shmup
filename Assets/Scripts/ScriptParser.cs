@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 public static class ScriptParser
 {
@@ -25,10 +26,20 @@ public static class ScriptParser
 		}
 		else
 		{
-			UnityEngine.Debug.Log("yay big success");
+			command.id = cmdDef.id;
+			if (cmdDef.argumentCount > 0)
+			{
+				command.args = new System.Object[cmdDef.argumentCount];
+				for (int i = 0; i < cmdDef.argumentCount; ++i)
+				{
+					token = queue.Dequeue();
+					var argType = cmdDef.argumentTypes[i];
+					command.args[i] = System.ComponentModel.TypeDescriptor
+										.GetConverter(argType)
+										.ConvertFromString(token);
+				}
+			}
 		}
-
-		//To be continued
 
 		return command;
 	}
