@@ -88,6 +88,10 @@
     <Compile Include="Assets\Scripts\ScriptLanguageDefinition.cs" />
     <Compile Include="Assets\Scripts\ScriptParser.cs" />
     <Compile Include="Assets\Scripts\ShipController.cs" />
+    <Compile Include="Assets\Scripts\ShipScripts\SetupTestShipScript.cs" />
+    <Compile Include="Assets\Scripts\ShipScripts\ShipCommandFactory.cs" />
+    <Compile Include="Assets\Scripts\ShipScripts\ShipScriptDefinition.cs" />
+    <Compile Include="Assets\Scripts\ShipScripts\ShipScriptRunner.cs" />
     <Compile Include="Assets\Scripts\SpaceBender.cs" />
     <Compile Include="Assets\Scripts\SpaceBendingObject.cs" />
     <Compile Include="Assets\Scripts\TestMover.cs" />

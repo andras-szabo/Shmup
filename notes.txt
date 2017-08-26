@@ -1,3 +1,30 @@
+2017.08.26.
+	OK so let's get to command processing finally!
+	and let's do this with rotation.
+
+	<delay> spin <x> <y> <z> <t>		// -> rotation speeds, degree; t: time to lerp there in secs
+
+	// "Hello world:"
+	repeat
+	1 spin x y z t1
+	1 spin p q r t2
+	end
+
+	so then:
+	1.) create language definition -- done
+	2.) set up actual command objects for this
+		-but let's start at the other end:
+			-update: advance timer
+			-	if delay for next command exceeded: do that command
+				- get next command if any, check delay immediately, continue until you have to
+	3.) make it run
+
+	=== problem though. So this kind of definining sh*t is very generic,
+	but conversions / boxing should be avoided when executing them, really.
+	So maybe the way to go is to have factory, creating commands of appropriate
+	type, with appropriately typed fields
+
+
 2017.08.23.
 
 	So how should movement happen? Coordinates are given in viewport
