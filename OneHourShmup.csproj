@@ -80,6 +80,9 @@
   <ItemGroup>
     <Compile Include="Assets\_Generic\Consts.cs" />
     <Compile Include="Assets\_Generic\MonoWithCachedTransform.cs" />
+    <Compile Include="Assets\_Generic\Pools\GameObjectPoolManager.cs" />
+    <Compile Include="Assets\_Generic\Pools\IPoolable.cs" />
+    <Compile Include="Assets\_Generic\Pools\Spawner.cs" />
     <Compile Include="Assets\_Generic\VecExtensions.cs" />
     <Compile Include="Assets\_Test\TestMover.cs" />
     <Compile Include="Assets\Scripting\IExecutionContext.cs" />
@@ -96,9 +99,8 @@
     <Compile Include="Assets\Scripting\ShipScripts\ShipScriptsCollection.cs" />
     <Compile Include="Assets\Scripts\BasicBullet.cs" />
     <Compile Include="Assets\Scripts\BasicEnemy.cs" />
-    <Compile Include="Assets\Scripts\BulletPool.cs" />
-    <Compile Include="Assets\Scripts\BulletSpawner.cs" />
     <Compile Include="Assets\Scripts\Damage.cs" />
+    <Compile Include="Assets\Scripts\GameObjectPool.cs" />
     <Compile Include="Assets\Scripts\ShipController.cs" />
     <Compile Include="Assets\SpaceBending\SpaceBender.cs" />
     <Compile Include="Assets\SpaceBending\SpaceBendingObject.cs" />
