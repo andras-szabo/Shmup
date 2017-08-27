@@ -1,25 +1,9 @@
 ﻿using UnityEngine;
 
-public interface IPoolable
+public class BasicBullet : MonoWithCachedTransform, IPoolable
 {
-	void SetPool(BulletPool pool);
-	void Stop();
-	void SetStartVelocity();
-
-	Transform CachedTransform { get; }
-	GameObject GameObject { get; }
-}
-
-public class BasicBullet : MonoBehaviour, IPoolable
-{
-	private Transform _cachedTransform;
-	public Transform CachedTransform
-	{
-		get
-		{
-			return _cachedTransform ?? (_cachedTransform = this.gameObject.transform);
-		}
-	}
+	public PoolType poolType;
+	public PoolType PoolType { get { return poolType; } } 
 
 	public GameObject GameObject
 	{
@@ -34,7 +18,7 @@ public class BasicBullet : MonoBehaviour, IPoolable
 	public float lifespan = 2f;
 	public float speedUnitPerSeconds = 50f;
 
-	private BulletPool _pool;
+	private GameObjectPool _pool;
 	private Rigidbody _rb;
 
 	private void Start()
@@ -65,7 +49,7 @@ public class BasicBullet : MonoBehaviour, IPoolable
 		_rb.velocity = Vector3.zero;
 	}
 
-	public void SetPool(BulletPool pool)
+	public void SetPool(GameObjectPool pool)
 	{
 		_pool = pool;
 	}

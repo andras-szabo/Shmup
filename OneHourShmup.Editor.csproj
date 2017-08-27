@@ -129,7 +129,8 @@
     <Compile Include="Assets\Editor\ControlScriptTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\MultiCurvedUnrolledRtBG.shader" />
+    <None Include="Assets\Resources\ControlScripts\spinTest.scr.txt" />
+    <None Include="Assets\Resources\ControlScripts\test.scr.txt" />
     <None Include="Assets\Shaders\MultiCurvedUnrolledWave.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

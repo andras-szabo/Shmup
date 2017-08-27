@@ -1,17 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipController : MonoBehaviour
+public class ShipController : MonoWithCachedTransform
 {
-	private Transform _cachedTransform;
-	public Transform CachedTransform
-	{
-		get
-		{
-			return _cachedTransform ?? (_cachedTransform = this.gameObject.transform);
-		}
-	}
-
 	private Camera _mainCamera;
 	public Camera MainCamera
 	{
@@ -51,7 +42,7 @@ public class ShipController : MonoBehaviour
 			_elapsedSeconds = 0f;
 			foreach (var spawner in _bulletSpawners)
 			{
-				spawner.Spawn();
+				spawner.SpawnFromPool();
 			}
 		}
 	}

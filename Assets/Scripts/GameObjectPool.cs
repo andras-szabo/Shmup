@@ -1,18 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletPool : MonoBehaviour
+public class GameObjectPool : MonoWithCachedTransform
 {
-	private Transform _cachedTransform;
-	public Transform CachedTransform
-	{
-		get
-		{
-			return _cachedTransform ?? (_cachedTransform = this.gameObject.transform);
-		}
-	}
-
+	public PoolType poolType;
 	private Stack<GameObject> _pool = new Stack<GameObject>();
+
+	private void Awake()
+	{
+		GameObjectPoolManager.Register(poolType, this);
+	}
 
 	public GameObject Spawn(GameObject prototype, Transform templateTransform)
 	{
@@ -28,16 +25,16 @@ public class BulletPool : MonoBehaviour
 
 	private GameObject PopFromPool(Transform templateTransform)
 	{
-		var bullet = _pool.Pop();
+		var instance = _pool.Pop();
 
-		var poolable = bullet.GetComponent<IPoolable>();
+		var poolable = instance.GetComponent<IPoolable>();
 		
 		poolable.CachedTransform.SetParent(null);
 		poolable.CachedTransform.SetPositionAndRotation(templateTransform.position, templateTransform.rotation);
 		poolable.SetStartVelocity();
 
-		bullet.gameObject.SetActive(true);
-		return bullet;
+		instance.gameObject.SetActive(true);
+		return instance;
 	}
 
 	private bool HasPooled(GameObject prototype)
@@ -55,7 +52,7 @@ public class BulletPool : MonoBehaviour
 
 	private GameObject CreateNew(GameObject prototype, Transform templateTransform)
 	{
-		var newObject = UnityEngine.Object.Instantiate<GameObject>(prototype, null, true);
+		var newObject = Instantiate<GameObject>(prototype, null, true);
 
 		var poolable = newObject.GetComponent<IPoolable>();
 		if (poolable != null)
