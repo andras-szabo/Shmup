@@ -1,3 +1,18 @@
+2017.08.27.
+	OK, so what to do next?
+	- spawn? -> but this would be a different script; this could be a task for another day.
+	- move? -> this could mean 2 things:
+		-> setting velocity
+		-> setting move in tampered viewport coordinates
+			=> so for this I'd need out-of-bounds check as well, and possibly DOTween
+
+	- pooling of ships
+		-> this could go with spawning.
+
+	- so, what to do?
+	- let's do code cleanup - separate classes for separate files &c,
+		and making enemies poolable
+
 2017.08.26.
 	OK so let's get to command processing finally!
 	and let's do this with rotation.
