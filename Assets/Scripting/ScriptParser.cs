@@ -3,6 +3,33 @@ using System.Linq;
 
 public static class ScriptParser
 {
+	public static List<ScriptCommand> ParseFile(string fileAsText, ScriptLanguageDefinition languageDef)
+	{
+		var commands = new List<ScriptCommand>();
+
+		var lines = SplitIntoLines(fileAsText, removeEmptyLines: true);
+		foreach (var line in lines)
+		{
+			commands.Add(ParseLine(line, languageDef));
+		}
+
+		return commands;
+	}
+
+	public static string[] SplitIntoLines(string fileAsText, bool removeEmptyLines = true)
+	{
+		var lines = fileAsText.Split('\n');
+
+		if (removeEmptyLines)
+		{
+			var asList = new List<string>(lines);
+			asList.RemoveAll(line => string.IsNullOrEmpty(line));
+			lines = asList.ToArray();
+		}
+
+		return lines;
+	}
+
 	public static ScriptCommand ParseLine(string line, ScriptLanguageDefinition languageDef)
 	{
 		var command = new ScriptCommand();

@@ -78,26 +78,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\_Generic\Consts.cs" />
+    <Compile Include="Assets\_Generic\MonoWithCachedTransform.cs" />
+    <Compile Include="Assets\_Generic\VecExtensions.cs" />
+    <Compile Include="Assets\_Test\TestMover.cs" />
+    <Compile Include="Assets\Scripting\IExecutionContext.cs" />
+    <Compile Include="Assets\Scripting\IMoveControl.cs" />
+    <Compile Include="Assets\Scripting\IShipCommand.cs" />
+    <Compile Include="Assets\Scripting\ScriptCommand.cs" />
+    <Compile Include="Assets\Scripting\ScriptLanguageDefinition.cs" />
+    <Compile Include="Assets\Scripting\ScriptParser.cs" />
+    <Compile Include="Assets\Scripting\ShipScriptCommand.cs" />
+    <Compile Include="Assets\Scripting\ShipScripts\SetupTestShipScript.cs" />
+    <Compile Include="Assets\Scripting\ShipScripts\ShipCommandFactory.cs" />
+    <Compile Include="Assets\Scripting\ShipScripts\ShipScriptDefinition.cs" />
+    <Compile Include="Assets\Scripting\ShipScripts\ShipScriptRunner.cs" />
+    <Compile Include="Assets\Scripting\ShipScripts\ShipScriptsCollection.cs" />
     <Compile Include="Assets\Scripts\BasicBullet.cs" />
     <Compile Include="Assets\Scripts\BasicEnemy.cs" />
     <Compile Include="Assets\Scripts\BulletPool.cs" />
     <Compile Include="Assets\Scripts\BulletSpawner.cs" />
     <Compile Include="Assets\Scripts\Damage.cs" />
-    <Compile Include="Assets\Scripts\MonoWithCachedTransform.cs" />
-    <Compile Include="Assets\Scripts\ScriptCommand.cs" />
-    <Compile Include="Assets\Scripts\ScriptLanguageDefinition.cs" />
-    <Compile Include="Assets\Scripts\ScriptParser.cs" />
     <Compile Include="Assets\Scripts\ShipController.cs" />
-    <Compile Include="Assets\Scripts\ShipScripts\SetupTestShipScript.cs" />
-    <Compile Include="Assets\Scripts\ShipScripts\ShipCommandFactory.cs" />
-    <Compile Include="Assets\Scripts\ShipScripts\ShipScriptDefinition.cs" />
-    <Compile Include="Assets\Scripts\ShipScripts\ShipScriptRunner.cs" />
-    <Compile Include="Assets\Scripts\SpaceBender.cs" />
-    <Compile Include="Assets\Scripts\SpaceBendingObject.cs" />
-    <Compile Include="Assets\Scripts\TestMover.cs" />
+    <Compile Include="Assets\SpaceBending\SpaceBender.cs" />
+    <Compile Include="Assets\SpaceBending\SpaceBendingObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\MultiCurvedUnrolledRtBG.shader" />
+    <None Include="Assets\Resources\ControlScripts\spinTest.scr.txt" />
+    <None Include="Assets\Resources\ControlScripts\test.scr.txt" />
     <None Include="Assets\Shaders\MultiCurvedUnrolledWave.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

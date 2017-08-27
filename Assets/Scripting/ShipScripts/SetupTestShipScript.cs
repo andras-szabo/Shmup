@@ -13,17 +13,18 @@ public class SetupTestShipScript : MonoBehaviour
 		runner.Run(cmds);
 	}
 
+	//TODO: Clearly this should not be called for every
+	//		single instance
 	private List<IShipCommand> GetTestScript()
 	{
-		var path = Path.Combine(Application.dataPath, "ControlScripts/spinTest.scr");
-		var lines = File.ReadAllLines(path);
-		var languageDef = ShipScriptDefinition.Define();
+		var path = Path.Combine(Consts.PATH_CONTROL_SCRIPTS, "spinTest.scr");
+		var fileAsText = Resources.Load<TextAsset>(path).text;
+		var commands = ScriptParser.ParseFile(fileAsText, ShipScriptDefinition.Define());
 
-		var l = new List<IShipCommand>(lines.Length);
+		var l = new List<IShipCommand>(commands.Count);
 
-		foreach (var line in lines)
+		foreach (var cmd in commands)
 		{
-			var cmd = ScriptParser.ParseLine(line, languageDef);
 			l.Add(ShipCommandFactory.Parse(cmd));
 		}
 
