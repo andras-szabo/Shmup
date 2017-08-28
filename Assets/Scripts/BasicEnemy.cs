@@ -102,15 +102,20 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 			return;
 		}
 
-		StartingHP -= dmg.damage;
+		var outOfBounds = dmg.isBounds;
 
-		if (!_isHit)
+		StartingHP = outOfBounds ? 0 : StartingHP - dmg.damage;
+
+		if (!outOfBounds)
 		{
-			SwapMaterials(true);
+			if (!_isHit)
+			{
+				SwapMaterials(true);
+			}
+
+			_isHit = true;
+			_elapsedSecondsInHitStun = 0;
 		}
-	
-		_isHit = true;
-		_elapsedSecondsInHitStun = 0;
 	}
 
 	private void SwapMaterials(bool hit)

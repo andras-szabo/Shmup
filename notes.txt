@@ -1,3 +1,11 @@
+2017.08.28.
+	- out-of-bounds check & setting velocity.
+		- option 1: do this with colliders
+			- we _have_ colliders already, and we do
+			  check for collisions anyway
+			- simpler control of the relevant area
+			- but maybe this would not play so nicely with dynamic zoom
+		- option 2: position check	
 2017.08.27.
 	OK, so what to do next?
 	- spawn? -> but this would be a different script; this could be a task for another day.
