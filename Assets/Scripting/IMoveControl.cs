@@ -2,5 +2,6 @@
 
 public interface IMoveControl
 {
-	Vector3 CurrentRotSpeedAnglesPerSecond { get; set; } // angles per second
+	Vector3 CurrentRotSpeedAnglesPerSecond { get; set; } 
+	Vector2 CurrentVelocityViewportPerSecond { get; set; }
 }

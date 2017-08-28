@@ -8,4 +8,10 @@ public static class VecExtensions
 						   Mathf.Lerp(origin.y, vec.y, factor),
 						   Mathf.Lerp(origin.z, vec.z, factor));
 	}
+
+	public static Vector2 LerpFrom(this Vector2 vec, Vector2 origin, float factor)
+	{
+		return new Vector2(Mathf.Lerp(origin.x, vec.x, factor),
+						   Mathf.Lerp(origin.y, vec.y, factor));
+	}
 }

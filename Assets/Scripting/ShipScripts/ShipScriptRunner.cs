@@ -20,6 +20,18 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 		}
 	}
 
+	private Vector2 _currentVelocityViewportPerSecond;
+	private Vector3 _currentVelocityUnitsPerFrame;
+	public Vector2 CurrentVelocityViewportPerSecond
+	{
+		get { return _currentVelocityViewportPerSecond; }
+		set
+		{ 
+			_currentVelocityViewportPerSecond = value;
+			SetVelocity(_currentVelocityViewportPerSecond);
+		}
+	}
+
 	//TODO: Surely this can be optimized
 	#region IExecutionContext
 	protected List<IShipCommand> _commands = new List<IShipCommand>();
@@ -41,11 +53,18 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 
 	#endregion
 
-	public void SetRotation(Vector3 rotationAngles)
+	protected void SetRotation(Vector3 rotationAngles)
 	{
 		_rotationPerFrame = new Vector3(rotationAngles.x / Consts.IG_FRAMERATE, 
 										rotationAngles.y / Consts.IG_FRAMERATE, 
 										rotationAngles.z / Consts.IG_FRAMERATE);
+	}
+
+	protected void SetVelocity(Vector2 velocityViewportPerSecond)
+	{
+		var worldVelocity = ViewportUtility.ViewportToWorldVelocity(velocityViewportPerSecond);
+		_currentVelocityUnitsPerFrame = new Vector2(worldVelocity.x / Consts.IG_FRAMERATE,
+													worldVelocity.y / Consts.IG_FRAMERATE);
 	}
 
 	public void Run(List<IShipCommand> script)
@@ -80,6 +99,7 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 	private void TransformUpdate(float deltaTime)
 	{
 		CachedTransform.Rotate(_rotationPerFrame);
+		CachedTransform.position += _currentVelocityUnitsPerFrame;
 	}
 }
 

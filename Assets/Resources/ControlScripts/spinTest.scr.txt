@@ -1,5 +1,6 @@
 repeat
-  spin 180 90 220 2
-5 spin -180 -25 -25 2
+  vel 0.2 0.2 2
+  spin -180 -25 -25 2
 3 spin 0 0 0 3
-3 end
+  vel -0.2 -0.2 1
+2 end

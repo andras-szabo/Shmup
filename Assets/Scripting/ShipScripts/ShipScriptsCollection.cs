@@ -25,6 +25,37 @@ public class ShipScriptEnd : ShipScriptCommand
 	}
 }
 
+public class ShipScriptVelocity : ShipScriptCommand
+{
+	protected readonly Vector2 _velocity;
+	protected readonly float _deltaT;
+
+	public ShipScriptVelocity(ScriptCommand cmd) : base(cmd)
+	{
+		_velocity = new Vector2((float)cmd.args[0], -(float)cmd.args[1]);
+		_deltaT = (float)cmd.args[2];
+	}
+
+	public override void Execute(IExecutionContext context)
+	{
+		context.CoroutineRunner.StartCoroutine(Accelerate(context.MoveControl));
+	}
+
+	public IEnumerator Accelerate(IMoveControl moveControl)
+	{
+		var elapsedTime = 0f;
+		var startVelocity = moveControl.CurrentVelocityViewportPerSecond;
+		while (elapsedTime < _deltaT)
+		{
+			moveControl.CurrentVelocityViewportPerSecond = _velocity.LerpFrom(startVelocity, elapsedTime / _deltaT);
+			yield return ShipScriptCommand.CommandUpdateIntervalObject;
+			elapsedTime += ShipScriptCommand.CommandUpdateInterval;
+		}
+
+		moveControl.CurrentVelocityViewportPerSecond = _velocity;
+	}
+}
+
 public class ShipScriptSpin : ShipScriptCommand
 {
 	public ShipScriptSpin(ScriptCommand cmd) : base(cmd)

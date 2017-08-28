@@ -17,7 +17,15 @@ public static class ShipScriptDefinition
 		});
 		var end = new ScriptCommandDefinition(3, "end", 0, null);
 
-		def.Add(repeat, spin, end);
+		// vel x y dt
+		var vel = new ScriptCommandDefinition(4, "vel", 3, new List<Type>
+		{
+			typeof(float),
+			typeof(float),
+			typeof(float)
+		});
+
+		def.Add(repeat, spin, end, vel);
 
 		return def;
 	}

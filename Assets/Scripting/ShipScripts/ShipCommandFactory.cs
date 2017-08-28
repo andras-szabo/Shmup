@@ -11,6 +11,7 @@ public static class ShipCommandFactory
 			case 1: return new ShipScriptRepeat(cmd);
 			case 2: return new ShipScriptSpin(cmd);
 			case 3: return new ShipScriptEnd(cmd);
+			case 4: return new ShipScriptVelocity(cmd);
 		}
 
 		return null;
