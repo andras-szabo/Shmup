@@ -1,3 +1,12 @@
+2017.08.30
+	-spawner set up for enemies;
+	-need to think about formal spawning process,
+	 where e.g. scripts get reset, and we do whatever
+	 initialization we need to do (e.g. reset health &c).
+	-in fact maybe despawning could also be better formalized
+	 -> like, what are the steps that we should always do just
+	 before returning to the pool?
+
 2017.08.28.
 	- out-of-bounds check & setting velocity.
 		- option 1: do this with colliders

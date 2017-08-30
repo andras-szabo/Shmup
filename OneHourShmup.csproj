@@ -84,6 +84,7 @@
     <Compile Include="Assets\_Generic\Pools\IPoolable.cs" />
     <Compile Include="Assets\_Generic\Pools\Spawner.cs" />
     <Compile Include="Assets\_Generic\VecExtensions.cs" />
+    <Compile Include="Assets\_Test\TestEnemySpawner.cs" />
     <Compile Include="Assets\_Test\TestMover.cs" />
     <Compile Include="Assets\Scripting\IExecutionContext.cs" />
     <Compile Include="Assets\Scripting\IMoveControl.cs" />

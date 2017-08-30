@@ -7,7 +7,8 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 	public Material normalMaterial;
 	public Material hitMaterial;
 
-	public float StartingHP = 10;
+	public float startingHP = 10;
+	protected float currentHP;
 
 	private bool _isHit;
 	private float _elapsedSecondsInHitStun;
@@ -35,7 +36,7 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 
 	public void SetStartVelocity()
 	{
-		// well
+		currentHP = startingHP;
 	}
 
 	public GameObject GameObject
@@ -49,6 +50,7 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 
 	private void Start()
 	{
+		currentHP = startingHP;
 		SetPool(GameObjectPoolManager.Get(poolType));
 	}
 
@@ -75,7 +77,7 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 			SwapMaterials(_isHit);
 		}
 
-		if (StartingHP <= 0)
+		if (currentHP <= 0)
 		{
 			Despawn();
 		}
@@ -104,7 +106,7 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 
 		var outOfBounds = dmg.isBounds;
 
-		StartingHP = outOfBounds ? 0 : StartingHP - dmg.damage;
+		currentHP = outOfBounds ? 0 : currentHP - dmg.damage;
 
 		if (!outOfBounds)
 		{
