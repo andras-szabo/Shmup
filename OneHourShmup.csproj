@@ -80,24 +80,28 @@
   <ItemGroup>
     <Compile Include="Assets\_Generic\Consts.cs" />
     <Compile Include="Assets\_Generic\MonoWithCachedTransform.cs" />
+    <Compile Include="Assets\_Generic\Pools\EnemySpawner.cs" />
     <Compile Include="Assets\_Generic\Pools\GameObjectPoolManager.cs" />
     <Compile Include="Assets\_Generic\Pools\IPoolable.cs" />
     <Compile Include="Assets\_Generic\Pools\Spawner.cs" />
     <Compile Include="Assets\_Generic\VecExtensions.cs" />
     <Compile Include="Assets\_Test\TestEnemySpawner.cs" />
     <Compile Include="Assets\_Test\TestMover.cs" />
+    <Compile Include="Assets\Scripting\ICommand.cs" />
     <Compile Include="Assets\Scripting\IExecutionContext.cs" />
     <Compile Include="Assets\Scripting\IMoveControl.cs" />
-    <Compile Include="Assets\Scripting\IShipCommand.cs" />
-    <Compile Include="Assets\Scripting\ScriptCommand.cs" />
     <Compile Include="Assets\Scripting\ScriptLanguageDefinition.cs" />
     <Compile Include="Assets\Scripting\ScriptParser.cs" />
+    <Compile Include="Assets\Scripting\SerializedScriptCommand.cs" />
     <Compile Include="Assets\Scripting\ShipScriptCommand.cs" />
+    <Compile Include="Assets\Scripting\ShipScripts\ScriptRunner.cs" />
     <Compile Include="Assets\Scripting\ShipScripts\SetupTestShipScript.cs" />
     <Compile Include="Assets\Scripting\ShipScripts\ShipCommandFactory.cs" />
     <Compile Include="Assets\Scripting\ShipScripts\ShipScriptDefinition.cs" />
-    <Compile Include="Assets\Scripting\ShipScripts\ShipScriptRunner.cs" />
     <Compile Include="Assets\Scripting\ShipScripts\ShipScriptsCollection.cs" />
+    <Compile Include="Assets\Scripting\SpawnerScripts\SpawnerCommandFactory.cs" />
+    <Compile Include="Assets\Scripting\SpawnerScripts\SpawnerScriptDefinition.cs" />
+    <Compile Include="Assets\Scripting\SpawnerScripts\SpawnerScriptsCollection.cs" />
     <Compile Include="Assets\Scripts\BasicBullet.cs" />
     <Compile Include="Assets\Scripts\BasicEnemy.cs" />
     <Compile Include="Assets\Scripts\Damage.cs" />
@@ -108,6 +112,8 @@
     <Compile Include="Assets\SpaceBending\SpaceBendingObject.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Resources\ControlScripts\simpleSpinner.scr.txt" />
+    <None Include="Assets\Resources\ControlScripts\spawnerTest.scr.txt" />
     <None Include="Assets\Resources\ControlScripts\spinTest.scr.txt" />
     <None Include="Assets\Resources\ControlScripts\test.scr.txt" />
     <None Include="Assets\Shaders\MultiCurvedUnrolledWave.shader" />

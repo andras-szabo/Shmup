@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShipScriptRepeat : ShipScriptCommand
+public class ShipScriptRepeat : ACommand
 {
-	public ShipScriptRepeat(ScriptCommand cmd) : base(cmd)
+	public ShipScriptRepeat(SerializedScriptCommand cmd) : base(cmd)
 	{
 	}
 
@@ -13,9 +13,9 @@ public class ShipScriptRepeat : ShipScriptCommand
 	}
 }
 
-public class ShipScriptEnd : ShipScriptCommand
+public class ShipScriptEnd : ACommand
 {
-	public ShipScriptEnd(ScriptCommand cmd) : base(cmd)
+	public ShipScriptEnd(SerializedScriptCommand cmd) : base(cmd)
 	{
 	}
 
@@ -25,12 +25,12 @@ public class ShipScriptEnd : ShipScriptCommand
 	}
 }
 
-public class ShipScriptVelocity : ShipScriptCommand
+public class ShipScriptVelocity : ACommand
 {
 	protected readonly Vector2 _velocity;
 	protected readonly float _deltaT;
 
-	public ShipScriptVelocity(ScriptCommand cmd) : base(cmd)
+	public ShipScriptVelocity(SerializedScriptCommand cmd) : base(cmd)
 	{
 		_velocity = new Vector2((float)cmd.args[0], -(float)cmd.args[1]);
 		_deltaT = (float)cmd.args[2];
@@ -48,17 +48,17 @@ public class ShipScriptVelocity : ShipScriptCommand
 		while (elapsedTime < _deltaT)
 		{
 			moveControl.CurrentVelocityViewportPerSecond = _velocity.LerpFrom(startVelocity, elapsedTime / _deltaT);
-			yield return ShipScriptCommand.CommandUpdateIntervalObject;
-			elapsedTime += ShipScriptCommand.CommandUpdateInterval;
+			yield return ACommand.CommandUpdateIntervalObject;
+			elapsedTime += ACommand.CommandUpdateInterval;
 		}
 
 		moveControl.CurrentVelocityViewportPerSecond = _velocity;
 	}
 }
 
-public class ShipScriptSpin : ShipScriptCommand
+public class ShipScriptSpin : ACommand
 {
-	public ShipScriptSpin(ScriptCommand cmd) : base(cmd)
+	public ShipScriptSpin(SerializedScriptCommand cmd) : base(cmd)
 	{
 		_rotation = new Vector3((float)cmd.args[0], (float)cmd.args[1], (float)cmd.args[2]); 
 		_deltaT = (float)cmd.args[3];
@@ -80,8 +80,8 @@ public class ShipScriptSpin : ShipScriptCommand
 		while (elapsedTime < _deltaT)
 		{
 			moveControl.CurrentRotSpeedAnglesPerSecond = _rotation.LerpFrom(startRotation, elapsedTime / _deltaT);
-			yield return ShipScriptCommand.CommandUpdateIntervalObject;
-			elapsedTime += ShipScriptCommand.CommandUpdateInterval;
+			yield return ACommand.CommandUpdateIntervalObject;
+			elapsedTime += ACommand.CommandUpdateInterval;
 		}
 		moveControl.CurrentRotSpeedAnglesPerSecond = _rotation;
 	}

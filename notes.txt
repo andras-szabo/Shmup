@@ -1,12 +1,113 @@
+-TODO?
+	-scripts:
+		=> repeat and end should be generic, not tied to any specific script
+		=> parametric parameters, eg:
+			for $a = <start>, <end>, <step>
+				$a spawn someType 1+$a*2 0.2 someScript
+			end
+			
+			=> this is a challenge!
+
+		-> so: get a string, eg: (1 + ($a * 2)+(3/ $a))
+			1.) cull whitespace: (1+($a*2)+(3/$a))
+			2.) star evaling from left:
+				-if (, push it on stack
+				-if operand (value):
+					-if we have something on the operator stack:
+					-pop value from value stack (if any, e.g. unary - !)
+					-pop operator
+					-apply operator to previous and current value
+					-push new value on value stack	
+					
+					-if we have nothing on the operator stack:
+						push value on the value stack:
+							-if register, replace it with actual value of register, push it on value stack
+							-if float, push it on value stack
+
+				-if operator, push it on operator stack
+				
+				-if ), treat it as new value
+
+			- maybe we need 3 stacks, 1 for expressions (to deal with parens), 1 for operands, 1 for operators
+				=> or better yet, a stack of stacks
+			
+			=> but maybe we don't need a stack of stacks, just a marker to know if the current
+			   expression stack should be considered empty or not - and how many levels deep we are,
+			   in case of (((1+2)*3)+4).
+			
+			-> read first (. mark current exp. stack empty (or: parens: 1)
+			-> read 1. it's a value. push it on current value stack.
+			-> read +. it's an operator. push it on current operator stack.
+			-> read (. mark current exp. stack empty (parens: 2)
+			-> read $a. it's a value. push it on current value stack.
+			-> read *. it's an operator. push it on current operator stack.
+			-> read 2. it's a value. we have operator on current operator stack =>
+				pop previous value ($a)
+				pop operator (*)
+				calculate, and push end result onto current value stack
+			-> read ). this closes the current expression, so:
+			- pretend that we just pushed the value on the expr. stack:
+				-> it's a value, and we have an operator there: +, and a value, 1:
+				=> pop previous value (1)
+				=> pop operator (+)
+				=> calculate, and push result onto current value stack => (<VALUE>+(3/$a)), we have read VALUE.
+
+			=> 
+		
+				
+
 2017.09.03
 	-ok what now?
 		-when spawning enemies, reset scripts
+			- ok, done
 
 	-set up script for simply moving towards the bottom while
 	 spinning
+		- so that also means handling ending the command script execution
+			- ok, done
+
+	(-and then maybe we could spawn scripts by passing in arguments from another
+	 script (like: spawn this ship with this script and this parameters to that script))
+
+	-and be able to handle //comments in scripts
 
 	-set up script for enemy spawner:
 		<deltaT> spawn <what> <where> <how>
+
+	== But how to avoid GetComponents when spawning?
+	- How about this:
+		- spawn comes with - at least - a string param. IPoolables will receive this
+		- then the ship as IPoolable will assume that the param it received is the
+		  script that it needs
+		- and it looks up scripts in the ... singleton scriptlibrary
+		- let's do that
+	
+	== ok. now how about spawning <what> <where> <how>?
+		- what: passed in as param
+		- where: set own transform there?
+			- well, why not
+
+	=> OK, so we can make a plan.
+		1.) EnemySpawner should be / implement a scriptrunner too.
+
+			=> actually, ShipScriptRunner can just be made more generic
+			=> it all should work just via interfaces
+	-			=> ok this is actually done
+		2.) So it should implement IMoveControl too
+				=> and this we get for free
+		3.) And IMoveControl should be able to set position from outside
+				=> ok done
+		4.) It should be possible to parse a spawn command
+				=> what: kind of enemy
+				=> where: position:
+					=> x, y
+				=> how: script to run
+
+		5.) and EnemySpawner should be able to execute it
+			== > and it is done :)
+
+		6.) accept empty string as script param
+			=> done
 
 2017.08.30
 	-spawner set up for enemies;

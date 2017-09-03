@@ -42,7 +42,7 @@ public class ShipController : MonoWithCachedTransform
 			_elapsedSeconds = 0f;
 			foreach (var spawner in _bulletSpawners)
 			{
-				spawner.SpawnFromPool();
+				spawner.SpawnFromPool(string.Empty);
 			}
 		}
 	}

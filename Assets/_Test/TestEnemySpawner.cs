@@ -2,18 +2,26 @@
 
 public class TestEnemySpawner : MonoBehaviour
 {
-	private Spawner enemySpawner;
+	private EnemySpawner enemySpawner;
+	private ScriptRunner runner;
 
 	private void Awake()
 	{
-		enemySpawner = GetComponent<Spawner>();
+		enemySpawner = GetComponent<EnemySpawner>();
+		runner = GetComponent<ScriptRunner>();
+	}
+
+	private void Start()
+	{
+		var script = EnemySpawner.LoadScript("spawnerTest", SpawnerScriptDefinition.Define(), SpawnerCommandFactory.Instance);
+		runner.Run(script);
 	}
 
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.S))
 		{
-			enemySpawner.SpawnFromPool();
+			enemySpawner.SpawnWithScript("simpleSpinner");
 		}
 	}
 }

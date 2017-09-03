@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-public abstract class ShipScriptCommand : IShipCommand
+public abstract class ACommand : ICommand
 {
 	public static float CommandUpdateInterval = 0.1f;
 	public static WaitForSeconds CommandUpdateIntervalObject = new WaitForSeconds(CommandUpdateInterval);
 
 	public float Delay { get { return delay; } }
 
-	public ShipScriptCommand(ScriptCommand cmd)
+	public ACommand(SerializedScriptCommand cmd)
 	{
 		this.delay = cmd.delay;
 		this.commandID = cmd.id;

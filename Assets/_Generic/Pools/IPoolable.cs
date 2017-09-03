@@ -6,7 +6,7 @@ public interface IPoolable
 
 	void SetPool(GameObjectPool pool);
 	void Stop();
-	void SetStartVelocity();
+	void Init(string param);
 
 	Transform CachedTransform { get; }
 	GameObject GameObject { get; }

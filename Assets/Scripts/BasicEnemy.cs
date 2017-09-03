@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(ShipScriptRunner))]
+[RequireComponent(typeof(ScriptRunner))]
 public class BasicEnemy : MonoWithCachedTransform, IPoolable
 {
 	public Renderer enemyRenderer;
@@ -16,7 +16,7 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 	private float _visualHitStunSeconds = 0.1f;
 	private GameObjectPool _pool;
 
-	public ShipScriptRunner scriptRunner;
+	public ScriptRunner scriptRunner;
 
 	#region IPoolable
 	public PoolType poolType;
@@ -35,11 +35,13 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 	public void Stop()
 	{
 		scriptRunner.MoveControl.Stop();
+		SwapMaterials(false);
 	}
 
-	public void SetStartVelocity()
+	public void Init(string param)
 	{
-		scriptRunner.ResetScript();
+		var script = EnemySpawner.LoadScript(param, ShipScriptDefinition.Define(), ShipCommandFactory.Instance);
+		scriptRunner.Run(script);
 		currentHP = startingHP;
 	}
 

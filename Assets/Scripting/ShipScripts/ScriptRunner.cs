@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionContext
+public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionContext
 {
 	private float _elapsedTime;
 	private float _nextCommandDelay;
-	private IShipCommand _currentCommand;
+	private ICommand _currentCommand;
 
 	//TODO: Separate spinner component maybe
 	private Vector3 _rotationPerFrame;
@@ -38,20 +38,38 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 		CurrentVelocityViewportPerSecond = Vector2.zero;
 	}
 
+	public void SetPosition(Vector2 viewportCoords)
+	{
+		CachedTransform.position = ViewportUtility.GetWorldPosition(viewportCoords);
+	}
+
 	//TODO: Surely this can be optimized
 	#region IExecutionContext
-	protected List<IShipCommand> _commands = new List<IShipCommand>();
+	protected List<ICommand> _commands = new List<ICommand>();
 	protected Stack<int> _commandStack = new Stack<int>();
 	protected int _commandPointer = 0;
 
 	public MonoBehaviour CoroutineRunner { get { return this; } }
 	public IMoveControl MoveControl { get { return this; } }
 
+
+	protected ISpawner _spawner;
+	public ISpawner Spawner
+	{
+		get
+		{
+			return _spawner ?? (_spawner = GetComponent<ISpawner>());
+		}
+	}
+
 	public void ResetScript()
 	{
 		_commandPointer = 0;
 		_commandStack.Clear();
-		_currentCommand = _commands[0];
+		if (_commands != null && _commands.Count > 0)
+		{
+			_currentCommand = _commands[0];
+		}
 	}
 
 	public void PushCommandPointer()
@@ -80,7 +98,7 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 													worldVelocity.y / Consts.IG_FRAMERATE);
 	}
 
-	public void Run(List<IShipCommand> script)
+	public void Run(List<ICommand> script)
 	{
 		_commands = script;
 		if (script != null && script.Count > 0)
@@ -99,14 +117,21 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 		if (_currentCommand != null)
 		{
 			_elapsedTime += dt;
-			while (_elapsedTime >= _currentCommand.Delay)
+			while (_currentCommand != null && _elapsedTime >= _currentCommand.Delay)
 			{
 				_commandPointer++;
-				_currentCommand.Execute(context: this);			// this may make changes to the exec.context,
-				_currentCommand = _commands[_commandPointer];	// including changing the command pointer, that's cool
+				_currentCommand.Execute(context: this);         // this may make changes to the exec.context,
+
+				TryStepOnNextCommand();
+
 				_elapsedTime = 0f;
 			}
 		}
+	}
+
+	private void TryStepOnNextCommand()
+	{
+		_currentCommand = (_commandPointer < _commands.Count) ? _commands[_commandPointer] : null;
 	}
 
 	private void TransformUpdate(float deltaTime)

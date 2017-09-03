@@ -3,9 +3,9 @@ using System.Linq;
 
 public static class ScriptParser
 {
-	public static List<ScriptCommand> ParseFile(string fileAsText, ScriptLanguageDefinition languageDef)
+	public static List<SerializedScriptCommand> ParseFile(string fileAsText, ScriptLanguageDefinition languageDef)
 	{
-		var commands = new List<ScriptCommand>();
+		var commands = new List<SerializedScriptCommand>();
 
 		var lines = SplitIntoLines(fileAsText, removeEmptyLines: true);
 		foreach (var line in lines)
@@ -30,9 +30,9 @@ public static class ScriptParser
 		return lines;
 	}
 
-	public static ScriptCommand ParseLine(string line, ScriptLanguageDefinition languageDef)
+	public static SerializedScriptCommand ParseLine(string line, ScriptLanguageDefinition languageDef)
 	{
-		var command = new ScriptCommand();
+		var command = new SerializedScriptCommand();
 
 		var tokens = SplitAndIgnoreWhiteSpaces(line);
 		var queue = new Queue<string>(tokens);
@@ -57,11 +57,18 @@ public static class ScriptParser
 				command.args = new System.Object[cmdDef.argumentCount];
 				for (int i = 0; i < cmdDef.argumentCount; ++i)
 				{
-					token = queue.Dequeue();
-					var argType = cmdDef.argumentTypes[i];
-					command.args[i] = System.ComponentModel.TypeDescriptor
+					if (queue.Count > 0)
+					{
+						token = queue.Dequeue();
+						var argType = cmdDef.argumentTypes[i];
+						command.args[i] = System.ComponentModel.TypeDescriptor
 										.GetConverter(argType)
 										.ConvertFromString(token);
+					}
+					else
+					{
+						command.args[i] = null;
+					}
 				}
 			}
 		}

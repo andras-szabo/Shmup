@@ -1,10 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public static class ShipCommandFactory
+﻿public interface IParser
 {
-	public static IShipCommand Parse(ScriptCommand cmd)
+	ICommand Parse(SerializedScriptCommand cmd);
+}
+
+public class ShipCommandFactory : IParser
+{
+	private static ShipCommandFactory _instance = new ShipCommandFactory();
+	public static ShipCommandFactory Instance { get { return _instance; } }
+
+	public ICommand Parse(SerializedScriptCommand cmd)
 	{
 		switch (cmd.id)
 		{

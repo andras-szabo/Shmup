@@ -13,6 +13,11 @@ public class ViewportUtility : MonoBehaviour
 		return Instance.GetViewportToWorldVelocity(vpVelocity);
 	}
 
+	public static Vector2 GetWorldPosition(Vector2 viewportPosition)
+	{
+		return Instance.GetViewportToWorldCoords(viewportPosition);
+	}
+
 	public static ViewportUtility Instance { get; protected set; }
 
 	private void Awake()

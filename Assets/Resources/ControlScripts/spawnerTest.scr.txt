@@ -1,0 +1,9 @@
+spawn someType 0.5 0.5 simpleSpinner
+2 spawn someType 0.5 0.5 spinTest
+2 spawn someType 0.5 0.75 simpleSpinner
+2 spawn someType 0.2 0.9
+  spawn someType 0.8 0.9
+2 	spawn someType 0.1 1.5 simpleSpinner
+	spawn someType 0.9 1.5 simpleSpinner
+0.5	spawn someType 0.1 1.5 simpleSpinner
+	spawn someType 0.9 1.5 simpleSpinner

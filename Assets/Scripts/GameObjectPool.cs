@@ -11,19 +11,19 @@ public class GameObjectPool : MonoWithCachedTransform
 		GameObjectPoolManager.Register(poolType, this);
 	}
 
-	public GameObject Spawn(GameObject prototype, Transform templateTransform)
+	public GameObject Spawn(GameObject prototype, Transform templateTransform, string param)
 	{
 		if (HasPooled(prototype))
 		{
-			return PopFromPool(templateTransform);
+			return PopFromPool(templateTransform, param);
 		}
 		else
 		{
-			return CreateNew(prototype, templateTransform);
+			return CreateNew(prototype, templateTransform, param);
 		}
 	}
 
-	private GameObject PopFromPool(Transform templateTransform)
+	private GameObject PopFromPool(Transform templateTransform, string param)
 	{
 		var instance = _pool.Pop();
 
@@ -31,7 +31,7 @@ public class GameObjectPool : MonoWithCachedTransform
 		
 		poolable.CachedTransform.SetParent(null);
 		poolable.CachedTransform.SetPositionAndRotation(templateTransform.position, templateTransform.rotation);
-		poolable.SetStartVelocity();
+		poolable.Init(param);
 
 		instance.gameObject.SetActive(true);
 		return instance;
@@ -50,7 +50,7 @@ public class GameObjectPool : MonoWithCachedTransform
 		_pool.Push(poolable.GameObject);
 	}
 
-	private GameObject CreateNew(GameObject prototype, Transform templateTransform)
+	private GameObject CreateNew(GameObject prototype, Transform templateTransform, string param)
 	{
 		var newObject = Instantiate<GameObject>(prototype, null, true);
 
@@ -59,6 +59,7 @@ public class GameObjectPool : MonoWithCachedTransform
 		{
 			poolable.SetPool(this);
 			poolable.CachedTransform.SetPositionAndRotation(templateTransform.position, templateTransform.rotation);
+			poolable.Init(param);
 		}
 
 		return newObject;

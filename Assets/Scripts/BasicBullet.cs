@@ -20,11 +20,12 @@ public class BasicBullet : MonoWithCachedTransform, IPoolable
 
 	private GameObjectPool _pool;
 	private Rigidbody _rb;
-
-	private void Start()
+	private Rigidbody RB
 	{
-		_rb = GetComponent<Rigidbody>();
-		SetStartVelocity();
+		get
+		{
+			return _rb ?? (_rb = GetComponent<Rigidbody>());
+		}
 	}
 
 	private void OnTriggerEnter(Collider other)
@@ -32,9 +33,9 @@ public class BasicBullet : MonoWithCachedTransform, IPoolable
 		Despawn();
 	}
 
-	public void SetStartVelocity()
+	public void Init(string param)
 	{
-		_rb.velocity = transform.up * speedUnitPerSeconds;
+		RB.velocity = transform.up * speedUnitPerSeconds;
 		_elapsedSeconds = 0f;
 	}
 
@@ -46,7 +47,7 @@ public class BasicBullet : MonoWithCachedTransform, IPoolable
 
 	public void Stop()
 	{
-		_rb.velocity = Vector3.zero;
+		RB.velocity = Vector3.zero;
 	}
 
 	public void SetPool(GameObjectPool pool)
