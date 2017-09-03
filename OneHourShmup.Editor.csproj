@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Editor\ControlScriptTests.cs" />
+    <Compile Include="Assets\Editor\ExpressionEvaluatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Resources\ControlScripts\simpleSpinner.scr.txt" />

@@ -87,6 +87,7 @@
     <Compile Include="Assets\_Generic\VecExtensions.cs" />
     <Compile Include="Assets\_Test\TestEnemySpawner.cs" />
     <Compile Include="Assets\_Test\TestMover.cs" />
+    <Compile Include="Assets\ExpressionEvaluator\ExpressionEvaluator.cs" />
     <Compile Include="Assets\Scripting\ICommand.cs" />
     <Compile Include="Assets\Scripting\IExecutionContext.cs" />
     <Compile Include="Assets\Scripting\IMoveControl.cs" />

@@ -131,7 +131,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void TryStepOnNextCommand()
 	{
-		_currentCommand = (_commandPointer < _commands.Count) ? _commands[_commandPointer] : null;
+		_currentCommand = (_commands != null && _commandPointer < _commands.Count) ? _commands[_commandPointer] : null;
 	}
 
 	private void TransformUpdate(float deltaTime)

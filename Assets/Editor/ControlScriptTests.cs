@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
-using UnityEngine.TestTools;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -11,9 +9,9 @@ public class ControlScriptTests
 	[Test]
 	public void ReadTestFileTest()
 	{
-		var path = Path.Combine(Application.dataPath, "ControlScripts/test.scr");
-		var lines = File.ReadAllLines(path);
-		Assert.IsTrue(lines.Length == 3);
+		var path = Path.Combine(Consts.PATH_CONTROL_SCRIPTS, "test.scr");
+		var fileAsText = Resources.Load<TextAsset>(path).text;
+		var lines = fileAsText.Split('\n');
 
 		var testLanguageDef = CreateTestLanguageDefinition();
 		var first = ScriptParser.ParseLine(lines[0], testLanguageDef); 
