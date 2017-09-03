@@ -87,4 +87,4 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ObjectWorldPos: {r: 0, g: 0, b: 0, a: 0}
-    - _TintColor: {r: 0.9361347, g: 0.3359049, b: 0.4298496, a: 0}
+    - _TintColor: {r: 0.8546338, g: 0.33293098, b: 0.54676193, a: 0}

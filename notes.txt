@@ -1,3 +1,13 @@
+2017.09.03
+	-ok what now?
+		-when spawning enemies, reset scripts
+
+	-set up script for simply moving towards the bottom while
+	 spinning
+
+	-set up script for enemy spawner:
+		<deltaT> spawn <what> <where> <how>
+
 2017.08.30
 	-spawner set up for enemies;
 	-need to think about formal spawning process,

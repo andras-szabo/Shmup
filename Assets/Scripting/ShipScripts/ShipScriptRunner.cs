@@ -32,6 +32,12 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 		}
 	}
 
+	public void Stop()
+	{
+		CurrentRotSpeedAnglesPerSecond = Vector3.zero;
+		CurrentVelocityViewportPerSecond = Vector2.zero;
+	}
+
 	//TODO: Surely this can be optimized
 	#region IExecutionContext
 	protected List<IShipCommand> _commands = new List<IShipCommand>();
@@ -40,6 +46,13 @@ public class ShipScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutio
 
 	public MonoBehaviour CoroutineRunner { get { return this; } }
 	public IMoveControl MoveControl { get { return this; } }
+
+	public void ResetScript()
+	{
+		_commandPointer = 0;
+		_commandStack.Clear();
+		_currentCommand = _commands[0];
+	}
 
 	public void PushCommandPointer()
 	{
