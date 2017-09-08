@@ -40,7 +40,7 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 
 	public void Init(string param)
 	{
-		var script = EnemySpawner.LoadScript(param, ShipScriptDefinition.Define(), ShipCommandFactory.Instance);
+		var script = ScriptCache.LoadScript(param, ShipScriptDefinition.Define(), ShipCommandFactory.Instance);
 		scriptRunner.Run(script);
 		currentHP = startingHP;
 	}

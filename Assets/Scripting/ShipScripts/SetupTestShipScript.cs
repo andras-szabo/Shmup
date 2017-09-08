@@ -19,6 +19,6 @@ public class SetupTestShipScript : MonoBehaviour
 	{
 		var definition = ShipScriptDefinition.Define();
 		var parser = new ShipCommandFactory();
-		return EnemySpawner.LoadScript("spinTest.scr", definition, parser);
+		return ScriptCache.LoadScript("spinTest.scr", definition, parser);
 	}
 }
