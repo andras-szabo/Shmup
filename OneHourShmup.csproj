@@ -94,6 +94,7 @@
     <Compile Include="Assets\Scripting\IExecutionContext.cs" />
     <Compile Include="Assets\Scripting\IMoveControl.cs" />
     <Compile Include="Assets\Scripting\ParserUtility.cs" />
+    <Compile Include="Assets\Scripting\ScriptCache.cs" />
     <Compile Include="Assets\Scripting\ScriptLanguageDefinition.cs" />
     <Compile Include="Assets\Scripting\ScriptParser.cs" />
     <Compile Include="Assets\Scripting\SerializedScriptCommand.cs" />

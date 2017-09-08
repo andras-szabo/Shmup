@@ -1,19 +1,13 @@
--TODO?
-	-scripts:
-		=> repeat and end should be generic, not tied to any specific script
-		=> parametric parameters, eg:
-			for $a = <start>, <end>, <step>
-				$a spawn someType 1+$a*2 0.2 someScript
-			end
-			
-			=> this is a challenge!
+TODO:
+	- some basic commands for background movement
+	- apply scripts for bullets
+
 2017.09.08
 	- cleanup
 	- for loop in spawner
 
 	- ... and this is done. ^_^
-				
-	- TODO: Let's not try to parse scripts more than once.
+	
 
 2017.09.03
 	-ok what now?
