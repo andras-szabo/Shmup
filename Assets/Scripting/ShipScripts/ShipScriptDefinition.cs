@@ -15,7 +15,7 @@ public static class ShipScriptDefinition
 			typeof(float),
 			typeof(float)
 		});
-		var end = new ScriptCommandDefinition(3, "end", 0, null);
+		var end = new ScriptCommandDefinition(3, "endrepeat", 0, null);
 
 		// vel x y dt
 		var vel = new ScriptCommandDefinition(4, "vel", 3, new List<Type>

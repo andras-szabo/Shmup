@@ -1,103 +1,155 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 
-public static class ScriptParser
+public class ScriptParser
 {
-	public static List<SerializedScriptCommand> ParseFile(string fileAsText, ScriptLanguageDefinition languageDef)
+	public static string DecimalRegexPattern = @"^\d+(\.\d+)?\z";
+	public static string LoopRegexPattern = 
+		@"^(?<delay>\d+(\.\d+)?)?\s*for\s+(?<loopVarName>\w+)\s*=\s*(?<loopStart>\d+)\s+to\s+(?<loopEnd>\d+)(\s+step\s+(?<loopStep>-?\d+))?\z";
+
+	private struct LoopWidget
+	{
+		public string loopVariable;
+		public float limit;
+		public int lineIndex;
+		public float step;
+
+		public bool ShouldContinue(float variableValue)
+		{
+			return step > 0f ? variableValue <= limit : variableValue >= limit;
+		}
+	}
+
+	private string[] _lines;
+	private ScriptLanguageDefinition _def;
+
+	private Dictionary<string, float> _variables = new Dictionary<string, float>();
+	private int _lineIndex;
+	private Stack<LoopWidget> _loopStack = new Stack<LoopWidget>();
+
+	public ScriptParser(string[] lines, ScriptLanguageDefinition languageDef)
+	{
+		_lines = lines;
+		_def = languageDef;
+	}
+
+	public List<SerializedScriptCommand> Parse()
 	{
 		var commands = new List<SerializedScriptCommand>();
 
-		var lines = SplitIntoLines(fileAsText, removeEmptyLines: true);
-		foreach (var line in lines)
+		_lineIndex = 0;
+
+		while (_lineIndex < _lines.Length)
 		{
-			commands.Add(ParseLine(line, languageDef));
+			var command = ParseLine(_lines[_lineIndex]);
+			if (command.IsValid) { commands.Add(command); }
+			_lineIndex++;
 		}
 
 		return commands;
 	}
 
-	public static string[] SplitIntoLines(string fileAsText, bool removeEmptyLines = true)
+	public SerializedScriptCommand ParseLine(string line)
 	{
-		var lines = fileAsText.Split('\n');
-
-		if (removeEmptyLines)
-		{
-			var asList = new List<string>(lines);
-			asList.RemoveAll(line => string.IsNullOrEmpty(line));
-			lines = asList.ToArray();
-		}
-
-		return lines;
-	}
-
-	public static SerializedScriptCommand ParseLine(string line, ScriptLanguageDefinition languageDef)
-	{
-		var command = new SerializedScriptCommand();
-
-		var tokens = SplitAndIgnoreWhiteSpaces(line);
+		var tokens = ParserUtility.SplitAndIgnoreWhiteSpaces(line);
 		var queue = new Queue<string>(tokens);
+		var delay = 0f;
 
 		// Get delay if posibol
 		var token = queue.Peek();
 
-		try { command.delay = System.Convert.ToSingle(token); queue.Dequeue(); }
-		catch (System.FormatException) { }
+		try { delay = EE.Evaluate(token, _variables); queue.Dequeue(); }
+		catch (System.Collections.Generic.KeyNotFoundException) { }
 
 		token = queue.Dequeue();
 		ScriptCommandDefinition cmdDef;
-		if (!languageDef.TryGetValue(token, out cmdDef))
+		if (!_def.TryGetValue(token, out cmdDef))
 		{
-			// Syntax error, unrecognized token
+			if (token == "for") { ParseLoopBegin(line); }
+			if (token == "end") { ParseLoopEnd(); }
+
+			return SerializedScriptCommand.Invalid();
 		}
-		else
+
+		return ParseCommand(delay, cmdDef, queue);
+	}
+
+	private SerializedScriptCommand ParseCommand(float delay, ScriptCommandDefinition cmdDef, Queue<string> queue)
+	{
+		var command = new SerializedScriptCommand();
+		command.id = cmdDef.id;
+		command.delay = delay;
+		if (cmdDef.argumentCount > 0)
 		{
-			command.id = cmdDef.id;
-			if (cmdDef.argumentCount > 0)
+			command.args = new System.Object[cmdDef.argumentCount];
+			for (int i = 0; i < cmdDef.argumentCount; ++i)
 			{
-				command.args = new System.Object[cmdDef.argumentCount];
-				for (int i = 0; i < cmdDef.argumentCount; ++i)
+				if (queue.Count > 0)
 				{
-					if (queue.Count > 0)
+					var token = queue.Dequeue();
+					var argType = cmdDef.argumentTypes[i];
+
+					if (argType == typeof(float))
 					{
-						token = queue.Dequeue();
-						var argType = cmdDef.argumentTypes[i];
-						command.args[i] = System.ComponentModel.TypeDescriptor
-										.GetConverter(argType)
-										.ConvertFromString(token);
+						command.args[i] = EE.Evaluate(token, _variables);
 					}
 					else
 					{
-						command.args[i] = null;
+						command.args[i] = System.ComponentModel.TypeDescriptor
+									.GetConverter(argType)
+									.ConvertFromString(token);
 					}
+				}
+				else
+				{
+					command.args[i] = null;
 				}
 			}
 		}
-
 		return command;
 	}
 
-	public static string[] SplitAndIgnoreWhiteSpaces(string line)
+	private void ParseLoopEnd()
 	{
-		var asList = line.Trim().Split().ToList();
-		asList.RemoveAll(token => IsAllWhiteSpace(token));
-		return asList
-				.Select(token => token.ToLower())
-				.ToArray();
+		var loopWidget = _loopStack.Peek();
+		_variables[loopWidget.loopVariable] += loopWidget.step;
+		if (loopWidget.ShouldContinue(_variables[loopWidget.loopVariable]))
+		{
+			_lineIndex = loopWidget.lineIndex;
+		}
+		else
+		{
+			_variables.Remove(loopWidget.loopVariable);
+			_loopStack.Pop();
+		}
 	}
 
-	public static bool IsAllWhiteSpace(string token)
+	private void ParseLoopBegin(string line)
 	{
-		if (!string.IsNullOrEmpty(token))
+		var loopRegex = new Regex(LoopRegexPattern);
+		var match = loopRegex.Match(line.Trim());
+
+		if (!match.Success)
 		{
-			foreach (var c in token)
-			{
-				if (!System.Char.IsWhiteSpace(c))
-				{
-					return false;
-				}
-			}
+			throw new System.FormatException(line);
 		}
 
-		return true;
+		var loopVariableName = match.Groups["loopVarName"].ToString();
+		var loopVariableValue = System.Convert.ToSingle(match.Groups["loopStart"].ToString());
+		var loopLimit = System.Convert.ToSingle(match.Groups["loopEnd"].ToString());
+
+		var capturedStep = match.Groups["loopStep"].ToString();
+		var step = string.IsNullOrEmpty(capturedStep) ? 1f : System.Convert.ToSingle(capturedStep);
+
+		_variables[loopVariableName] = loopVariableValue;
+
+		var loopWidget = new LoopWidget();
+
+		loopWidget.loopVariable = loopVariableName;
+		loopWidget.limit = loopLimit;
+		loopWidget.lineIndex = _lineIndex;
+		loopWidget.step = step;
+
+		_loopStack.Push(loopWidget);
 	}
 }

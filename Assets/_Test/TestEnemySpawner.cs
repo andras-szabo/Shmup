@@ -13,7 +13,7 @@ public class TestEnemySpawner : MonoBehaviour
 
 	private void Start()
 	{
-		var script = EnemySpawner.LoadScript("spawnerTest", SpawnerScriptDefinition.Define(), SpawnerCommandFactory.Instance);
+		var script = EnemySpawner.LoadScript("spawnerTestLoop", SpawnerScriptDefinition.Define(), SpawnerCommandFactory.Instance);
 		runner.Run(script);
 	}
 

@@ -1,0 +1,10 @@
+for i = 1 to 2
+	for j = 1 to 4
+		0.5 spawn someType j*0.1 1.2 simpleSpinner
+			spawn someType 1-(j*0.1) 1.1 simpleSpinner
+	end
+	for j = 4 to 1 step -1
+		0.5 spawn someType j*0.1 1.2 simpleSpinner
+			spawn someType 1-(j*0.1) 1.1 simpleSpinner
+	end
+end

@@ -23,7 +23,7 @@ public class EnemySpawner : MonoWithCachedTransform
 
 		var path = Path.Combine(Consts.PATH_CONTROL_SCRIPTS, string.Format("{0}.scr", scriptName));
 		var fileAsText = Resources.Load<TextAsset>(path).text;
-		var commands = ScriptParser.ParseFile(fileAsText, scriptDefinition);
+		var commands = ParserUtility.ParseFile(fileAsText, scriptDefinition);
 
 		var l = new List<ICommand>(commands.Count);
 

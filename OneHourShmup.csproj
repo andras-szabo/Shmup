@@ -88,9 +88,12 @@
     <Compile Include="Assets\_Test\TestEnemySpawner.cs" />
     <Compile Include="Assets\_Test\TestMover.cs" />
     <Compile Include="Assets\ExpressionEvaluator\ExpressionEvaluator.cs" />
+    <Compile Include="Assets\ExpressionEvaluator\Token.cs" />
+    <Compile Include="Assets\ExpressionEvaluator\TokenFactory.cs" />
     <Compile Include="Assets\Scripting\ICommand.cs" />
     <Compile Include="Assets\Scripting\IExecutionContext.cs" />
     <Compile Include="Assets\Scripting\IMoveControl.cs" />
+    <Compile Include="Assets\Scripting\ParserUtility.cs" />
     <Compile Include="Assets\Scripting\ScriptLanguageDefinition.cs" />
     <Compile Include="Assets\Scripting\ScriptParser.cs" />
     <Compile Include="Assets\Scripting\SerializedScriptCommand.cs" />
@@ -115,6 +118,7 @@
   <ItemGroup>
     <None Include="Assets\Resources\ControlScripts\simpleSpinner.scr.txt" />
     <None Include="Assets\Resources\ControlScripts\spawnerTest.scr.txt" />
+    <None Include="Assets\Resources\ControlScripts\spawnerTestLoop.scr.txt" />
     <None Include="Assets\Resources\ControlScripts\spinTest.scr.txt" />
     <None Include="Assets\Resources\ControlScripts\test.scr.txt" />
     <None Include="Assets\Shaders\MultiCurvedUnrolledWave.shader" />

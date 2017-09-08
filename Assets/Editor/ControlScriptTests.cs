@@ -3,9 +3,79 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class ControlScriptTests
 {
+	[Test]
+	public void LoopRegexTest()
+	{
+		var reg = new Regex(ScriptParser.LoopRegexPattern);
+		var match = reg.Match("for i = 1 to 10 step 2");
+
+		Assert.IsTrue(match.Groups["loopVarName"].ToString() == "i");
+		Assert.IsTrue(match.Groups["loopStart"].ToString() == "1");
+		Assert.IsTrue(match.Groups["loopEnd"].ToString() == "10");
+		Assert.IsTrue(match.Groups["loopStep"].ToString() == "2");
+		Assert.IsTrue(string.IsNullOrEmpty(match.Groups["delay"].ToString()));
+
+		match = reg.Match("0.2   for loopy=1 to 999");
+		Assert.IsTrue(match.Success);
+		Assert.IsTrue(match.Groups["delay"].ToString() == "0.2");
+		Assert.IsTrue(match.Groups["loopVarName"].ToString() == "loopy");
+		Assert.IsTrue(match.Groups["loopStart"].ToString() == "1");
+		Assert.IsTrue(match.Groups["loopEnd"].ToString() == "999");
+
+		match = reg.Match("for j = 10 to 1 step -1");
+		Assert.IsTrue(match.Success);
+		Assert.IsTrue(match.Groups["loopStep"].ToString() == "-1");
+	}
+
+	[Test]
+	public void DecimalRegexTest()
+	{
+		var reg = new Regex(ScriptParser.DecimalRegexPattern);
+
+		M(reg, "0");	M(reg, "0.2");	M(reg, "12.345");	M(reg, "0.002");
+		M(reg, "123");
+
+		M(reg, "a", false);
+		M(reg, "abcd.efg", false);
+		M(reg, "0.asd", false);
+		M(reg, "someString.123", false);
+	}
+
+	private void M(Regex regex, string expr, bool shouldMatch = true)
+	{
+		Assert.IsTrue(regex.IsMatch(expr) == shouldMatch, expr);
+	}
+
+	[Test]
+	public void ForLoopTest()
+	{
+		var script = "for i = 1 to 10 step 1\nspawn someType 1 2 someScript\nend";
+		var commands = ParserUtility.ParseFile(script, SpawnerScriptDefinition.Define());
+		Assert.IsTrue(commands.Count == 10, commands.Count.ToString()); 
+	}
+
+	[Test]
+	public void LoopInLoopTest()
+	{
+		var script = "for i = 1 to 3\nfor j = 1 to 3\n0.2*i spawn someType 1 2 someScript\nend\nend";
+		var commands = ParserUtility.ParseFile(script, SpawnerScriptDefinition.Define());
+		Assert.IsTrue(commands.Count == 9, commands.Count.ToString());
+	}
+
+	[Test]
+	public void LoopWithVariableTest()
+	{
+		var script = "for i = 1 to 2\n0.2 spawn someType i*2 i someScript\nend";
+		var commands = ParserUtility.ParseFile(script, SpawnerScriptDefinition.Define());
+		Assert.IsTrue(commands.Count == 2, commands.Count.ToString());
+		Assert.IsTrue((float)(commands[0].args[1]) == 2 && (float)(commands[0].args[2]) == 1);
+		Assert.IsTrue((float)(commands[1].args[1]) == 4 && (float)(commands[1].args[2]) == 2);
+	}
+
 	[Test]
 	public void ReadTestFileTest()
 	{
@@ -14,7 +84,9 @@ public class ControlScriptTests
 		var lines = fileAsText.Split('\n');
 
 		var testLanguageDef = CreateTestLanguageDefinition();
-		var first = ScriptParser.ParseLine(lines[0], testLanguageDef); 
+		var parser = new ScriptParser(lines, testLanguageDef);
+
+		var first = parser.ParseLine(lines[0]);
 		Assert.IsTrue(first.args.Length == 4);
 		Assert.IsTrue((string)first.args[0] == "a", (string) first.args[0]);
 		Assert.IsTrue((string)first.args[1] == "b");
@@ -22,12 +94,12 @@ public class ControlScriptTests
 		Assert.IsTrue((int)first.args[3] == 12);
 		Assert.IsTrue(Mathf.Approximately(first.delay, 0f));
 
-		var second = ScriptParser.ParseLine(lines[1], testLanguageDef);
+		var second = parser.ParseLine(lines[1]);
 		Assert.IsTrue(second.args == null);
 		Assert.IsTrue(second.id == 2);
-		Assert.IsTrue(Mathf.Approximately(second.delay, 0.2f));
+		Assert.IsTrue(Mathf.Approximately(second.delay, 0.2f), string.Format("{0}", second.delay));
 
-		var third = ScriptParser.ParseLine(lines[2], testLanguageDef);
+		var third = parser.ParseLine(lines[2]);
 		Assert.IsTrue(third.args.Length == 2);
 		Assert.IsTrue(third.id == 3);
 		Assert.IsTrue(Mathf.Approximately((float)third.args[0], 1f));
