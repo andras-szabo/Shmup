@@ -14,6 +14,7 @@
 		switch (cmd.id)
 		{
 			case 1: return new SpawnerScriptSpawn(cmd);
+			case 2: return new SpawnerScriptBgVel(cmd);
 		}
 
 		return null;

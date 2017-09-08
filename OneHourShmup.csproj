@@ -113,6 +113,8 @@
     <Compile Include="Assets\Scripts\GameObjectPool.cs" />
     <Compile Include="Assets\Scripts\ShipController.cs" />
     <Compile Include="Assets\Scripts\ViewportUtility.cs" />
+    <Compile Include="Assets\SpaceBending\BackgroundController.cs" />
+    <Compile Include="Assets\SpaceBending\IBackgroundController.cs" />
     <Compile Include="Assets\SpaceBending\SpaceBender.cs" />
     <Compile Include="Assets\SpaceBending\SpaceBendingObject.cs" />
   </ItemGroup>

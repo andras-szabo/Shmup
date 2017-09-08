@@ -15,7 +15,16 @@ public static class SpawnerScriptDefinition
 			typeof(string)		// which script should it run
 		});
 
+		var bgScrollCommand = new ScriptCommandDefinition(2, "bgVel", 3, new List<Type>
+		{
+			typeof(float),		// x
+			typeof(float),		// y
+			typeof(float)		// acceleration delta
+		});
+
 		def.Add(spawnCommand);
+		def.Add(bgScrollCommand);
+
 		return def;
 	}
 }

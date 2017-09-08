@@ -18,9 +18,6 @@ public class SpaceBender : MonoBehaviour
 	public float bulletWeight;
 	public Slider bulletWeightSlider;
 
-	public float scrollSpeed;
-	public Slider scrollSpeedSlider;
-
 	public bool tint;
 	public Color startTintColor;
 	public Color midTintColor;
@@ -71,7 +68,6 @@ public class SpaceBender : MonoBehaviour
 
 	private void Start()
 	{
-		ScrollSpeedChanged();
 		BulletWeightChanged();
 		multiCurvedSpaceMaterial.SetVectorArray("_Ripples", _ripples);
 	}
@@ -95,7 +91,9 @@ public class SpaceBender : MonoBehaviour
 		multiCurvedSpaceMaterial.SetVectorArray("_Array", _objectArray);
 		_arrLimitReached = false;
 		_arrayLength = 0;
-		multiCurvedSpaceMaterial.SetFloat("_RotationAngleInRadians", Mathf.Deg2Rad * Mathf.Sin(Time.timeSinceLevelLoad / 8f) * 72f); 
+
+		//TODO
+		//multiCurvedSpaceMaterial.SetFloat("_RotationAngleInRadians", Mathf.Deg2Rad * Mathf.Sin(Time.timeSinceLevelLoad / 8f) * 72f); 
 	}
 
 	private void ResetNotUsedElements()
@@ -113,15 +111,6 @@ public class SpaceBender : MonoBehaviour
 		{
 			Tint();
 		}
-	}
-
-	public void ScrollSpeedChanged()
-	{
-		var speed = scrollSpeedSlider.value;
-		#if UNITY_ANDROID && !UNITY_EDITOR
-		speed *= -1f;
-		#endif		
-		multiCurvedSpaceMaterial.SetFloat("_ScrollSpeedY", speed);
 	}
 
 	public void BulletWeightChanged()

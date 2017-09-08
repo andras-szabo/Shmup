@@ -26,6 +26,7 @@ public class ScriptParser
 	private Dictionary<string, float> _variables = new Dictionary<string, float>();
 	private int _lineIndex;
 	private Stack<LoopWidget> _loopStack = new Stack<LoopWidget>();
+	private float _loopDelay;
 
 	public ScriptParser(string[] lines, ScriptLanguageDefinition languageDef)
 	{
@@ -42,7 +43,11 @@ public class ScriptParser
 		while (_lineIndex < _lines.Length)
 		{
 			var command = ParseLine(_lines[_lineIndex]);
-			if (command.IsValid) { commands.Add(command); }
+			if (command.IsValid)
+			{ 
+				commands.Add(command);
+				_loopDelay = 0f;	
+			}
 			_lineIndex++;
 		}
 
@@ -78,7 +83,7 @@ public class ScriptParser
 	{
 		var command = new SerializedScriptCommand();
 		command.id = cmdDef.id;
-		command.delay = delay;
+		command.delay = delay + _loopDelay;
 		if (cmdDef.argumentCount > 0)
 		{
 			command.args = new System.Object[cmdDef.argumentCount];
@@ -138,8 +143,11 @@ public class ScriptParser
 		var loopVariableValue = System.Convert.ToSingle(match.Groups["loopStart"].ToString());
 		var loopLimit = System.Convert.ToSingle(match.Groups["loopEnd"].ToString());
 
+		var capturedDelay = match.Groups["delay"].ToString();
+		var delay = string.IsNullOrEmpty(capturedDelay) ? 0f : EE.Evaluate(capturedDelay, _variables);
+
 		var capturedStep = match.Groups["loopStep"].ToString();
-		var step = string.IsNullOrEmpty(capturedStep) ? 1f : System.Convert.ToSingle(capturedStep);
+		var step = string.IsNullOrEmpty(capturedStep) ? 1f : EE.Evaluate(capturedStep, _variables);
 
 		_variables[loopVariableName] = loopVariableValue;
 
@@ -149,6 +157,8 @@ public class ScriptParser
 		loopWidget.limit = loopLimit;
 		loopWidget.lineIndex = _lineIndex;
 		loopWidget.step = step;
+
+		_loopDelay += delay;
 
 		_loopStack.Push(loopWidget);
 	}
