@@ -1,13 +1,13 @@
 TODO:
 	- some basic commands for background movement
-		=> fix background scroll speed updates, so it doesn't
-		get jerky => in fact, maybe the shader could do the
-		lerping itself-?
 
 	- fix: bullets can damage ships outside the visible area - at least
 	       a part of them should be visible in order to be able to take damage
 
 	- apply scripts for bullets
+
+2017.09.09
+	-fixed stuttering uv scroll on background texture	
 
 2017.09.08
 	- cleanup
