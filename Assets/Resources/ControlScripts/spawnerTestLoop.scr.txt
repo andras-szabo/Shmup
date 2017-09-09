@@ -1,4 +1,4 @@
-bgVel 0 -1 0
+bgVel 0 -2 20
 5 for i = 1 to 2
 	for j = 1 to 4
 		0.5 spawn someType j*0.1 1.5 simpleSpinner
@@ -9,3 +9,5 @@ bgVel 0 -1 0
 			spawn someType 1-(j*0.1) 1.5 simpleSpinner
 	end
 end
+bgVel 0 -1 10
+10 bgvel 0 0 12

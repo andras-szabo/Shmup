@@ -17,6 +17,9 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 	private bool _shouldUpdate;
 	private Vector2 _desiredVelocity;
 
+	private float _elapsedTime;
+	private Vector4 _pastDisplacement;
+
 	private void Awake()
 	{
 		_instance = this;
@@ -42,15 +45,23 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 
 	private void LateUpdate()
 	{
+		backgroundMaterial.SetFloat("_ElapsedTime", _elapsedTime);
+
 		if (_shouldUpdate)
 		{
 			DoSetVelocity(_desiredVelocity);
 			_shouldUpdate = false;
+			_elapsedTime = 0f;
 		}
+
+		_elapsedTime += Time.smoothDeltaTime;
 	}
 
 	private void DoSetVelocity(Vector2 velocity)
 	{
+		SetPastDisplacement();
+		backgroundMaterial.SetVector("_PastDisplacement", _pastDisplacement);
+
 		backgroundMaterial.SetFloat("_ScrollSpeedX", velocity.x);
 		#if UNITY_ANDROID && !UNITY_EDITOR
 		velocity.y *= -1f;
@@ -60,4 +71,12 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 		_currentScrollVelocity = velocity;
 	}
 
+	private void SetPastDisplacement()
+	{
+		_pastDisplacement.x += _currentScrollVelocity.x * _elapsedTime;
+		_pastDisplacement.y -= _currentScrollVelocity.y * _elapsedTime;
+
+		_pastDisplacement.x -= (float)(System.Math.Truncate(_pastDisplacement.x));
+		_pastDisplacement.y -= (float)(System.Math.Truncate(_pastDisplacement.y));
+	}
 }

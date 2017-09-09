@@ -12,6 +12,9 @@
 		_MaxDelta("Max delta", float) = 5.0
 		_CentreY("Centre Y", float) = 5.0
 
+		_PastDisplacement("Past displacement", Vector) = (0, 0, 0, 0)
+		_ElapsedTime("Elapsed time", float) = 0.0
+
 		[PerRendererData]
 		_TintColor("Tint color", color) = (1, 1, 1, 1)
 	}
@@ -61,6 +64,9 @@
 				float _MaxDelta;
 				float _RotationAngleInRadians;
 
+				float4 _PastDisplacement;
+				float _ElapsedTime;
+
 				float2x2 GetUVRotMatrix(float2 worldPos)
 				{
 					float dy = clamp(worldPos.y - _CentreY, 0, _MaxDelta);
@@ -73,7 +79,7 @@
 				float2 CalculateWorldSpaceUV(float4 worldSpacePos)
 				{
 					float2 tex = worldSpacePos.xy / _UVDistance;
-					return mul(GetUVRotMatrix(worldSpacePos.xy), tex) + frac(_Time.y * float2(_ScrollSpeedX, _ScrollSpeedY * _ProjectionParams.x));
+					return mul(GetUVRotMatrix(worldSpacePos.xy), tex) + frac(_PastDisplacement.xy + _ElapsedTime * float2(_ScrollSpeedX, _ScrollSpeedY * _ProjectionParams.x));
 				}
 
 				vertexOutput vert(vertexInput input)
