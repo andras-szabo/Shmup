@@ -30,7 +30,7 @@
 				#include "HLSLSupport.cginc"
 
 				#define MAX_WEIGHTED_OBJECTS 16
-				#define MAX_RIPPLES 4
+				#define MAX_RIPPLES 8
 				#define RIPPLE_WIDTH 1
 
 				float4 _Array[MAX_WEIGHTED_OBJECTS];

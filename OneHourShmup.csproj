@@ -87,6 +87,7 @@
     <Compile Include="Assets\_Generic\VecExtensions.cs" />
     <Compile Include="Assets\_Test\TestEnemySpawner.cs" />
     <Compile Include="Assets\_Test\TestMover.cs" />
+    <Compile Include="Assets\_Test\TestRippler.cs" />
     <Compile Include="Assets\ExpressionEvaluator\ExpressionEvaluator.cs" />
     <Compile Include="Assets\ExpressionEvaluator\Token.cs" />
     <Compile Include="Assets\ExpressionEvaluator\TokenFactory.cs" />

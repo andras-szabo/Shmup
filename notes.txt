@@ -6,6 +6,10 @@ TODO:
 
 	- apply scripts for bullets
 
+2017.09.16.
+	-remove test ripple effect and make it nice and easy to call
+	-check space bending weight scripts and their limit
+
 2017.09.09
 	-fixed stuttering uv scroll on background texture	
 
