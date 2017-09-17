@@ -4,22 +4,23 @@ using UnityEngine.UI;
 
 public class SpaceBender : MonoBehaviour
 {
-	public const int LIMIT = 16;
+	public const int WEIGHTED_OBJECT_MAX_COUNT = 16;
+	public const int RIPPLE_MAX_COUNT = 8;
+	public const float RIPPLE_MAX_RADIUS = 16f;
+	
 	public static SpaceBender Instance;
 
 	public Material multiCurvedSpaceMaterial;
-	private Vector4[] _objectArray = new Vector4[LIMIT];
-	private Vector4[] _ripples = new Vector4[4];
+	private Vector4[] _objectArray = new Vector4[WEIGHTED_OBJECT_MAX_COUNT];
+	private Vector4[] _ripples = new Vector4[RIPPLE_MAX_COUNT];
 
 	private int _arrayLength;
 	private int _prevArrayLength;
 	private bool _arrLimitReached;
+	private bool _ripplesChanged;
 
 	public float bulletWeight;
 	public Slider bulletWeightSlider;
-
-	public float scrollSpeed;
-	public Slider scrollSpeedSlider;
 
 	public bool tint;
 	public Color startTintColor;
@@ -33,45 +34,64 @@ public class SpaceBender : MonoBehaviour
 	private void Awake()
 	{
 		Instance = this;
-		for (int i = 0; i < LIMIT; ++i)
+		for (int i = 0; i < WEIGHTED_OBJECT_MAX_COUNT; ++i)
 		{
 			_objectArray[i] = new Vector4(0, 0, 0, 0);
 
-			if (i < 4)
+			if (i < RIPPLE_MAX_COUNT)
 			{
 				_ripples[i] = new Vector4(0, 0, 0, 0);
 			}
 		}
-
-		// ripples.w: weight
-		// ripples.z: radius
-		StartCoroutine(Ripple());
 	}
 
-	private IEnumerator Ripple()
+	public void StartRipple(float viewportX, float viewportY, 
+							float weight, float expansionPerFrame)
 	{
-		var radius = 0f;
-		while (true)
+		var rippleIndex = TryFindFreeRippleIndex();
+		if (rippleIndex >= 0 && rippleIndex < RIPPLE_MAX_COUNT)
 		{
-			var x = 0f;
-			var y = 2f;
-			var weight = -2f;
-
-			while (radius < 16f)
-			{
-				radius += 0.05f;
-				_ripples[0] = new Vector4(x, y, radius, weight);
-				multiCurvedSpaceMaterial.SetVectorArray("_Ripples", _ripples);
-				yield return new WaitForEndOfFrame();
-			}
-
-			radius = 0f;
+			StartCoroutine(RippleRoutine(rippleIndex, viewportX, viewportY, weight, expansionPerFrame));
 		}
+	}
+
+	private int TryFindFreeRippleIndex()
+	{
+		for (int i = 0; i < _ripples.Length; ++i)
+		{
+			if (Mathf.Approximately(_ripples[i].z, 0f))
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	private IEnumerator RippleRoutine(int rippleIndex, float vpX, float vpY,
+									  float weight, float radiusGrowthPerFrame)
+	{
+		var radius = radiusGrowthPerFrame;
+		var worldCoords = ViewportUtility.GetWorldPosition(new Vector2(vpX, vpY));
+
+		while (radius < RIPPLE_MAX_RADIUS)
+		{
+			SetRipple(rippleIndex, new Vector4(worldCoords.x, worldCoords.y, radius, weight));
+			yield return null;
+			radius += radiusGrowthPerFrame;
+		}
+
+		SetRipple(rippleIndex, Vector4.zero);
+	}
+
+	private void SetRipple(int index, Vector4 rippleVector)
+	{
+		_ripples[index] = rippleVector;
+		_ripplesChanged = true;
 	}
 
 	private void Start()
 	{
-		ScrollSpeedChanged();
 		BulletWeightChanged();
 		multiCurvedSpaceMaterial.SetVectorArray("_Ripples", _ripples);
 	}
@@ -81,7 +101,7 @@ public class SpaceBender : MonoBehaviour
 		_objectArray[_arrayLength] = posAndWeight;
 		_objectArray[_arrayLength++].z = 1f;
 
-		if (_arrayLength >= LIMIT)
+		if (_arrayLength >= WEIGHTED_OBJECT_MAX_COUNT)
 		{
 			//Reserve place 0 for player's ship
 			_arrLimitReached = true;
@@ -95,12 +115,20 @@ public class SpaceBender : MonoBehaviour
 		multiCurvedSpaceMaterial.SetVectorArray("_Array", _objectArray);
 		_arrLimitReached = false;
 		_arrayLength = 0;
-		multiCurvedSpaceMaterial.SetFloat("_RotationAngleInRadians", Mathf.Deg2Rad * Mathf.Sin(Time.timeSinceLevelLoad / 8f) * 72f); 
+
+		if (_ripplesChanged)
+		{
+			multiCurvedSpaceMaterial.SetVectorArray("_Ripples", _ripples);
+			_ripplesChanged = false;
+		}
+
+		//TODO
+		//multiCurvedSpaceMaterial.SetFloat("_RotationAngleInRadians", Mathf.Deg2Rad * Mathf.Sin(Time.timeSinceLevelLoad / 8f) * 72f); 
 	}
 
 	private void ResetNotUsedElements()
 	{
-		for (int i = _arrLimitReached ? LIMIT : _arrayLength; i < LIMIT; ++i)
+		for (int i = _arrLimitReached ? WEIGHTED_OBJECT_MAX_COUNT : _arrayLength; i < WEIGHTED_OBJECT_MAX_COUNT; ++i)
 		{
 			//z: either 1 or 0, for hopeful optimizations in the shader
 			_objectArray[i].z = 0f;
@@ -113,15 +141,6 @@ public class SpaceBender : MonoBehaviour
 		{
 			Tint();
 		}
-	}
-
-	public void ScrollSpeedChanged()
-	{
-		var speed = scrollSpeedSlider.value;
-		#if UNITY_ANDROID && !UNITY_EDITOR
-		speed *= -1f;
-		#endif		
-		multiCurvedSpaceMaterial.SetFloat("_ScrollSpeedY", speed);
 	}
 
 	public void BulletWeightChanged()

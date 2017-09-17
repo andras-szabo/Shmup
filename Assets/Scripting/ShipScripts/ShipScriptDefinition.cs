@@ -3,7 +3,19 @@ using System.Collections.Generic;
 
 public static class ShipScriptDefinition
 {
+	private static ScriptLanguageDefinition _cachedDefinition;
+
 	public static ScriptLanguageDefinition Define()
+	{
+		if (_cachedDefinition == null)
+		{
+			_cachedDefinition = DoDefine();
+		}
+
+		return _cachedDefinition;
+	}
+
+	private static ScriptLanguageDefinition DoDefine()
 	{
 		var def = new ScriptLanguageDefinition();
 

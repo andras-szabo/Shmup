@@ -1,10 +1,23 @@
-for i = 1 to 2
+bgVel 0 -2 20
+2 bgRot 25 5
+5 bgRot -25 5
+5 for i = 1 to 2
 	for j = 1 to 4
-		0.5 spawn someType j*0.1 1.2 simpleSpinner
-			spawn someType 1-(j*0.1) 1.1 simpleSpinner
+		0.5 spawn someType j*0.1 1.5 simpleSpinner
+			spawn someType 1-(j*0.1) 1.5 simpleSpinner
 	end
 	for j = 4 to 1 step -1
-		0.5 spawn someType j*0.1 1.2 simpleSpinner
-			spawn someType 1-(j*0.1) 1.1 simpleSpinner
+		0.5 spawn someType j*0.1 1.5 simpleSpinner
+			spawn someType 1-(j*0.1) 1.5 simpleSpinner
+	end
+end
+bgRot 0 20
+bgVel 0 0 20
+1 for j = 1 to 2 
+	for i = 1 to 5
+		0.3 spawn someType i*0.2 1.5 simpleSpinner
+	end
+	for i = 1 to 5
+		0.3 spawn someType 1-(i*0.2) 1.5 simpleSpinner
 	end
 end

@@ -1,19 +1,27 @@
--TODO?
-	-scripts:
-		=> repeat and end should be generic, not tied to any specific script
-		=> parametric parameters, eg:
-			for $a = <start>, <end>, <step>
-				$a spawn someType 1+$a*2 0.2 someScript
-			end
-			
-			=> this is a challenge!
+TODO:
+	- fix: bullets can damage ships outside the visible area - at least
+	       a part of them should be visible in order to be able to take damage
+
+	- apply scripts for bullets
+		-ships may have any number of different weapon setups
+		-to execute: shoot <weapon>
+		-maybe maybe: rotateWeapon <weapon> <relative rotation>
+			-then the weapon itself decide what a "shot" means
+2017.09.17.
+	-bending background gently via command scripts
+
+2017.09.16.
+	-remove test ripple effect and make it nice and easy to call
+	-check space bending weight scripts and their limit
+
+2017.09.09
+	-fixed stuttering uv scroll on background texture	
+
 2017.09.08
 	- cleanup
 	- for loop in spawner
 
 	- ... and this is done. ^_^
-				
-	- TODO: Let's not try to parse scripts more than once.
 
 2017.09.03
 	-ok what now?
