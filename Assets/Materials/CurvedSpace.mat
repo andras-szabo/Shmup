@@ -61,7 +61,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _ElapsedTime: 7.9616523
+    - _ElapsedTime: 2.8306599
     - _ForwardAngle: -32.26
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -88,5 +88,5 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ObjectWorldPos: {r: 0, g: 0, b: 0, a: 0}
-    - _PastDisplacement: {r: 0, g: 0.105036855, b: 0, a: 0}
-    - _TintColor: {r: 0.5444804, g: 0.589494, b: 0.76089567, a: 0}
+    - _PastDisplacement: {r: 0, g: 0.96719617, b: 0, a: 0}
+    - _TintColor: {r: 0.8443637, g: 0.33255622, b: 0.56149435, a: 0}
