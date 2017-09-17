@@ -121,6 +121,7 @@ GameObject:
   - component: {fileID: 6530558}
   - component: {fileID: 6530557}
   - component: {fileID: 6530562}
+  - component: {fileID: 6530563}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -213,13 +214,22 @@ MonoBehaviour:
     type: 2}
   bulletWeight: 0
   bulletWeightSlider: {fileID: 1897268079}
-  scrollSpeed: 0
-  scrollSpeedSlider: {fileID: 0}
   tint: 1
   startTintColor: {r: 0.62068963, g: 0.32439446, b: 0.88235295, a: 0}
   midTintColor: {r: 1, g: 0.33823532, b: 0.33823532, a: 0}
   endTintColor: {r: 0.42647058, g: 1, b: 0.57281935, a: 0}
   colorChangeDurationSecs: 2
+--- !u!114 &6530563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 6530556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2f8ca3c33e501945b78f3b498914fc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &118103573
 GameObject:
   m_ObjectHideFlags: 0

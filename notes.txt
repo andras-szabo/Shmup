@@ -1,10 +1,14 @@
 TODO:
-	- some basic commands for background movement
-
 	- fix: bullets can damage ships outside the visible area - at least
 	       a part of them should be visible in order to be able to take damage
 
 	- apply scripts for bullets
+		-ships may have any number of different weapon setups
+		-to execute: shoot <weapon>
+		-maybe maybe: rotateWeapon <weapon> <relative rotation>
+			-then the weapon itself decide what a "shot" means
+2017.09.17.
+	-bending background gently via command scripts
 
 2017.09.16.
 	-remove test ripple effect and make it nice and easy to call

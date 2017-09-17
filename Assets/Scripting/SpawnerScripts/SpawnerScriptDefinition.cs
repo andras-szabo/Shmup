@@ -22,8 +22,15 @@ public static class SpawnerScriptDefinition
 			typeof(float)		// acceleration delta
 		});
 
+		var bgRotCommand = new ScriptCommandDefinition(3, "bgRot", 2, new List<Type>
+		{
+			typeof(float),		// desired rotation angle in degrees
+			typeof(float)		// duration of the rotation
+		});
+
 		def.Add(spawnCommand);
 		def.Add(bgScrollCommand);
+		def.Add(bgRotCommand);
 
 		return def;
 	}

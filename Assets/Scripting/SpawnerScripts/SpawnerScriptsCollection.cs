@@ -22,6 +22,39 @@ public class SpawnerScriptSpawn : ACommand
 	}
 }
 
+public class SpawnerScriptBgRot : ACommand
+{
+	protected readonly float _targetRotation;
+	protected readonly float _deltaT;
+
+	public SpawnerScriptBgRot(SerializedScriptCommand cmd) : base(cmd)
+	{
+		var targetInDegrees = (float)cmd.args[0];
+		_targetRotation = targetInDegrees * Mathf.PI / 180f;
+		_deltaT = (float)cmd.args[1];
+	}
+
+	public override void Execute(IExecutionContext context)
+	{
+		var bgController = BackgroundController.Instance;
+		context.CoroutineRunner.StartCoroutine(RotateOverTime(bgController));
+	}
+
+	public IEnumerator RotateOverTime(IBackgroundController bgController)
+	{
+		var elapsedTime = 0f;
+		var startRotation = bgController.GetCurrentRotationAngleInRad();
+		while (elapsedTime < _deltaT)
+		{
+			var currentAngle = Mathf.Lerp(startRotation, _targetRotation, elapsedTime / _deltaT);
+			bgController.Rotate(currentAngle);
+			yield return null;
+			elapsedTime += Time.smoothDeltaTime;
+		}
+		bgController.Rotate(_targetRotation);
+	}
+}
+
 public class SpawnerScriptBgVel : ACommand
 {
 	protected readonly Vector2 _velocity;

@@ -13,6 +13,7 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 
 	public Material backgroundMaterial;
 	private Vector2 _currentScrollVelocity;
+	private float _currentRotAngleInRad;
 
 	private bool _shouldUpdate;
 	private Vector2 _desiredVelocity;
@@ -27,9 +28,15 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 		DontDestroyOnLoad(this.gameObject);
 	}
 
+	public float GetCurrentRotationAngleInRad()
+	{
+		return _currentRotAngleInRad;
+	}	
+
 	public void Rotate(float rotationAngleInRadians)
 	{
-		backgroundMaterial.SetFloat("_RotationAngleInRadians", rotationAngleInRadians); 
+		_currentRotAngleInRad = rotationAngleInRadians;
+		backgroundMaterial.SetFloat("_RotationAngleInRadians", _currentRotAngleInRad); 
 	}
 
 	public Vector2 GetCurrentScrollVelocity()

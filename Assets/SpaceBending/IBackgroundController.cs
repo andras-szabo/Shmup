@@ -6,4 +6,5 @@ public interface IBackgroundController
 	void SetScrollVelocity(Vector2 velocity);
 
 	Vector2 GetCurrentScrollVelocity();
+	float GetCurrentRotationAngleInRad();
 }

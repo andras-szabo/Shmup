@@ -15,6 +15,7 @@
 		{
 			case 1: return new SpawnerScriptSpawn(cmd);
 			case 2: return new SpawnerScriptBgVel(cmd);
+			case 3: return new SpawnerScriptBgRot(cmd);
 		}
 
 		return null;
