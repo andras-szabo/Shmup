@@ -2,14 +2,14 @@
 
 public interface ISpawner
 {
-	GameObject SpawnFromPool(string param);
+	APoolable SpawnFromPool(string param);
 }
 
 public class Spawner : MonoWithCachedTransform, ISpawner
 {
 	protected PoolType _poolType;
-	protected GameObjectPool _pool;
-	public GameObjectPool Pool
+	protected GenericPool _pool;
+	public GenericPool Pool
 	{
 		get
 		{
@@ -18,18 +18,17 @@ public class Spawner : MonoWithCachedTransform, ISpawner
 
 	}
 
-	public GameObject prototype;
+	public APoolable prototype;
 
 	protected void Awake()
 	{
-		var poolable = prototype.GetComponent<IPoolable>();
-		if (poolable != null)
+		if (prototype != null)
 		{
-			_poolType = poolable.PoolType;
+			_poolType = prototype.PoolType;
 		}
 	}
 
-	public GameObject SpawnFromPool(string param)
+	public APoolable SpawnFromPool(string param)
 	{
 		return Pool.Spawn(prototype, CachedTransform, param);
 	}

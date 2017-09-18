@@ -12,14 +12,14 @@ public enum PoolType
 public class GameObjectPoolManager : MonoBehaviour
 {
 	private static GameObjectPoolManager _instance;
-	private Dictionary<PoolType, GameObjectPool> _pools = new Dictionary<PoolType, GameObjectPool>();
+	private Dictionary<PoolType, GenericPool> _pools = new Dictionary<PoolType, GenericPool>();
 
 	public static bool Has(PoolType poolType)
 	{
 		return _instance != null && _instance._pools.ContainsKey(poolType);
 	}
 
-	public static void Register(PoolType poolType, GameObjectPool pool)
+	public static void Register(PoolType poolType, GenericPool pool)
 	{
 		if (_instance == null)
 		{
@@ -41,11 +41,11 @@ public class GameObjectPoolManager : MonoBehaviour
 		}
 	}
 
-	public static GameObjectPool Get(PoolType poolType)
+	public static GenericPool Get(PoolType poolType)
 	{
 		if (_instance != null)
 		{
-			GameObjectPool pool;
+			GenericPool pool;
 			if (_instance._pools.TryGetValue(poolType, out pool))
 			{
 				return pool;

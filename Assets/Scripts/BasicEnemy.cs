@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(ScriptRunner))]
-public class BasicEnemy : MonoWithCachedTransform, IPoolable
+public class BasicEnemy : APoolable
 {
 	public Renderer enemyRenderer;
 
@@ -14,50 +14,26 @@ public class BasicEnemy : MonoWithCachedTransform, IPoolable
 	private bool _isHit;
 	private float _elapsedSecondsInHitStun;
 	private float _visualHitStunSeconds = 0.1f;
-	private GameObjectPool _pool;
 
 	public ScriptRunner scriptRunner;
 
-	#region IPoolable
-	public PoolType poolType;
-	public PoolType PoolType
-	{
-		get
-		{
-			return poolType;
-		}
-	}
-	public void SetPool(GameObjectPool pool)
-	{
-		_pool = pool;
-	}
-
-	public void Stop()
+	public override void Stop()
 	{
 		scriptRunner.MoveControl.Stop();
 		SwapMaterials(false);
 	}
 
-	public void Init(string param)
+	public override void Init(string param)
 	{
 		var script = ScriptCache.LoadScript(param, ShipScriptDefinition.Define(), ShipCommandFactory.Instance);
 		scriptRunner.Run(script);
 		currentHP = startingHP;
 	}
 
-	public GameObject GameObject
-	{
-		get
-		{
-			return this.gameObject;
-		}
-	}
-	#endregion
-
 	private void Start()
 	{
 		currentHP = startingHP;
-		SetPool(GameObjectPoolManager.Get(poolType));
+		AssignToPool(GameObjectPoolManager.Get(PoolType));
 	}
 
 	private void OnTriggerEnter(Collider other)

@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a3beb13f2e65c4291d80b7041ec4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolType: 1
+  _poolType: 1
   lifespan: 0.5
   speedUnitPerSeconds: 40
 --- !u!114 &114705276733035074
@@ -151,3 +151,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  isBounds: 0

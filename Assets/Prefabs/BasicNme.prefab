@@ -107,12 +107,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed07e9f9fedbc2446a3c63b30ec19301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _poolType: 2
   enemyRenderer: {fileID: 23673898916602670}
   normalMaterial: {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
   hitMaterial: {fileID: 2100000, guid: 9835a4283c7d82b41acf9be9c9af4bc5, type: 2}
   startingHP: 10
   scriptRunner: {fileID: 114273259584044436}
-  poolType: 2
 --- !u!114 &114273259584044436
 MonoBehaviour:
   m_ObjectHideFlags: 1

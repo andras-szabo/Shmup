@@ -1,24 +1,12 @@
 ﻿using UnityEngine;
 
-public class BasicBullet : MonoWithCachedTransform, IPoolable
+public class BasicBullet : APoolable
 {
-	public PoolType poolType;
-	public PoolType PoolType { get { return poolType; } } 
-
-	public GameObject GameObject
-	{
-		get
-		{
-			return this.gameObject;
-		}
-	}
-
 	private float _elapsedSeconds;
 
 	public float lifespan = 2f;
 	public float speedUnitPerSeconds = 50f;
 
-	private GameObjectPool _pool;
 	private Rigidbody _rb;
 	private Rigidbody RB
 	{
@@ -33,7 +21,7 @@ public class BasicBullet : MonoWithCachedTransform, IPoolable
 		Despawn();
 	}
 
-	public void Init(string param)
+	public override void Init(string param)
 	{
 		RB.velocity = transform.up * speedUnitPerSeconds;
 		_elapsedSeconds = 0f;
@@ -45,14 +33,9 @@ public class BasicBullet : MonoWithCachedTransform, IPoolable
 		CheckOutOfBounds();
 	}
 
-	public void Stop()
+	public override void Stop()
 	{
 		RB.velocity = Vector3.zero;
-	}
-
-	public void SetPool(GameObjectPool pool)
-	{
-		_pool = pool;
 	}
 
 	private void CheckOutOfBounds()
