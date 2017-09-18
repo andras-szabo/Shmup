@@ -1,4 +1,5 @@
 TODO:
+	- make pool generic of <PoolableMonoBehaviour> or so
 	- fix: bullets can damage ships outside the visible area - at least
 	       a part of them should be visible in order to be able to take damage
 
