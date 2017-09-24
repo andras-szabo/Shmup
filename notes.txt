@@ -1,5 +1,4 @@
 TODO:
-	- make pool generic of <PoolableMonoBehaviour> or so
 	- fix: bullets can damage ships outside the visible area - at least
 	       a part of them should be visible in order to be able to take damage
 
@@ -8,6 +7,15 @@ TODO:
 		-to execute: shoot <weapon>
 		-maybe maybe: rotateWeapon <weapon> <relative rotation>
 			-then the weapon itself decide what a "shot" means
+
+	- pre-populate pools (PPP); consider doing it such that this will be done
+		while loading
+2017.09.24.
+	- fix: bullets can damage ships outside the visible area
+
+2017.09.18.
+	-setting up generic pool system for simplicity and performance
+
 2017.09.17.
 	-bending background gently via command scripts
 

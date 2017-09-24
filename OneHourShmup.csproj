@@ -91,6 +91,7 @@
     <Compile Include="Assets\ExpressionEvaluator\ExpressionEvaluator.cs" />
     <Compile Include="Assets\ExpressionEvaluator\Token.cs" />
     <Compile Include="Assets\ExpressionEvaluator\TokenFactory.cs" />
+    <Compile Include="Assets\Fbx\Scripts\PrefabRotator.cs" />
     <Compile Include="Assets\Scripting\ICommand.cs" />
     <Compile Include="Assets\Scripting\IExecutionContext.cs" />
     <Compile Include="Assets\Scripting\IMoveControl.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Assets\Scripts\BasicEnemy.cs" />
     <Compile Include="Assets\Scripts\Damage.cs" />
     <Compile Include="Assets\Scripts\ShipController.cs" />
+    <Compile Include="Assets\Scripts\SnapToTopEdgeOfScreen.cs" />
     <Compile Include="Assets\Scripts\ViewportUtility.cs" />
     <Compile Include="Assets\SpaceBending\BackgroundController.cs" />
     <Compile Include="Assets\SpaceBending\IBackgroundController.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Assets\SpaceBending\SpaceBendingObject.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Fbx\Shaders\Bits.shader" />
     <None Include="Assets\Resources\ControlScripts\simpleSpinner.scr.txt" />
     <None Include="Assets\Resources\ControlScripts\spawnerTest.scr.txt" />
     <None Include="Assets\Resources\ControlScripts\spawnerTestLoop.scr.txt" />
