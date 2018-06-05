@@ -62,7 +62,7 @@ namespace RingBuffer
 			if (lastIndex == _startIndex) { IsEmpty = true; }
 
 			_endIndex -= 1;
-			if (_endIndex == 0) { _endIndex = Capacity; }
+			if (_endIndex == 0) { _endIndex = _list.Count; }
 
 			return itemToReturn;
 		}

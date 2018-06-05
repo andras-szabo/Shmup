@@ -1165,6 +1165,7 @@ GameObject:
   - component: {fileID: 1235416228}
   - component: {fileID: 1235416229}
   - component: {fileID: 1235416230}
+  - component: {fileID: 1235416231}
   m_Layer: 8
   m_Name: Ship
   m_TagString: Untagged
@@ -1278,6 +1279,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1235416231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1235416223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1369531058
 GameObject:
   m_ObjectHideFlags: 0
