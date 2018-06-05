@@ -16,6 +16,15 @@ public class BasicBullet : APoolable
 		}
 	}
 
+	private Rewindable _rewindable;
+	private Rewindable Rewindable
+	{
+		get
+		{
+			return _rewindable ?? (_rewindable = GetComponent<Rewindable>());
+		}
+	}
+
 	private void OnTriggerEnter(Collider other)
 	{
 		Despawn();
@@ -25,12 +34,32 @@ public class BasicBullet : APoolable
 	{
 		RB.velocity = transform.up * speedUnitPerSeconds;
 		_elapsedSeconds = 0f;
+
+		Rewindable.Reset();
+		Rewindable.lifeTimeStart = Time.realtimeSinceStartup;
+
+		Rewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
+		Rewindable.OnLifeTimeStartReachedViaRewind += HandleRewoundBeforeSpawn;
 	}
 
-	private void Update()
+	private void HandleRewoundBeforeSpawn()
 	{
-		_elapsedSeconds += Time.deltaTime;
-		CheckOutOfBounds();
+		Despawn();
+	}
+
+	private void FixedUpdate()
+	{
+		if (!Rewindable.IsRewinding)
+		{
+			if (RB.isKinematic) { RB.isKinematic = false; RB.velocity = transform.up * speedUnitPerSeconds; }
+			_elapsedSeconds += Time.deltaTime;
+			CheckOutOfBounds();
+		}
+		else
+		{
+			_elapsedSeconds -= Time.deltaTime;
+			if (!RB.isKinematic) { RB.isKinematic = true; }
+		}
 	}
 
 	public override void Stop()
@@ -46,8 +75,11 @@ public class BasicBullet : APoolable
 		}
 	}
 
+
 	private void Despawn()
 	{
+		Rewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
+
 		if (_pool != null)
 		{
 			_pool.Despawn(this);

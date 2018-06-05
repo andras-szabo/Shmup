@@ -29,6 +29,8 @@ public class ShipController : MonoWithCachedTransform
 
 		_bulletSpawners = new List<ISpawner>(GetComponentsInChildren<ISpawner>());
 		_rewindable = GetComponent<Rewindable>();
+		_rewindable.Reset();
+		_rewindable.lifeTimeStart = Time.realtimeSinceStartup;
 	}
 
 	private void FixedUpdate()

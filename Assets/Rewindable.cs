@@ -1,33 +1,43 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System;
+using UnityEngine;
 using RingBuffer;
 
 public class Rewindable : MonoWithCachedTransform
 {
 	public const int LOG_SIZE_FRAMES = 512;
-	private bool _isRewinding;
-	private RingBuffer<Vector3> _positionLog = new RingBuffer<Vector3>(LOG_SIZE_FRAMES);
+
+	public event Action OnLifeTimeStartReachedViaRewind;
+	[HideInInspector] public float lifeTimeStart = -1f;     // Can't rewind to earlier than this
 
 	public bool IsRewinding { get; protected set; }
+
+	private RingBuffer<Vector3> _positionLog = new RingBuffer<Vector3>(LOG_SIZE_FRAMES);
+	private float _rewoundTime;
+
+	public void Reset()
+	{
+		_positionLog.Clear();
+		_rewoundTime = Time.realtimeSinceStartup;
+	}
 
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.R))
 		{
-			_isRewinding = true;
+			IsRewinding = true;
 		}
 
 		if (Input.GetKeyUp(KeyCode.R))
 		{
-			_isRewinding = false;
+			IsRewinding = false;
 		}
 	}
 
 	private void FixedUpdate()
 	{
-		if (_isRewinding)
+		if (IsRewinding)
 		{
-			TryApplyRecordedPosition();	
+			TryApplyRecordedPosition();
 		}
 		else
 		{
@@ -37,18 +47,34 @@ public class Rewindable : MonoWithCachedTransform
 
 	private void TryApplyRecordedPosition()
 	{
-		if (!_positionLog.IsEmpty)
+		_rewoundTime -= Time.fixedDeltaTime;
+		if (_rewoundTime < lifeTimeStart)
+		{
+			IsRewinding = false;
+			HandleLifeTimeStartReachedViaRewind();
+		}
+
+		if (IsRewinding && !_positionLog.IsEmpty)
 		{
 			CachedTransform.position = _positionLog.Pop();
 		}
 		else
 		{
-			_isRewinding = false;
+			IsRewinding = false;
+		}
+	}
+
+	private void HandleLifeTimeStartReachedViaRewind()
+	{
+		if (OnLifeTimeStartReachedViaRewind != null)
+		{
+			OnLifeTimeStartReachedViaRewind();
 		}
 	}
 
 	private void RecordPosition()
 	{
-		_positionLog.Push(CachedTransform.position);	
+		_positionLog.Push(CachedTransform.position);
+		_rewoundTime += Time.fixedDeltaTime;
 	}
 }

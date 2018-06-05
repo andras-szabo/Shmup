@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 114705276733035074}
   - component: {fileID: 54587501763790618}
   - component: {fileID: 114971414930872572}
+  - component: {fileID: 114463775315663168}
   m_Layer: 8
   m_Name: BasicBullet
   m_TagString: Untagged
@@ -112,6 +113,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114463775315663168
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1806366837826752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeTimeStart: -1
 --- !u!114 &114668481406775224
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -124,7 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolType: 1
-  lifespan: 0.5
+  lifespan: 1
   speedUnitPerSeconds: 40
 --- !u!114 &114705276733035074
 MonoBehaviour:
