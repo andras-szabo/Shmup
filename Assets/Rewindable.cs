@@ -4,7 +4,7 @@ using RingBuffer;
 
 public class Rewindable : MonoWithCachedTransform
 {
-	public const int LOG_SIZE_FRAMES = 512;
+	public const int LOG_SIZE_FRAMES = 256;
 
 	public event Action OnLifeTimeStartReachedViaRewind;
 	[HideInInspector] public float lifeTimeStart = -1f;     // Can't rewind to earlier than this

@@ -2,7 +2,12 @@
 
 public class BasicBullet : APoolable
 {
+	public Renderer renderer;
+	public Collider collider;
+
 	private float _elapsedSeconds;
+	private int _framesSpentInGraveyard;
+	private bool _isInGraveyard;
 
 	public float lifespan = 2f;
 	public float speedUnitPerSeconds = 50f;
@@ -27,7 +32,7 @@ public class BasicBullet : APoolable
 
 	private void OnTriggerEnter(Collider other)
 	{
-		Despawn();
+		PutInGraveyard();
 	}
 
 	public override void Init(string param)
@@ -40,6 +45,8 @@ public class BasicBullet : APoolable
 
 		Rewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
 		Rewindable.OnLifeTimeStartReachedViaRewind += HandleRewoundBeforeSpawn;
+
+		GetOutOfGraveyard();
 	}
 
 	private void HandleRewoundBeforeSpawn()
@@ -53,10 +60,29 @@ public class BasicBullet : APoolable
 		{
 			if (RB.isKinematic) { RB.isKinematic = false; RB.velocity = transform.up * speedUnitPerSeconds; }
 			_elapsedSeconds += Time.deltaTime;
-			CheckOutOfBounds();
+
+			if (_isInGraveyard)
+			{
+				if (++_framesSpentInGraveyard == Rewindable.LOG_SIZE_FRAMES)
+				{
+					Despawn();
+				}
+			}
+			else
+			{
+				CheckOutOfBounds();
+			}
 		}
 		else
 		{
+			if (_isInGraveyard) 
+			{
+				if (--_framesSpentInGraveyard == 0)
+				{
+					GetOutOfGraveyard();
+				}
+			}
+
 			_elapsedSeconds -= Time.deltaTime;
 			if (!RB.isKinematic) { RB.isKinematic = true; }
 		}
@@ -71,10 +97,26 @@ public class BasicBullet : APoolable
 	{
 		if (_elapsedSeconds >= lifespan)
 		{
-			Despawn();
+			PutInGraveyard();
 		}
 	}
 
+	private void PutInGraveyard()
+	{
+		_isInGraveyard = true;
+		collider.enabled = false;
+		renderer.enabled = false;
+		RB.isKinematic = true;
+		_framesSpentInGraveyard = 0;	
+	}
+
+	private void GetOutOfGraveyard()
+	{
+		collider.enabled = true;
+		renderer.enabled = true;
+		RB.isKinematic = false;
+		_isInGraveyard = false;
+	}
 
 	private void Despawn()
 	{
