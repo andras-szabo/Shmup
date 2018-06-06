@@ -4,6 +4,18 @@ using RingBuffer;
 
 public class Rewindable : MonoWithCachedTransform
 {
+	public struct TransformData
+	{
+		public TransformData(Vector3 pos, Quaternion rot)
+		{
+			position = pos;
+			rotation = rot;
+		}
+
+		public readonly Vector3 position;
+		public readonly Quaternion rotation;
+	}
+
 	public const int LOG_SIZE_FRAMES = 256;
 
 	public event Action OnLifeTimeStartReachedViaRewind;
@@ -11,12 +23,12 @@ public class Rewindable : MonoWithCachedTransform
 
 	public bool IsRewinding { get; protected set; }
 
-	private RingBuffer<Vector3> _positionLog = new RingBuffer<Vector3>(LOG_SIZE_FRAMES);
+	private RingBuffer<TransformData> _transformLog = new RingBuffer<TransformData>(LOG_SIZE_FRAMES);
 	private float _rewoundTime;
 
 	public void Reset()
 	{
-		_positionLog.Clear();
+		_transformLog.Clear();
 		_rewoundTime = Time.realtimeSinceStartup;
 	}
 
@@ -43,9 +55,11 @@ public class Rewindable : MonoWithCachedTransform
 			HandleLifeTimeStartReachedViaRewind();
 		}
 
-		if (IsRewinding && !_positionLog.IsEmpty)
+		if (IsRewinding && !_transformLog.IsEmpty)
 		{
-			CachedTransform.position = _positionLog.Pop();
+			var trData = _transformLog.Pop();
+			CachedTransform.position = trData.position;
+			CachedTransform.rotation = trData.rotation;
 		}
 		else
 		{
@@ -63,7 +77,7 @@ public class Rewindable : MonoWithCachedTransform
 
 	private void RecordPosition()
 	{
-		_positionLog.Push(CachedTransform.position);
+		_transformLog.Push(new TransformData(CachedTransform.position, CachedTransform.rotation));
 		_rewoundTime += Time.fixedDeltaTime;
 	}
 }

@@ -26,12 +26,14 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	{
 		get { return _currentVelocityViewportPerSecond; }
 		set
-		{ 
+		{
 			_currentVelocityViewportPerSecond = value;
 			SetVelocity(_currentVelocityViewportPerSecond);
 		}
 	}
 
+	public Rewindable rewindable;
+	
 	public void Stop()
 	{
 		CurrentRotSpeedAnglesPerSecond = Vector3.zero;
@@ -86,8 +88,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	protected void SetRotation(Vector3 rotationAngles)
 	{
-		_rotationPerFrame = new Vector3(rotationAngles.x / Consts.IG_FRAMERATE, 
-										rotationAngles.y / Consts.IG_FRAMERATE, 
+		_rotationPerFrame = new Vector3(rotationAngles.x / Consts.IG_FRAMERATE,
+										rotationAngles.y / Consts.IG_FRAMERATE,
 										rotationAngles.z / Consts.IG_FRAMERATE);
 	}
 
@@ -108,30 +110,72 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
-		var dt = Time.deltaTime;
-		TransformUpdate(dt);
+		var dt = Time.fixedDeltaTime;
+		var rewinding = rewindable != null && rewindable.IsRewinding;
 
-		// Command update
-		if (_currentCommand != null)
+		if (!rewinding) { TransformUpdate(dt); }
+		else { dt *= -1f; }
+
+		WaitForAndExecuteCommand(dt);
+	}
+
+	private void WaitForAndExecuteCommand(float deltaTime)
+	{
+		_elapsedTime += deltaTime;
+
+		if (deltaTime > 0f)
 		{
-			_elapsedTime += dt;
 			while (_currentCommand != null && _elapsedTime >= _currentCommand.Delay)
 			{
-				_commandPointer++;
-				_currentCommand.Execute(context: this);         // this may make changes to the exec.context,
-
+				_currentCommand.Execute(context: this);
 				TryStepOnNextCommand();
-
 				_elapsedTime = 0f;
+			}
+		}
+		else
+		{
+			while (_elapsedTime <= 0f)
+			{
+				TryStepOnPreviousCommand();
+				if (_currentCommand != null)
+				{
+					_currentCommand.Execute(context: this);
+					_elapsedTime = _currentCommand.Delay;
+				}
+				else
+				{
+					break;
+				}
 			}
 		}
 	}
 
 	private void TryStepOnNextCommand()
 	{
+		if (_commandPointer < _commands.Count)
+		{
+			_commandPointer++;
+		}
 		_currentCommand = (_commands != null && _commandPointer < _commands.Count) ? _commands[_commandPointer] : null;
+	}
+
+	private void TryStepOnPreviousCommand()
+	{
+		if (_commandPointer >= 0)
+		{
+			_commandPointer -= 1;
+		}
+
+		if (_commands != null && _commandPointer < _commands.Count && _commandPointer >= 0)
+		{
+			_currentCommand = _commands[_commandPointer];
+		}
+		else
+		{
+			_currentCommand = null;
+		}
 	}
 
 	private void TransformUpdate(float deltaTime)

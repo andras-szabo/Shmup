@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114209129737698206}
   - component: {fileID: 114273259584044436}
   - component: {fileID: 114958252797746174}
+  - component: {fileID: 114576970679946242}
   m_Layer: 9
   m_Name: BasicNme
   m_TagString: Untagged
@@ -108,7 +109,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolType: 2
-  enemyRenderer: {fileID: 23673898916602670}
+  _enemyRenderer: {fileID: 23673898916602670}
+  _enemyCollider: {fileID: 65666865516437650}
+  _enemyRewindable: {fileID: 114576970679946242}
   normalMaterial: {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
   hitMaterial: {fileID: 2100000, guid: 9835a4283c7d82b41acf9be9c9af4bc5, type: 2}
   startingHP: 10
@@ -124,6 +127,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee8e302fc64f3545b57bcc351a8a9a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rewindable: {fileID: 114576970679946242}
+--- !u!114 &114576970679946242
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1811827714071982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeTimeStart: -1
 --- !u!114 &114958252797746174
 MonoBehaviour:
   m_ObjectHideFlags: 1

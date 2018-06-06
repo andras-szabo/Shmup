@@ -3,7 +3,11 @@
 [RequireComponent(typeof(ScriptRunner))]
 public class BasicEnemy : APoolable
 {
-	public Renderer enemyRenderer;
+	public Renderer _enemyRenderer;
+	public Collider _enemyCollider;
+	public Rewindable _enemyRewindable;
+	private bool _isInGraveyard;
+	private int _framesSpentInGraveyard;
 
 	public Material normalMaterial;
 	public Material hitMaterial;
@@ -25,9 +29,23 @@ public class BasicEnemy : APoolable
 
 	public override void Init(string param)
 	{
+		_enemyRewindable.Reset();
+		_enemyRewindable.lifeTimeStart = Time.realtimeSinceStartup;
+
+		//TODO: we should just remove all listeners
+		_enemyRewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
+		_enemyRewindable.OnLifeTimeStartReachedViaRewind += HandleRewoundBeforeSpawn;
+
+		GetOutOfGraveyard();
+
 		var script = ScriptCache.LoadScript(param, ShipScriptDefinition.Define(), ShipCommandFactory.Instance);
 		scriptRunner.Run(script);
 		currentHP = startingHP;
+	}
+
+	private void HandleRewoundBeforeSpawn()
+	{
+		Despawn();
 	}
 
 	private void Start()
@@ -43,8 +61,24 @@ public class BasicEnemy : APoolable
 		GetHit(other.GetComponent<Damage>());
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
+		if (!_enemyRewindable.IsRewinding)
+		{
+			if (_isInGraveyard && ++_framesSpentInGraveyard == Rewindable.LOG_SIZE_FRAMES)
+			{
+				Despawn();
+			}
+		}
+		else
+		{
+			if (_isInGraveyard && --_framesSpentInGraveyard == 0)
+			{
+				GetOutOfGraveyard();
+			}
+		}
+
+		// TODO: Fix this
 		if (_isHit)
 		{
 			_elapsedSecondsInHitStun += Time.deltaTime;
@@ -59,15 +93,34 @@ public class BasicEnemy : APoolable
 			SwapMaterials(_isHit);
 		}
 
-		if (currentHP <= 0)
+		if (currentHP <= 0 && !_isInGraveyard)
 		{
-			Despawn();
+			PutInGraveyard();
 		}
+	}
+
+	private void PutInGraveyard()
+	{
+		_isInGraveyard = true;
+		_enemyCollider.enabled = false;
+		_enemyRenderer.enabled = false;
+		_framesSpentInGraveyard = 0;
+	}
+
+	private void GetOutOfGraveyard()
+	{
+		//TODO - better handling of hits
+		currentHP = 10f;
+		_isInGraveyard = false; 
+		_enemyCollider.enabled = true;
+		_enemyRenderer.enabled = true;
 	}
 
 	// This is duplicate code from basicBullet; could be fixed!
 	private void Despawn()
 	{
+		_enemyRewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
+
 		if (_pool != null)
 		{
 			_pool.Despawn(this);
@@ -104,6 +157,6 @@ public class BasicEnemy : APoolable
 
 	private void SwapMaterials(bool hit)
 	{
-		enemyRenderer.material = hit ? hitMaterial : normalMaterial;
+		_enemyRenderer.material = hit ? hitMaterial : normalMaterial;
 	}
 }
