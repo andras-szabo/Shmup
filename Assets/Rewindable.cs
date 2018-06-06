@@ -20,29 +20,18 @@ public class Rewindable : MonoWithCachedTransform
 		_rewoundTime = Time.realtimeSinceStartup;
 	}
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.R))
-		{
-			IsRewinding = true;
-		}
-
-		if (Input.GetKeyUp(KeyCode.R))
-		{
-			IsRewinding = false;
-		}
-	}
-
 	private void FixedUpdate()
 	{
-		if (IsRewinding)
-		{
-			TryApplyRecordedPosition();
-		}
-		else
-		{
-			RecordPosition();
-		}
+		CheckIfRewindingRequested();
+
+		if (IsRewinding) { TryApplyRecordedPosition(); }
+		else { RecordPosition(); }
+	}
+
+	private void CheckIfRewindingRequested()
+	{
+
+		IsRewinding = Input.GetKey(KeyCode.R);
 	}
 
 	private void TryApplyRecordedPosition()

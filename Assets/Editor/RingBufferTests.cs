@@ -102,4 +102,59 @@ public class RingBufferTests
 
 		Assert.IsTrue(buffer.IsEmpty && buffer.Count == 0);
 	}
+
+	[Test]
+	public void RandomAccessTest()
+	{
+		var buffer = new RingBuffer<int>(100);
+
+		for (int i = 0; i < 50; ++i) { buffer.Push(i); }
+		var expected = 49;
+		for (int i = 0; i < 25; ++i)
+		{
+			var nextItem = buffer.Pop();
+			Assert.IsTrue(nextItem == expected--);
+		}
+
+		for (int i = 0; i < 30; ++i) { buffer.Push(199); }
+		for (int i = 0; i < 30; ++i) { Assert.IsTrue(buffer.Pop() == 199); }
+		for (int i = 0; i < 10; ++i) { Assert.IsTrue(buffer.Pop() == expected--); }
+		
+		for (int i = 0; i < 4; ++i) { buffer.Push(922); }
+		for (int i = 0; i < 4; ++i) { Assert.IsTrue(buffer.Pop() == 922); }
+		for (int i = 0; i < 15; ++i) { Assert.IsTrue(buffer.Pop() == expected--); }
+
+		Assert.IsTrue(buffer.IsEmpty, "Not empty");
+	}
+
+	[Test]
+	public void ClearBeforeFull()
+	{
+		var buffer = new RingBuffer<int>(50);
+		for (int i = 0; i < 10; ++i)
+		{
+			buffer.Push(i);
+		}
+
+		Assert.IsTrue(buffer.Count == 10);
+
+		buffer.Clear();
+
+		Assert.IsTrue(buffer.IsEmpty && buffer.Count == 0);
+
+		for (int i = 20; i < 25; ++i)
+		{
+			buffer.Push(i);
+		}
+
+		Assert.IsTrue(buffer.Count == 5);
+
+		var expected = 24;
+		while (!buffer.IsEmpty)
+		{
+			var nextItem = buffer.Pop();
+			Assert.IsTrue(nextItem == expected--);
+		}
+	}
 }
+

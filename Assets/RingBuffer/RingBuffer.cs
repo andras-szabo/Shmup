@@ -32,7 +32,7 @@ namespace RingBuffer
 
 		public void Push(T newItem)
 		{
-			if (_list.Count < Capacity)
+			if (_list.Count < Capacity && _endIndex == _list.Count)
 			{
 				_list.Add(newItem);
 				_endIndex += 1;
@@ -63,16 +63,28 @@ namespace RingBuffer
 
 			_endIndex -= 1;
 			if (_endIndex == 0) { _endIndex = _list.Count; }
-
+			
 			return itemToReturn;
 		}
 
 		public void Clear()
 		{
-			_list.Clear();
-			_startIndex = 0;
-			_endIndex = 0;
+			_startIndex = (_list.Count < Capacity) ? _list.Count : 0;
+			_endIndex = _startIndex;
 			IsEmpty = true;
+		}
+
+		public override string ToString()
+		{
+			var sb = new System.Text.StringBuilder();
+
+			sb.AppendFormat("Start: {0}, end: {1}, count: {2}\n", _startIndex, _endIndex, Count);
+			foreach (var item in _list)
+			{
+				sb.AppendFormat("[{0}] ", item.ToString());
+			}
+
+			return sb.ToString();
 		}
 
 		protected void IncrementStartIndex()

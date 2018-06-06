@@ -137,8 +137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolType: 1
-  lifespan: 1
-  speedUnitPerSeconds: 40
+  lifespan: 2
+  speedUnitPerSeconds: 10
 --- !u!114 &114705276733035074
 MonoBehaviour:
   m_ObjectHideFlags: 1
