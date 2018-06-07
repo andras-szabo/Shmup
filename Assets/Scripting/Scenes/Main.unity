@@ -972,6 +972,7 @@ GameObject:
   - component: {fileID: 1144996391}
   - component: {fileID: 1144996392}
   - component: {fileID: 1144996390}
+  - component: {fileID: 1144996393}
   m_Layer: 8
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -1039,6 +1040,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee8e302fc64f3545b57bcc351a8a9a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rewindable: {fileID: 1144996393}
+--- !u!114 &1144996393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1144996387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeTimeStart: -1
 --- !u!1 &1218485467
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,7 +1418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5134e6fef853624eaab7f5d54629d51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
+  damage: 999
   isBounds: 1
 --- !u!23 &1627138854
 MeshRenderer:
