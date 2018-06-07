@@ -137,9 +137,21 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		var rewinding = rewindable != null && rewindable.IsRewinding;
 
 		if (!rewinding) { TransformUpdate(dt); }
-		else { dt *= -1f; }
+		else 
+		{ 
+			dt *= -1f;
+			if (rewindable != null && !rewindable.HasAnythingToRewindTo)
+			{
+				dt = 0f;
+			}
+		}
 
 		WaitForAndExecuteCommand(dt);
+	}
+
+	private bool ApproximatelySameOrOver(float a, float b)
+	{
+		return a > b || Mathf.Approximately(a, b);
 	}
 
 	private void WaitForAndExecuteCommand(float deltaTime)
@@ -153,12 +165,11 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 				TryStepOnNextCommand();
 			}
 
-			while (_currentCommand != null && _time >= _currentCommandTriggerTime)
+			while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
 			{
 				_currentCommand.Execute(context: this);
 				_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
-
-				L("Executed: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime);
+				//L("Executedxix: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime);
 				TryStepOnNextCommand();
 			}
 		}
@@ -166,15 +177,14 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		{
 			if (_commandHistory.Count > 0)
 			{
-				L("Rewinding, top on _commandHistory is at: " + _commandHistory.Peek().triggerTime + " at " + _time);
-
-				while (_commandHistory.Count > 0 && _commandHistory.Peek().triggerTime >= _time)
+				while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
 				{
 					var nextCommandToExecute = _commandHistory.Pop();
 					// TODO: "Reverse execute" the command, if it makes sense
 					SetNextCommandTo(nextCommandToExecute);
 				}
 
+				/*
 				if (_currentCommand != null)
 				{
 					L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
@@ -183,10 +193,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 				{
 					L("Couldn't find current command at time " + _time);
 				}
-			}
-			else
-			{
-				L("No command history at time: " + _time);				
+				*/
 			}
 		}
 	}
@@ -211,7 +218,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		{
 			_currentCommandTriggerTime += _currentCommand.Delay;
 
-			L("CCTT set toxx: " + _currentCommandTriggerTime);
+			L("CCTT jajjaj: " + _currentCommandTriggerTime);
+
 		}
 	}
 

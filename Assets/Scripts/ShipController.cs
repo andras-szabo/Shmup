@@ -38,7 +38,7 @@ public class ShipController : MonoWithCachedTransform
 		if (_rewindable != null && !_rewindable.IsRewinding)
 		{
 			UpdatePosition();
-			TryShoot(Time.deltaTime);
+			TryShoot(Time.fixedDeltaTime);
 		}
 	}
 	#endregion

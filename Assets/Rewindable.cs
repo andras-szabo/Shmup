@@ -25,6 +25,13 @@ public class Rewindable : MonoWithCachedTransform
 	[HideInInspector] public float lifeTimeStart = -1f;     // Can't rewind to earlier than this
 
 	public bool IsRewinding { get; protected set; }
+	public bool HasAnythingToRewindTo
+	{
+		get
+		{
+			return !_transformLog.IsEmpty;
+		}
+	}
 
 	private RingBuffer<TransformData> _transformLog = new RingBuffer<TransformData>(LOG_SIZE_FRAMES);
 	private List<IRewindableEvent> _eventQueue = new List<IRewindableEvent>();
@@ -45,24 +52,26 @@ public class Rewindable : MonoWithCachedTransform
 	{
 		CheckIfRewindingRequested();
 
+		var dt = IsRewinding ? -Time.fixedDeltaTime : Time.fixedDeltaTime;
+
+		_rewoundTime += dt;
+
 		if (IsRewinding) { TryApplyRecordedPosition(); }
-		if (!IsRewinding) { RecordPosition(); }
+		else { RecordPosition(); }
 	}
 
 	private void CheckIfRewindingRequested()
 	{
-		IsRewinding = InputController.Instance.IsHoldingDoubleTap && !_transformLog.IsEmpty;
+		IsRewinding = InputController.Instance.IsHoldingDoubleTap;
 	}
 
 	private void TryApplyRecordedPosition()
 	{
-		_rewoundTime -= Time.fixedDeltaTime;
-
 		var rewound = false;
 
-		if (_rewoundTime <= 0f)
+		if (_rewoundTime <= 0f )
 		{
-			Debug.Log("Rewound to " + _rewoundTime + " / at: " + Time.frameCount);
+			// Debug.Log("Rewound to " + _rewoundTime + " / at: " + Time.frameCount);
 			HandleLifeTimeStartReachedViaRewind();
 			rewound = true;
 		}
@@ -81,6 +90,11 @@ public class Rewindable : MonoWithCachedTransform
 				}
 			}
 		}
+		else
+		{
+			_rewoundTime += Time.fixedDeltaTime;
+		}
+
 	}
 
 	private void HandleLifeTimeStartReachedViaRewind()
@@ -94,7 +108,6 @@ public class Rewindable : MonoWithCachedTransform
 	private void RecordPosition()
 	{
 		_transformLog.Push(new TransformData(CachedTransform.position, CachedTransform.rotation, _eventQueue));
-		_rewoundTime += Time.fixedDeltaTime;
 		_eventQueue.Clear();
 	}
 }

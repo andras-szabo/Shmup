@@ -59,7 +59,7 @@ public class BasicBullet : APoolable
 		if (!Rewindable.IsRewinding)
 		{
 			if (RB.isKinematic) { RB.isKinematic = false; RB.velocity = transform.up * speedUnitPerSeconds; }
-			_elapsedSeconds += Time.deltaTime;
+			_elapsedSeconds += Time.fixedDeltaTime;
 
 			if (_isInGraveyard)
 			{
@@ -83,7 +83,7 @@ public class BasicBullet : APoolable
 				}
 			}
 
-			_elapsedSeconds -= Time.deltaTime;
+			_elapsedSeconds -= Time.fixedDeltaTime;
 			if (!RB.isKinematic) { RB.isKinematic = true; }
 		}
 	}
