@@ -15,6 +15,15 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		public readonly int commandPointer;
 	}
 
+	public bool log;
+	public void L(string msg)
+	{
+		if (log)
+		{
+			Debug.Log(string.Format("{0} // {1}", msg, Time.frameCount));
+		}
+	}
+
 	private float _time;
 	private float _currentCommandTriggerTime;
 	private Stack<ExecutedCommand> _commandHistory = new Stack<ExecutedCommand>();
@@ -79,12 +88,10 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	public void ResetScript()
 	{
-		_commandPointer = 0;
 		_commandStack.Clear();
-		if (_commands != null && _commands.Count > 0)
-		{
-			_currentCommand = _commands[0];
-		}
+		_time = 0f;
+		_commandPointer = -1;
+		_currentCommand = null;
 	}
 
 	public void PushCommandPointer()
@@ -116,8 +123,11 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		_commands = script;
 		if (script != null && script.Count > 0)
 		{
-			_commandPointer = 0;
-			_currentCommand = script[0];
+			_time = 0f;
+			_commandStack.Clear();
+			_currentCommand = null;
+			_commandPointer = -1;
+			TryStepOnNextCommand();
 		}
 	}
 
@@ -147,19 +157,36 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			{
 				_currentCommand.Execute(context: this);
 				_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
+
+				L("Executed: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime);
 				TryStepOnNextCommand();
 			}
 		}
-		else
+		else 
 		{
 			if (_commandHistory.Count > 0)
 			{
-				while (_commandHistory.Count > 0 && _commandHistory.Peek().triggerTime > _time)
+				L("Rewinding, top on _commandHistory is at: " + _commandHistory.Peek().triggerTime + " at " + _time);
+
+				while (_commandHistory.Count > 0 && _commandHistory.Peek().triggerTime >= _time)
 				{
 					var nextCommandToExecute = _commandHistory.Pop();
 					// TODO: "Reverse execute" the command, if it makes sense
 					SetNextCommandTo(nextCommandToExecute);
 				}
+
+				if (_currentCommand != null)
+				{
+					L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
+				}
+				else
+				{
+					L("Couldn't find current command at time " + _time);
+				}
+			}
+			else
+			{
+				L("No command history at time: " + _time);				
 			}
 		}
 	}
@@ -183,6 +210,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		if (_currentCommand != null)
 		{
 			_currentCommandTriggerTime += _currentCommand.Delay;
+
+			L("CCTT set toxx: " + _currentCommandTriggerTime);
 		}
 	}
 

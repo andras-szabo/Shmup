@@ -65,8 +65,7 @@ public class ShipController : MonoWithCachedTransform
 
 	private bool IsShooting()
 	{
-		//TODO: replace with actual touch input
-		return Input.GetMouseButton(0);
+		return InputController.Instance.IsShooting();
 	}
 
 	private Vector3 GetInputScreenPosition()

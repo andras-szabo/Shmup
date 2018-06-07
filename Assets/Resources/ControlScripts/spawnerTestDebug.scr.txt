@@ -1,2 +1,1 @@
-1 spawn someType 0.5 0.8 spinTest
-1 spawn someType 0.5 0.8 spinTest
+2 spawn someType 0.4 0.8 simpleSpinner

@@ -33,7 +33,7 @@ public class Rewindable : MonoWithCachedTransform
 	public void Reset()
 	{
 		_transformLog.Clear();
-		_rewoundTime = Time.realtimeSinceStartup;
+		_rewoundTime = 0f;
 	}
 
 	public void EnqueueEvent(IRewindableEvent evt)
@@ -51,20 +51,23 @@ public class Rewindable : MonoWithCachedTransform
 
 	private void CheckIfRewindingRequested()
 	{
-		IsRewinding = Input.GetKey(KeyCode.R) && !_transformLog.IsEmpty;
+		IsRewinding = InputController.Instance.IsHoldingDoubleTap && !_transformLog.IsEmpty;
 	}
 
 	private void TryApplyRecordedPosition()
 	{
 		_rewoundTime -= Time.fixedDeltaTime;
 
-		if (_rewoundTime <= lifeTimeStart)
+		var rewound = false;
+
+		if (_rewoundTime <= 0f)
 		{
-			IsRewinding = false;
+			Debug.Log("Rewound to " + _rewoundTime + " / at: " + Time.frameCount);
 			HandleLifeTimeStartReachedViaRewind();
+			rewound = true;
 		}
 
-		if (IsRewinding && !_transformLog.IsEmpty)
+		if (IsRewinding && !_transformLog.IsEmpty && !rewound)
 		{
 			var trData = _transformLog.Pop();
 			CachedTransform.position = trData.position;
@@ -77,10 +80,6 @@ public class Rewindable : MonoWithCachedTransform
 					evt.Apply(isRewind: true);
 				}
 			}
-		}
-		else
-		{
-			IsRewinding = false;
 		}
 	}
 
