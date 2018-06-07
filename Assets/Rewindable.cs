@@ -69,9 +69,9 @@ public class Rewindable : MonoWithCachedTransform
 	{
 		var rewound = false;
 
-		if (_rewoundTime <= 0f )
+		if (_rewoundTime <= 0f && _transformLog.IsEmpty)
 		{
-			// Debug.Log("Rewound to " + _rewoundTime + " / at: " + Time.frameCount);
+			Debug.Log("Rewound to ---- " + _rewoundTime + " / at: " + Time.frameCount);
 			HandleLifeTimeStartReachedViaRewind();
 			rewound = true;
 		}
@@ -94,7 +94,6 @@ public class Rewindable : MonoWithCachedTransform
 		{
 			_rewoundTime += Time.fixedDeltaTime;
 		}
-
 	}
 
 	private void HandleLifeTimeStartReachedViaRewind()

@@ -50,6 +50,8 @@ public class BasicEnemy : APoolable, IHittable
 
 	public override void Init(string param)
 	{
+		Debug.Log("BasicEnemySpawning at: " + Time.frameCount);
+
 		_enemyRewindable.Reset();
 		_enemyRewindable.lifeTimeStart = Time.realtimeSinceStartup;
 

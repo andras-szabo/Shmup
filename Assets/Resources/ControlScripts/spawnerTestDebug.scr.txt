@@ -1,1 +1,2 @@
 2 spawn someType 0.4 0.8 simpleSpinner
+0.2 spawn someType 0.6 0.8 simpleSpinner

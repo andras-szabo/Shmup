@@ -16,11 +16,17 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	}
 
 	public bool log;
-	public void L(string msg)
+	public void L(string msg, bool warn = false)
 	{
 		if (log)
 		{
-			Debug.Log(string.Format("{0} // {1}", msg, Time.frameCount));
+			var mess = string.Format("{0} // {1} // {2}", msg, Time.frameCount, _time);
+
+
+
+
+			if (warn) { Debug.LogWarning(mess); }
+			else { Debug.Log(mess); }
 		}
 	}
 
@@ -131,21 +137,35 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
+	//TODO: So to fix this: save rewindable.HasAnythingToRewindTo at the
+	//		beginning of the rewindable FU, so that it doesn't happen that
+	//		we have 1 rewindable state, we pop that in rewindable, so that
+	//		gets to an earlier state -> and now we can't update here
+	private bool okNotToUpdateAnymore;
+
 	private void FixedUpdate()
 	{
 		var dt = Time.fixedDeltaTime;
 		var rewinding = rewindable != null && rewindable.IsRewinding;
 
-		if (!rewinding) { TransformUpdate(dt); }
-		else 
-		{ 
+		if (!rewinding) { okNotToUpdateAnymore = false;  TransformUpdate(dt); }
+		else
+		{
 			dt *= -1f;
 			if (rewindable != null && !rewindable.HasAnythingToRewindTo)
 			{
-				dt = 0f;
+				if (okNotToUpdateAnymore)
+				{
+					dt = 0f;
+				}
+				else
+				{
+					okNotToUpdateAnymore = true;
+				}
 			}
 		}
 
+		L("Fixed Update. oh dear. DT: " + dt);
 		WaitForAndExecuteCommand(dt);
 	}
 
@@ -169,31 +189,26 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			{
 				_currentCommand.Execute(context: this);
 				_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
-				//L("Executedxix: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime);
+				L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
 				TryStepOnNextCommand();
 			}
 		}
-		else 
+		else
 		{
-			if (_commandHistory.Count > 0)
+			while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
 			{
-				while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
-				{
-					var nextCommandToExecute = _commandHistory.Pop();
-					// TODO: "Reverse execute" the command, if it makes sense
-					SetNextCommandTo(nextCommandToExecute);
-				}
+				var nextCommandToExecute = _commandHistory.Pop();
+				// TODO: "Reverse execute" the command, if it makes sense
+				SetNextCommandTo(nextCommandToExecute);
+			}
 
-				/*
-				if (_currentCommand != null)
-				{
-					L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
-				}
-				else
-				{
-					L("Couldn't find current command at time " + _time);
-				}
-				*/
+			if (_currentCommand != null)
+			{
+				L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
+			}
+			else
+			{
+				L("Couldn't find current command at time " + _time);
 			}
 		}
 	}
@@ -218,8 +233,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		{
 			_currentCommandTriggerTime += _currentCommand.Delay;
 
-			L("CCTT jajjaj: " + _currentCommandTriggerTime);
-
+			L("CCTTV: " + _currentCommandTriggerTime);
 		}
 	}
 
