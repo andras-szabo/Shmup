@@ -17,6 +17,7 @@ public class SpawnerScriptSpawn : ACommand
 	public override void Execute(IExecutionContext context)
 	{
 		//TODO: Actually deal with the ship type instead of ignoring it
+		Debug.Log("Spwaning ship! " + Time.frameCount);
 		context.MoveControl.SetPosition(_position);
 		context.Spawner.SpawnFromPool(_shipScript);
 	}

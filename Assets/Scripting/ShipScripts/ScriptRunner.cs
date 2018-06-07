@@ -3,8 +3,22 @@ using UnityEngine;
 
 public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionContext
 {
-	private float _elapsedTime;
-	private float _nextCommandDelay;
+	public struct ExecutedCommand
+	{
+		public ExecutedCommand(float triggerTime, int commandPointer)
+		{
+			this.triggerTime = triggerTime;
+			this.commandPointer = commandPointer;
+		}
+
+		public readonly float triggerTime;
+		public readonly int commandPointer;
+	}
+
+	private float _time;
+	private float _currentCommandTriggerTime;
+	private Stack<ExecutedCommand> _commandHistory = new Stack<ExecutedCommand>();
+
 	private ICommand _currentCommand;
 
 	//TODO: Separate spinner component maybe
@@ -33,7 +47,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	}
 
 	public Rewindable rewindable;
-	
+
 	public void Stop()
 	{
 		CurrentRotSpeedAnglesPerSecond = Vector3.zero;
@@ -46,7 +60,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	}
 
 	//TODO: Surely this can be optimized
-	#region IExecutionContext
 	protected List<ICommand> _commands = new List<ICommand>();
 	protected Stack<int> _commandStack = new Stack<int>();
 	protected int _commandPointer = 0;
@@ -83,8 +96,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	{
 		_commandPointer = _commandStack.Peek();
 	}
-
-	#endregion
 
 	protected void SetRotation(Vector3 rotationAngles)
 	{
@@ -123,33 +134,41 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void WaitForAndExecuteCommand(float deltaTime)
 	{
-		_elapsedTime += deltaTime;
+		_time += deltaTime;
 
 		if (deltaTime > 0f)
 		{
-			while (_currentCommand != null && _elapsedTime >= _currentCommand.Delay)
+			if (_currentCommand == null)
+			{
+				TryStepOnNextCommand();
+			}
+
+			while (_currentCommand != null && _time >= _currentCommandTriggerTime)
 			{
 				_currentCommand.Execute(context: this);
+				_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
 				TryStepOnNextCommand();
-				_elapsedTime = 0f;
 			}
 		}
 		else
 		{
-			while (_elapsedTime <= 0f)
+			if (_commandHistory.Count > 0)
 			{
-				TryStepOnPreviousCommand();
-				if (_currentCommand != null)
+				while (_commandHistory.Count > 0 && _commandHistory.Peek().triggerTime > _time)
 				{
-					_currentCommand.Execute(context: this);
-					_elapsedTime = _currentCommand.Delay;
-				}
-				else
-				{
-					break;
+					var nextCommandToExecute = _commandHistory.Pop();
+					// TODO: "Reverse execute" the command, if it makes sense
+					SetNextCommandTo(nextCommandToExecute);
 				}
 			}
 		}
+	}
+
+	private void SetNextCommandTo(ExecutedCommand cmd)
+	{
+		_commandPointer = cmd.commandPointer;
+		_currentCommandTriggerTime = cmd.triggerTime;
+		_currentCommand = _commands[_commandPointer];
 	}
 
 	private void TryStepOnNextCommand()
@@ -158,23 +177,12 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		{
 			_commandPointer++;
 		}
+
 		_currentCommand = (_commands != null && _commandPointer < _commands.Count) ? _commands[_commandPointer] : null;
-	}
 
-	private void TryStepOnPreviousCommand()
-	{
-		if (_commandPointer >= 0)
+		if (_currentCommand != null)
 		{
-			_commandPointer -= 1;
-		}
-
-		if (_commands != null && _commandPointer < _commands.Count && _commandPointer >= 0)
-		{
-			_currentCommand = _commands[_commandPointer];
-		}
-		else
-		{
-			_currentCommand = null;
+			_currentCommandTriggerTime += _currentCommand.Delay;
 		}
 	}
 

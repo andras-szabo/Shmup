@@ -1,7 +1,41 @@
-TODO:
-	- fix: bullets can damage ships outside the visible area - at least
-	       a part of them should be visible in order to be able to take damage
+2018.06.07:
+	- turning hits into rewindable events:
+		-> Enemy.OnTriggerEnter: create appropriate hit event, and add it to the rewindable event Q,
+					 as well as onto the enemy's own event Q
+			-> Rewindable: on the next FixedUpdate, if not rewinding, put the whole q on next
+					frame's recorded data
+					if rewinding, process all the events but backwards
+					=> events should be IRewindable
+			-> BasicEnemy: at next FixedUpdate, go through the event Q and apply all that
+					and clear the event Q, no matter what
 
+-- OK so how to represent events and stuff, without casting.
+	-> 1.) so, say, hit.
+		-> I don't want the hit event to tell what's going to happen; I want that to be
+		decided by the entity. => HitEvent.Apply() should call entity.hit; and
+		HitEvent.ApplyBackwards() should call entity.hit().
+			-> but how should hitEvent know who to hit?
+				-> I can make HitEvent's ctor take an IHittable, but then the
+				Q (also in replay) will have a reference to the original target;
+				which won't be garbage collected until we override it. That's
+				probably bad.
+
+				=> but worry about that later. let's do it like this for now.
+
+-- OK but how about hitstun & shit.
+	-> on hit, take HitStart event, which doesn't do anything but swap the material
+	-> and enqueue new [HitStunDuration, PendingDamage] event (in HitStunDuration time, take this much dmg.)
+
+	-> when updating status, go through each pending damage, and modify hitstun duration, and when
+		one of them reaches 0, then apply pendingDamage damage.
+
+	-> then on replay, do the opposite:
+		=> if it's a pending damage application event backwards, append the new pair to the
+			pending damage Q, but apply the positive hp
+		=> if now we're back alive, get out of graveyard etc.
+			
+-------------------------
+TODO:
 	- apply scripts for bullets
 		-ships may have any number of different weapon setups
 		-to execute: shoot <weapon>

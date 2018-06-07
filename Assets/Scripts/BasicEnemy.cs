@@ -58,6 +58,7 @@ public class BasicEnemy : APoolable, IHittable
 		_enemyRewindable.OnLifeTimeStartReachedViaRewind += HandleRewoundBeforeSpawn;
 
 		GetOutOfGraveyard();
+		_framesSpentInGraveyard = 0;
 
 		currentHP = startingHP;
 
@@ -136,7 +137,6 @@ public class BasicEnemy : APoolable, IHittable
 			else
 			{
 				var couldRemove = TryRemoveFromPendingDamage(damage, isRewind);
-				Debug.Log("Could remove while replay? " + couldRemove);
 
 				if (_pendingDamage.Count < 1)
 				{
@@ -230,7 +230,6 @@ public class BasicEnemy : APoolable, IHittable
 		{
 			currentHP -= damage;
 			var couldRemove = TryRemoveFromPendingDamage(damage, isRewind);
-			Debug.Log("Could remove? " + couldRemove);
 
 			if (_pendingDamage.Count < 1)
 			{
