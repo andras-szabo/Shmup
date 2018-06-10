@@ -2,8 +2,8 @@
 
 public class BasicBullet : APoolable
 {
-	public Renderer renderer;
-	public Collider collider;
+	public Renderer myRenderer;
+	public Collider myCollider;
 
 	private float _elapsedSeconds;
 	private int _framesSpentInGraveyard;
@@ -104,16 +104,16 @@ public class BasicBullet : APoolable
 	private void PutInGraveyard()
 	{
 		_isInGraveyard = true;
-		collider.enabled = false;
-		renderer.enabled = false;
+		myCollider.enabled = false;
+		myRenderer.enabled = false;
 		RB.isKinematic = true;
 		_framesSpentInGraveyard = 0;	
 	}
 
 	private void GetOutOfGraveyard()
 	{
-		collider.enabled = true;
-		renderer.enabled = true;
+		myCollider.enabled = true;
+		myRenderer.enabled = true;
 		RB.isKinematic = false;
 		_isInGraveyard = false;
 	}

@@ -137,8 +137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolType: 1
-  renderer: {fileID: 23788612409872988}
-  collider: {fileID: 65636612776729548}
+  myRenderer: {fileID: 23788612409872988}
+  myCollider: {fileID: 65636612776729548}
   lifespan: 0.5
   speedUnitPerSeconds: 38
 --- !u!114 &114705276733035074

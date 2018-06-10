@@ -138,8 +138,6 @@ public class BasicEnemy : APoolable, IHittable
 			}
 			else
 			{
-				var couldRemove = TryRemoveFromPendingDamage(damage, isRewind);
-
 				if (_pendingDamage.Count < 1)
 				{
 					_isHit = false;
@@ -231,7 +229,6 @@ public class BasicEnemy : APoolable, IHittable
 		if (!isRewind)
 		{
 			currentHP -= damage;
-			var couldRemove = TryRemoveFromPendingDamage(damage, isRewind);
 
 			if (_pendingDamage.Count < 1)
 			{
