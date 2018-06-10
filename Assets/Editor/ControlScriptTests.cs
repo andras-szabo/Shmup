@@ -37,12 +37,26 @@ public class ControlScriptTests
 		var reg = new Regex(ScriptParser.DecimalRegexPattern);
 
 		M(reg, "0");	M(reg, "0.2");	M(reg, "12.345");	M(reg, "0.002");
-		M(reg, "123");
+		M(reg, "123");	M(reg, "-0.1");	M(reg, "-12");		M(reg, "-0.002");
 
 		M(reg, "a", false);
 		M(reg, "abcd.efg", false);
 		M(reg, "0.asd", false);
 		M(reg, "someString.123", false);
+	}
+
+	[Test]
+	public void VariableDeclarationRegexTest()
+	{
+		var reg = new Regex(ScriptParser.VariableDeclarationPattern);
+		M(reg, "var i = 0");
+		M(reg, "var Foo = 12.34");
+		M(reg, "var   blah = 1");
+		M(reg, "var neg = -1");
+		M(reg, "var someCamelCaseVariable = 0.4321");
+
+		M(reg, "var i = able", false);
+		M(reg, "var i 12.3", false);
 	}
 
 	private void M(Regex regex, string expr, bool shouldMatch = true)
@@ -56,6 +70,26 @@ public class ControlScriptTests
 		var script = "for i = 1 to 10 step 1\nspawn someType 1 2 someScript\nend";
 		var commands = ParserUtility.ParseFile(script, SpawnerScriptDefinition.Define());
 		Assert.IsTrue(commands.Count == 10, commands.Count.ToString()); 
+	}
+
+	[Test]
+	public void FreeVariablesTest()
+	{
+		var script = "var i = 1\n0.2*i spawn someType 1 i somescript\n";
+		var commands = ParserUtility.ParseFile(script, SpawnerScriptDefinition.Define());
+		Assert.IsTrue(commands.Count == 1, commands.Count.ToString());
+		Assert.IsTrue(Mathf.Approximately(commands[0].delay, 0.2f), commands[0].delay.ToString());
+		Assert.IsTrue((float)(commands[0].args[2]) == 1, commands[0].args[2].ToString());
+	}
+
+	[Test]
+	public void OtherVariableTest()
+	{
+		var script = "var foo = 0.35\nvar bar = 0.2\nfoo spawn someType 1 bar*10 somescript\n";
+		var commands = ParserUtility.ParseFile(script, SpawnerScriptDefinition.Define());
+		Assert.IsTrue(commands.Count == 1, commands.Count.ToString());
+		Assert.IsTrue(Mathf.Approximately(commands[0].delay, 0.35f), commands[0].delay.ToString());
+		Assert.IsTrue(Mathf.Approximately((float)(commands[0].args[2]), 2f), commands[0].args[2].ToString());
 	}
 
 	[Test]

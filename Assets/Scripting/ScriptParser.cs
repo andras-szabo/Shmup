@@ -3,8 +3,9 @@ using System.Text.RegularExpressions;
 
 public class ScriptParser
 {
-	public static string DecimalRegexPattern = @"^\d+(\.\d+)?\z";
-	public static string LoopRegexPattern = 
+	public static string DecimalRegexPattern = @"^-?\d+(\.\d+)?\z";
+	public static string VariableDeclarationPattern = @"^var\s+(?<variableName>\w+)\s*=\s*(?<initialValue>-?\d+(\.\d+)?)\z";
+	public static string LoopRegexPattern =
 		@"^(?<delay>\d+(\.\d+)?)?\s*for\s+(?<loopVarName>\w+)\s*=\s*(?<loopStart>\d+)\s+to\s+(?<loopEnd>\d+)(\s+step\s+(?<loopStep>-?\d+))?\z";
 
 	private struct LoopWidget
@@ -44,9 +45,9 @@ public class ScriptParser
 		{
 			var command = ParseLine(_lines[_lineIndex]);
 			if (command.IsValid)
-			{ 
+			{
 				commands.Add(command);
-				_loopDelay = 0f;	
+				_loopDelay = 0f;
 			}
 			_lineIndex++;
 		}
@@ -66,12 +67,18 @@ public class ScriptParser
 		try { delay = EE.Evaluate(token, _variables); queue.Dequeue(); }
 		catch (System.Collections.Generic.KeyNotFoundException) { }
 
+		if (delay < 0f)
+		{
+			throw new System.ArgumentException(string.Format("Trying to set negative delay: {0}", line));
+		}
+
 		token = queue.Dequeue();
 		ScriptCommandDefinition cmdDef;
 		if (!_def.TryGetValue(token, out cmdDef))
 		{
 			if (token == "for") { ParseLoopBegin(line); }
 			if (token == "end") { ParseLoopEnd(); }
+			if (token == "var") { ParseVariableDeclaration(line); }
 
 			return SerializedScriptCommand.Invalid();
 		}
@@ -127,6 +134,22 @@ public class ScriptParser
 			_variables.Remove(loopWidget.loopVariable);
 			_loopStack.Pop();
 		}
+	}
+
+	private void ParseVariableDeclaration(string line)
+	{
+		var varRegex = new Regex(VariableDeclarationPattern);
+		var match = varRegex.Match(line.Trim());
+		var variableName = match.Groups["variableName"].ToString();
+		var initialValue = System.Convert.ToSingle(match.Groups["initialValue"].ToString());
+
+		if (_variables.ContainsKey(variableName))
+		{
+			throw new System.ArgumentException(string.Format("Duplicate declaration of variable {0}: {1}",
+															 variableName, line));
+		}
+
+		_variables[variableName] = initialValue;
 	}
 
 	private void ParseLoopBegin(string line)
