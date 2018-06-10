@@ -24,7 +24,7 @@ public class InputController : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		_touchesThisFrame = Input.GetMouseButton(0) ? 1 : 0;
+		_touchesThisFrame = InputService.Instance.MouseLeftButton ? 1 : 0;
 
 		if (_touchesThisFrame > _touchesLastFrame)
 		{
@@ -53,7 +53,7 @@ public class InputController : MonoBehaviour
 		_touchesLastFrame = _touchesThisFrame;
 
 #if UNITY_EDITOR
-		IsHoldingDoubleTap = Input.GetKey(KeyCode.W);
+		IsHoldingDoubleTap = InputService.Instance.RewindKey;
 #endif
 	}
 }

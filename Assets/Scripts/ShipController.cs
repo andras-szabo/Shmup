@@ -71,8 +71,9 @@ public class ShipController : MonoWithCachedTransform
 	private Vector3 GetInputScreenPosition()
 	{
 		//TODO: replace with actual touch input
-		return new Vector3(Input.mousePosition.x,
-						   Input.mousePosition.y,
+		var mouseOnScreen = InputService.Instance.MousePixelPosition;
+		return new Vector3(mouseOnScreen.x,
+						   mouseOnScreen.y,
 						   10f);
 	}
 

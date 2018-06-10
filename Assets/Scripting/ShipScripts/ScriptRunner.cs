@@ -21,10 +21,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		if (log)
 		{
 			var mess = string.Format("{0} // {1} // {2}", msg, Time.frameCount, _time);
-
-
-
-
 			if (warn) { Debug.LogWarning(mess); }
 			else { Debug.Log(mess); }
 		}
@@ -165,7 +161,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			}
 		}
 
-		L("Fixed Update. oh dear. DT: " + dt);
 		WaitForAndExecuteCommand(dt);
 	}
 
