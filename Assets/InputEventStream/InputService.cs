@@ -1,74 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RingBuffer;
 using UnityEngine;
 
 public class InputService : MonoBehaviour
 {
 	[System.Serializable]
-	public class CustomInputEvent
+	public class SerializedLog
 	{
-		public enum Type
+		public SerializedLog(List<CustomInputEvent> log)
 		{
-			None = 0,
-			MousePositionDelta = 1,
-			MouseButton = 2,
-			Key = 3,
+			this.log = log;
 		}
 
-		public CustomInputEvent(int frameCount, Type type, Vector3 vectorParam)
-		{
-			this.frameCount = frameCount;
-			this.type = type;
-			this.vectorParam = vectorParam;
-			this.intParam = 0;
-			this.boolParam = false;
-			this.keyParam = KeyCode.None;
-		}
-
-		public CustomInputEvent(int frameCount, Type type, int intParam, bool boolParam)
-		{
-			this.frameCount = frameCount;
-			this.type = type;
-			this.intParam = intParam;
-			this.boolParam = boolParam;
-			this.vectorParam = Vector3.zero;
-			this.keyParam = KeyCode.None;
-		}
-
-		public CustomInputEvent(int frameCount, Type type, KeyCode keyParam, bool boolParam)
-		{
-			this.frameCount = frameCount;
-			this.type = type;
-			this.intParam = 0;
-			this.boolParam = boolParam;
-			this.vectorParam = Vector3.zero;
-			this.keyParam = keyParam;
-		}
-
-		public readonly Type type;
-		public readonly Vector3 vectorParam;
-		public readonly int intParam;
-		public readonly bool boolParam;
-		public readonly KeyCode keyParam;
-		public readonly int frameCount;
-
-		public override string ToString()
-		{
-			return string.Format("FC: {0} - {1}", frameCount, GetParamsAsString());
-		}
-
-		private string GetParamsAsString()
-		{
-			switch (type)
-			{
-
-				case Type.MouseButton:		  { return string.Format("[But] {0} -> {1}", intParam, boolParam ? "on" : "off"); } ;
-				case Type.MousePositionDelta: { return string.Format("[Pos] {0};{1}", vectorParam.x, vectorParam.y); };
-				case Type.Key:				  { return string.Format("[Key] {0} -> {1}", keyParam, boolParam ? "on" : "off"); }
-				default: return "[None]";
-			}
-		}
+		public List<CustomInputEvent> log;
 	}
 
 	public const KeyCode REWIND_KEY = KeyCode.W;
@@ -79,14 +23,19 @@ public class InputService : MonoBehaviour
 	public bool MouseLeftButton { get; protected set; }
 	public bool RewindKey { get; protected set; }
 
+	public bool PlaybackMode { get; protected set; }
 	public int FrameCount { get; protected set; }
 
 	public bool LogToConsole { get; set; }
 
-	private RingBuffer<CustomInputEvent> _statusChanges = new RingBuffer<CustomInputEvent>(20);
+	public SerializedLog GetSerializedLog()
+	{
+		return new SerializedLog(_log);
+	}
 
-	//TODO - make RingBuffer serializable
+	private RingBuffer<CustomInputEvent> _statusChanges = new RingBuffer<CustomInputEvent>(20);
 	private List<CustomInputEvent> _log = new List<CustomInputEvent>();
+	private int _playbackLogIndex;
 
 	//TODO - better singletoning
 	private void Awake()
@@ -101,6 +50,17 @@ public class InputService : MonoBehaviour
 		FrameCount = 0;
 	}
 
+	public void Playback(List<CustomInputEvent> eventStream, string streamName, int customStartFrameCount = 0)
+	{
+		Debug.LogFormat("[InputService] Starting playback of {0}; from frame count: {1} // {2}",
+						 streamName, customStartFrameCount, Time.frameCount);
+
+		FrameCount = customStartFrameCount;
+		_log = eventStream;
+		PlaybackMode = true;
+		_playbackLogIndex = 0;
+	}
+
 	private void Update()
 	{
 		FrameCount++;
@@ -108,7 +68,7 @@ public class InputService : MonoBehaviour
 		GetStatusChangeSinceLastUpdate();
 		if (_statusChanges.Count > 0)
 		{
-			RecordStatusChanges(_statusChanges);
+			LogStatusChanges(_statusChanges);
 		}
 	}
 
@@ -116,12 +76,60 @@ public class InputService : MonoBehaviour
 	{
 		_statusChanges.Clear();
 
-		CheckMousePosition(_statusChanges);
-		CheckMouseButton(_statusChanges);
-		CheckRewindKey(_statusChanges);
+		if (!PlaybackMode)
+		{
+			GetMousePositionFromInput(_statusChanges);
+			GetMouseButtonFromInput(_statusChanges);
+			GetRewindKeyFromInput(_statusChanges);
+		}
+		else
+		{
+			ApplyRecordedChanges(_log, _statusChanges);
+		}
 	}
 
-	private void CheckRewindKey(RingBuffer<CustomInputEvent> statusChanges)
+	private void ApplyRecordedChanges(List<CustomInputEvent> log, RingBuffer<CustomInputEvent> statusChanges)
+	{
+		while (_playbackLogIndex < log.Count && log[_playbackLogIndex].frameCount == FrameCount)
+		{
+			ProcessRecordedEvent(log[_playbackLogIndex]);
+			statusChanges.Push(log[_playbackLogIndex]);
+			_playbackLogIndex++;
+		}
+	}
+
+	private void ProcessRecordedEvent(CustomInputEvent evt)
+	{
+		switch (evt.type)
+		{
+			case CustomInputEvent.Type.MousePositionDelta: 
+				MousePixelPosition += evt.vectorParam;
+				break;
+
+			case CustomInputEvent.Type.MouseButton:
+			{
+				if (evt.intParam == 0)
+				{
+					MouseLeftButton = evt.boolParam;
+				}
+				break;
+			}
+
+			case CustomInputEvent.Type.Key:
+			{
+				if (evt.keyParam == REWIND_KEY)
+				{
+					RewindKey = evt.boolParam;
+				}
+				break;
+			}
+
+			default:
+				break;
+		}
+	}
+
+	private void GetRewindKeyFromInput(RingBuffer<CustomInputEvent> statusChanges)
 	{
 		var previousKeyState = RewindKey;
 		RewindKey = Input.GetKey(REWIND_KEY);
@@ -131,7 +139,7 @@ public class InputService : MonoBehaviour
 		}
 	}
 
-	private void CheckMouseButton(RingBuffer<CustomInputEvent> statusChanges)
+	private void GetMouseButtonFromInput(RingBuffer<CustomInputEvent> statusChanges)
 	{
 		var previousButtonState = MouseLeftButton;
 		MouseLeftButton = Input.GetMouseButton(0);
@@ -141,7 +149,7 @@ public class InputService : MonoBehaviour
 		}
 	}
 
-	private void CheckMousePosition(RingBuffer<CustomInputEvent> statusChanges)
+	private void GetMousePositionFromInput(RingBuffer<CustomInputEvent> statusChanges)
 	{
 		var previousMousePosition = MousePixelPosition;
 		MousePixelPosition = Input.mousePosition;
@@ -154,11 +162,14 @@ public class InputService : MonoBehaviour
 		}
 	}
 
-	private void RecordStatusChanges(RingBuffer<CustomInputEvent> statusChanges)
+	private void LogStatusChanges(RingBuffer<CustomInputEvent> statusChanges)
 	{
 		while (!statusChanges.IsEmpty)
 		{
-			_log.Add(statusChanges.Pop());
+			if (!PlaybackMode)
+			{
+				_log.Add(statusChanges.Pop());
+			}
 
 			//TODO- check, at which point does it grow too large, and what
 			//		can we do about it?
