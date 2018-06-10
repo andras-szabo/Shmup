@@ -140,7 +140,7 @@ public class ScriptParser
 	{
 		var varRegex = new Regex(VariableDeclarationPattern);
 		var match = varRegex.Match(line.Trim());
-		var variableName = match.Groups["variableName"].ToString();
+		var variableName = match.Groups["variableName"].ToString().ToLower();
 		var initialValue = System.Convert.ToSingle(match.Groups["initialValue"].ToString());
 
 		if (_variables.ContainsKey(variableName))
