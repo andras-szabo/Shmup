@@ -36,6 +36,7 @@ public class InputService : MonoBehaviour
 	private RingBuffer<CustomInputEvent> _statusChanges = new RingBuffer<CustomInputEvent>(20);
 	private List<CustomInputEvent> _log = new List<CustomInputEvent>();
 	private int _playbackLogIndex;
+	private bool _loggedPlaybackFinish;
 
 	//TODO - better singletoning
 	private void Awake()
@@ -90,7 +91,19 @@ public class InputService : MonoBehaviour
 
 	private void ApplyRecordedChanges(List<CustomInputEvent> log, RingBuffer<CustomInputEvent> statusChanges)
 	{
-		while (_playbackLogIndex < log.Count && log[_playbackLogIndex].frameCount == FrameCount)
+		if (_playbackLogIndex >= log.Count)
+		{
+			if (!_loggedPlaybackFinish)
+			{
+				_loggedPlaybackFinish = true;
+				Debug.LogWarning("[InputService] Playback finished.");
+			}
+#if UNITY_EDITOR
+			Debug.Break();
+#endif
+		}
+
+		while ((_playbackLogIndex < log.Count) && (log[_playbackLogIndex].frameCount == FrameCount))
 		{
 			ProcessRecordedEvent(log[_playbackLogIndex]);
 			statusChanges.Push(log[_playbackLogIndex]);
@@ -166,9 +179,10 @@ public class InputService : MonoBehaviour
 	{
 		while (!statusChanges.IsEmpty)
 		{
+			var lastStatusChange = statusChanges.Pop();
 			if (!PlaybackMode)
 			{
-				_log.Add(statusChanges.Pop());
+				_log.Add(lastStatusChange);
 			}
 
 			//TODO- check, at which point does it grow too large, and what
@@ -176,7 +190,7 @@ public class InputService : MonoBehaviour
 
 			if (LogToConsole)
 			{
-				Debug.LogFormat("{0} // {1}", _log.Count, _log[_log.Count - 1].ToString());
+				Debug.LogFormat("{0} // {1}", FrameCount, lastStatusChange.ToString());
 			}
 		}
 	}

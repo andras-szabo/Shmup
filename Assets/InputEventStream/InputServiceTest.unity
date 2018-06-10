@@ -302,6 +302,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a964821766925441bcdb786cda68ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logToConsole: 1
+  replay: 1
+  replayStartFrame: 0
+  logToReplay: {fileID: 4900000, guid: c9edc25b7ff320d429d638e99049f333, type: 3}
 --- !u!1 &1358631231
 GameObject:
   m_ObjectHideFlags: 0
