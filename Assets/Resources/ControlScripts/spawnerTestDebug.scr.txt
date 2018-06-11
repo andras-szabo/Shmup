@@ -1,2 +1,4 @@
-2 spawn someType 0.4 0.8 simpleSpinner
-0.2 spawn someType 0.6 0.8 simpleSpinner
+var y = 0.8
+2 spawn someType 0.4 y simpleSpinner
+// 0.2	spawn someType 0.3 y simpleSpinner
+// 0.2	spawn someType 0.2 y simpleSpinner

@@ -16,7 +16,7 @@ public static class ParserUtility
 		if (removeEmptyLines)
 		{
 			var asList = new List<string>(lines);
-			asList.RemoveAll(line => string.IsNullOrEmpty(line));
+			asList.RemoveAll(line => string.IsNullOrEmpty(line) || line.StartsWith("//"));
 			lines = asList.ToArray();
 		}
 

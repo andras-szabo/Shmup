@@ -802,7 +802,7 @@ MonoBehaviour:
   logToConsole: 0
   replay: 0
   replayStartFrame: 0
-  logToReplay: {fileID: 4900000, guid: 23e0ed03ed1b251479cc6dc90c9fa681, type: 3}
+  logToReplay: {fileID: 4900000, guid: 7442ef108f4a2f049bae4a39d6656e55, type: 3}
 --- !u!4 &739082913
 Transform:
   m_ObjectHideFlags: 0

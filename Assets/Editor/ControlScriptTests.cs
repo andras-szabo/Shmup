@@ -83,6 +83,14 @@ public class ControlScriptTests
 	}
 
 	[Test]
+	public void CommentTest()
+	{
+		var script = "0.2 spawn sometype 1 1 somescript\n// 0.1 spawn sometype 2 2 somescript\n";
+		var commands = ParserUtility.ParseFile(script, SpawnerScriptDefinition.Define());
+		Assert.IsTrue(commands.Count == 1, commands.Count.ToString());
+	}
+
+	[Test]
 	public void OtherVariableTest()
 	{
 		var script = "var foo = 0.35\nvar bar = 0.2\nfoo spawn someType 1 bar*10 somescript\n";

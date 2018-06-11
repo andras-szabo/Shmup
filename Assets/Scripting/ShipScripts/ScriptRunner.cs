@@ -141,23 +141,22 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void FixedUpdate()
 	{
-		var dt = Time.fixedDeltaTime;
 		var rewinding = rewindable != null && rewindable.IsRewinding;
+		var dt = Time.fixedDeltaTime;
 
-		if (!rewinding) { okNotToUpdateAnymore = false;  TransformUpdate(dt); }
+		if (!rewinding)
+		{
+			TransformUpdate(dt);
+		}
 		else
 		{
-			dt *= -1f;
-			if (rewindable != null && !rewindable.HasAnythingToRewindTo)
+			if (rewindable.HadSomethingToRewindToAtFrameStart)
 			{
-				if (okNotToUpdateAnymore)
-				{
-					dt = 0f;
-				}
-				else
-				{
-					okNotToUpdateAnymore = true;
-				}
+				dt *= -1f;
+			}
+			else
+			{
+				dt = 0f;
 			}
 		}
 
@@ -171,10 +170,11 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void WaitForAndExecuteCommand(float deltaTime)
 	{
-		_time += deltaTime;
-
 		if (deltaTime > 0f)
 		{
+			_time += deltaTime;
+			L(_time.ToString());
+
 			if (_currentCommand == null)
 			{
 				TryStepOnNextCommand();
@@ -205,6 +205,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			{
 				L("Couldn't find current command at time " + _time);
 			}
+
+			_time += deltaTime;		// When rewinding, apply time _after_ logic update
 		}
 	}
 

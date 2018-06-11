@@ -10,7 +10,7 @@ public class InputServiceTester : MonoBehaviour
 
 	void Start()
 	{
-		Debug.Log("[Tester Compile Check]-");
+		Debug.Log("[Tester Compile Check]");
 
 		if (replay && logToReplay != null)
 		{
