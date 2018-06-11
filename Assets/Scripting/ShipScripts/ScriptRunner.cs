@@ -133,12 +133,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
-	//TODO: So to fix this: save rewindable.HasAnythingToRewindTo at the
-	//		beginning of the rewindable FU, so that it doesn't happen that
-	//		we have 1 rewindable state, we pop that in rewindable, so that
-	//		gets to an earlier state -> and now we can't update here
-	private bool okNotToUpdateAnymore;
-
 	private void FixedUpdate()
 	{
 		var rewinding = rewindable != null && rewindable.IsRewinding;
@@ -150,14 +144,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 		else
 		{
-			if (rewindable.HadSomethingToRewindToAtFrameStart)
-			{
-				dt *= -1f;
-			}
-			else
-			{
-				dt = 0f;
-			}
+			if (rewindable.HadSomethingToRewindToAtFrameStart) { dt *= -1f; }
+			else { dt = 0f; }
 		}
 
 		WaitForAndExecuteCommand(dt);
@@ -170,43 +158,44 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void WaitForAndExecuteCommand(float deltaTime)
 	{
-		if (deltaTime > 0f)
+		if (deltaTime > 0f) { TryGoForwardInTime(); }
+		else { TryRewindtime(); }
+
+		_time += deltaTime;
+	}
+
+	private void TryGoForwardInTime()
+	{
+		if (_currentCommand == null)
 		{
-			_time += deltaTime;
-			L(_time.ToString());
+			TryStepOnNextCommand();
+		}
 
-			if (_currentCommand == null)
-			{
-				TryStepOnNextCommand();
-			}
+		while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
+		{
+			_currentCommand.Execute(context: this);
+			_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
+			L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
+			TryStepOnNextCommand();
+		}
+	}
 
-			while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
-			{
-				_currentCommand.Execute(context: this);
-				_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
-				L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
-				TryStepOnNextCommand();
-			}
+	private void TryRewindtime()
+	{
+		while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
+		{
+			var nextCommandToExecute = _commandHistory.Pop();
+			// TODO: "Reverse execute" the command, if it makes sense
+			SetNextCommandTo(nextCommandToExecute);
+		}
+
+		if (_currentCommand != null)
+		{
+			L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
 		}
 		else
 		{
-			while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
-			{
-				var nextCommandToExecute = _commandHistory.Pop();
-				// TODO: "Reverse execute" the command, if it makes sense
-				SetNextCommandTo(nextCommandToExecute);
-			}
-
-			if (_currentCommand != null)
-			{
-				L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
-			}
-			else
-			{
-				L("Couldn't find current command at time " + _time);
-			}
-
-			_time += deltaTime;		// When rewinding, apply time _after_ logic update
+			L("Couldn't find current command at time " + _time);
 		}
 	}
 

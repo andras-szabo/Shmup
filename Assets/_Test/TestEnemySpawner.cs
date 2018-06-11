@@ -2,6 +2,7 @@
 
 public class TestEnemySpawner : MonoBehaviour
 {
+	public TextAsset scriptToRun;
 	private EnemySpawner enemySpawner;
 	private ScriptRunner runner;
 
@@ -13,8 +14,9 @@ public class TestEnemySpawner : MonoBehaviour
 
 	private void Start()
 	{
-
-		var script = ScriptCache.LoadScript("spawnerTestDebug", SpawnerScriptDefinition.Define(), SpawnerCommandFactory.Instance);
+		var scriptName = scriptToRun != null ? scriptToRun.name.Split('.')[0] : "spawnerTestDebug";
+		Debug.Log(scriptName);
+		var script = ScriptCache.LoadScript(scriptName, SpawnerScriptDefinition.Define(), SpawnerCommandFactory.Instance);
 		runner.Run(script);
 	}
 

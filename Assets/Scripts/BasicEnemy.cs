@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(ScriptRunner))]
-public class BasicEnemy : APoolable, IHittable
+public class BasicEnemy : APoolable, IHittable, IDespawnable
 {
 	public class PendingDamage
 	{
@@ -53,11 +53,7 @@ public class BasicEnemy : APoolable, IHittable
 		Debug.Log("BasicEnemySpawning at: " + Time.frameCount);
 
 		_enemyRewindable.Reset();
-		_enemyRewindable.lifeTimeStart = Time.realtimeSinceStartup;
-
-		//TODO: we should just remove all listeners
-		_enemyRewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
-		_enemyRewindable.OnLifeTimeStartReachedViaRewind += HandleRewoundBeforeSpawn;
+		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this));
 
 		GetOutOfGraveyard();
 		_framesSpentInGraveyard = 0;
@@ -70,11 +66,6 @@ public class BasicEnemy : APoolable, IHittable
 
 		var script = ScriptCache.LoadScript(param, ShipScriptDefinition.Define(), ShipCommandFactory.Instance);
 		scriptRunner.Run(script);
-	}
-
-	private void HandleRewoundBeforeSpawn()
-	{
-		Despawn();
 	}
 
 	private void Start()
@@ -254,7 +245,6 @@ public class BasicEnemy : APoolable, IHittable
 			}
 		}
 
-		Debug.LogWarning("Trying to swap materials to : " + _isHit);
 		SwapMaterials(_isHit);
 	}
 
@@ -285,10 +275,8 @@ public class BasicEnemy : APoolable, IHittable
 	}
 
 	// This is duplicate code from basicBullet; could be fixed!
-	private void Despawn()
+	public void Despawn()
 	{
-		_enemyRewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
-
 		if (_pool != null)
 		{
 			_pool.Despawn(this);

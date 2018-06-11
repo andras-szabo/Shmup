@@ -17,6 +17,28 @@
 	}
 }
 
+public class DespawnOnReplayEvent : IRewindableEvent
+{
+	readonly public IDespawnable target;
+	public DespawnOnReplayEvent(IDespawnable target)
+	{
+		this.target = target;
+	}
+
+	public void Apply(bool isRewind)
+	{
+		if (isRewind)
+		{
+			target.Despawn();
+		}
+	}
+}
+
+public interface IDespawnable
+{
+	void Despawn();
+}
+
 public class HitStunOverEvent : IRewindableEvent
 {
 	readonly public IHittable target;

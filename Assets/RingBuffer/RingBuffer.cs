@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace RingBuffer
 {
@@ -13,6 +11,7 @@ namespace RingBuffer
 		{
 			get
 			{
+				if (IsEmpty) { return 0; }
 				if (_endIndex > _startIndex) {	return _endIndex - _startIndex; }
 				if (IsEmpty || _endIndex == 0) { return 0; }
 				return Capacity - (_endIndex - _startIndex);

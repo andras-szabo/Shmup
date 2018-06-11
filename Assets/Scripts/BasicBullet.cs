@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class BasicBullet : APoolable
+public class BasicBullet : APoolable, IDespawnable
 {
 	public Renderer myRenderer;
 	public Collider myCollider;
@@ -20,6 +20,8 @@ public class BasicBullet : APoolable
 			return _rb ?? (_rb = GetComponent<Rigidbody>());
 		}
 	}
+
+	private bool initialized = false;
 
 	private Rewindable _rewindable;
 	private Rewindable Rewindable
@@ -41,21 +43,20 @@ public class BasicBullet : APoolable
 		_elapsedSeconds = 0f;
 
 		Rewindable.Reset();
-		Rewindable.lifeTimeStart = Time.realtimeSinceStartup;
-
-		Rewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
-		Rewindable.OnLifeTimeStartReachedViaRewind += HandleRewoundBeforeSpawn;
+		Rewindable.EnqueueEvent(new DespawnOnReplayEvent(this));
 
 		GetOutOfGraveyard();
-	}
-
-	private void HandleRewoundBeforeSpawn()
-	{
-		Despawn();
+		initialized = true;
 	}
 
 	private void FixedUpdate()
 	{
+		if (!initialized)
+		{
+			Debug.LogWarning("Rewindable not initialized yet");
+			return;
+		}
+
 		if (!Rewindable.IsRewinding)
 		{
 			if (RB.isKinematic) { RB.isKinematic = false; RB.velocity = transform.up * speedUnitPerSeconds; }
@@ -118,9 +119,9 @@ public class BasicBullet : APoolable
 		_isInGraveyard = false;
 	}
 
-	private void Despawn()
+	public void Despawn()
 	{
-		Rewindable.OnLifeTimeStartReachedViaRewind -= HandleRewoundBeforeSpawn;
+		initialized = false;
 
 		if (_pool != null)
 		{

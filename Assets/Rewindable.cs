@@ -21,20 +21,15 @@ public class Rewindable : MonoWithCachedTransform
 
 	public const int LOG_SIZE_FRAMES = 128;
 
-	public event Action OnLifeTimeStartReachedViaRewind;
-	[HideInInspector] public float lifeTimeStart = -1f;     // Can't rewind to earlier than this
-
 	public bool IsRewinding { get; protected set; }
 	public bool HadSomethingToRewindToAtFrameStart { get; protected set; }
 
 	private RingBuffer<TransformData> _transformLog = new RingBuffer<TransformData>(LOG_SIZE_FRAMES);
 	private List<IRewindableEvent> _eventQueue = new List<IRewindableEvent>();
-	private float _rewoundTime;
 
 	public void Reset()
 	{
 		_transformLog.Clear();
-		_rewoundTime = 0f;
 	}
 
 	public void EnqueueEvent(IRewindableEvent evt)
@@ -50,12 +45,10 @@ public class Rewindable : MonoWithCachedTransform
 
 		if (IsRewinding)
 		{
-			TryApplyRecordedPosition();				// When rewinding, apply logic first and then adjust time
-			_rewoundTime -= Time.fixedDeltaTime;
+			if (!_transformLog.IsEmpty) { TryApplyRecordedPosition(); }
 		}
-		else 
-		{
-			_rewoundTime += Time.fixedDeltaTime;	// When playing normally, do it the other way 'round
+		else
+		{ 
 			RecordPosition();
 		}
 	}
@@ -67,21 +60,7 @@ public class Rewindable : MonoWithCachedTransform
 
 	private void TryApplyRecordedPosition()
 	{
-		var rewound = false;
-
-		if (_rewoundTime <= 0f)
-		{
-			Debug.Log("Rewound to ---- " + _rewoundTime + " / at: " + Time.frameCount);
-			HandleLifeTimeStartReachedViaRewind();
-			rewound = true;
-		}
-
-		if (_transformLog.IsEmpty)
-		{
-			_rewoundTime += Time.fixedDeltaTime;
-		}
-
-		if (!_transformLog.IsEmpty && !rewound)
+		if (!_transformLog.IsEmpty)
 		{
 			var trData = _transformLog.Pop();
 			CachedTransform.position = trData.position;
@@ -94,14 +73,6 @@ public class Rewindable : MonoWithCachedTransform
 					evt.Apply(isRewind: true);
 				}
 			}
-		}
-	}
-
-	private void HandleLifeTimeStartReachedViaRewind()
-	{
-		if (OnLifeTimeStartReachedViaRewind != null)
-		{
-			OnLifeTimeStartReachedViaRewind();
 		}
 	}
 

@@ -802,7 +802,7 @@ MonoBehaviour:
   logToConsole: 0
   replay: 0
   replayStartFrame: 0
-  logToReplay: {fileID: 4900000, guid: 7442ef108f4a2f049bae4a39d6656e55, type: 3}
+  logToReplay: {fileID: 4900000, guid: fceafbe28cb32a848bbb7d8f8d575bde, type: 3}
 --- !u!4 &739082913
 Transform:
   m_ObjectHideFlags: 0
@@ -1141,6 +1141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c8da08eb8a06f4ebf0a53445921a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scriptToRun: {fileID: 4900000, guid: 2b90503aa9f039c468d862880509bf6b, type: 3}
 --- !u!114 &1144996391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1177,7 +1178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeTimeStart: -1
+  dontLog: 0
 --- !u!1 &1218485467
 GameObject:
   m_ObjectHideFlags: 0
@@ -1429,7 +1430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeTimeStart: -1
+  dontLog: 1
 --- !u!1 &1369531058
 GameObject:
   m_ObjectHideFlags: 0
