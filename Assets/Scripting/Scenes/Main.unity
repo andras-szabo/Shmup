@@ -799,8 +799,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a964821766925441bcdb786cda68ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logToConsole: 1
-  replay: 1
+  logToConsole: 0
+  replay: 0
   replayStartFrame: 0
   logToReplay: {fileID: 4900000, guid: 23e0ed03ed1b251479cc6dc90c9fa681, type: 3}
 --- !u!4 &739082913

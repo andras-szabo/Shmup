@@ -138,6 +138,7 @@ public class BasicEnemy : APoolable, IHittable
 			}
 			else
 			{
+				TryRemoveFromPendingDamage(damage, isRewind);
 				if (_pendingDamage.Count < 1)
 				{
 					_isHit = false;
@@ -230,6 +231,8 @@ public class BasicEnemy : APoolable, IHittable
 		{
 			currentHP -= damage;
 
+			TryRemoveFromPendingDamage(damage, isRewind);
+
 			if (_pendingDamage.Count < 1)
 			{
 				_isHit = false;
@@ -251,6 +254,7 @@ public class BasicEnemy : APoolable, IHittable
 			}
 		}
 
+		Debug.LogWarning("Trying to swap materials to : " + _isHit);
 		SwapMaterials(_isHit);
 	}
 
