@@ -1,191 +1,32 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
 public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionContext
 {
-	//TODO: cleanup
-	public struct ExecutedCommand
-	{
-		public ExecutedCommand(float triggerTime, int commandPointer)
-		{
-			this.triggerTime = triggerTime;
-			this.commandPointer = commandPointer;
-		}
-
-		public readonly float triggerTime;
-		public readonly int commandPointer;
-	}
-
-	//TODO: cleanup
-	public class LoopInfo
-	{
-		public LoopInfo(int completionCount, int commandsWithinLoop)
-		{
-			this.ranToCompletionCount = completionCount;
-			this.commandsWithinLoop = commandsWithinLoop;
-		}
-
-		public bool IsCountingCommands
-		{
-			get
-			{
-				return ranToCompletionCount < 1 && !alreadyCountedCommandsWithinLoop;
-			}
-		}
-
-		public void Completed()
-		{
-			alreadyCountedCommandsWithinLoop = true;
-			ranToCompletionCount += 1;
-		}
-
-		public int GetLoopCommandOffset()
-		{
-			return ranToCompletionCount * commandsWithinLoop;
-		}
-
-		public int ranToCompletionCount;
-		public int commandsWithinLoop;
-		public bool alreadyCountedCommandsWithinLoop;
-	}
-
-
-
-	//TODO: cleanup
+	public Rewindable rewindable;
 	public bool log;
-	public void L(string msg, bool warn = false)
-	{
-		if (log)
-		{
-			var mess = string.Format("{0} // {1} // {2}", msg, InputService.Instance.UpdateCount, _time);
-			if (warn) { Debug.LogWarning(mess); }
-			else { Debug.Log(mess); }
-		}
-	}
 
+	private SpinController _spinController = new SpinController();
+	private VelocityController _velocityController = new VelocityController();
+
+	private bool _isRunning;
 	private float _time;
-	private float _currentCommandTriggerTime;
-	private Stack<ExecutedCommand> _commandHistory = new Stack<ExecutedCommand>();
-
 	private ICommand _currentCommand;
 
-	//TODO: Separate spinner component maybe
-	private Vector3 _rotationPerFrame;
-	private Vector3 _rotationPerSecond;
-	private Vector3 CurrentRotSpeedAnglesPerSecond
-	{
-		get { return _rotationPerSecond; }
-		set
-		{
-			_rotationPerSecond = value;
-			SetRotation(_rotationPerSecond);
-		}
-	}
+	private List<ICommand> _commands = new List<ICommand>();
+	private Stack<int> _commandStack = new Stack<int>();
+	private Stack<LoopInfo> _loopStack = new Stack<LoopInfo>();
+	private Stack<ExecutedCommand> _commandHistory = new Stack<ExecutedCommand>();
 
-	private Vector2 _currentVelocityViewportPerSecond;
-	private Vector3 _currentVelocityUnitsPerFrame;
-	private Vector2 CurrentVelocityViewportPerSecond
-	{
-		get { return _currentVelocityViewportPerSecond; }
-		set
-		{
-			_currentVelocityViewportPerSecond = value;
-			SetVelocity(_currentVelocityViewportPerSecond);
-		}
-	}
+	private int _commandPointer = 0;
 
-	public class Lerp<T>
-	{
-		public float startTime;
-		public float endTime;
-		public T startVector;
-		public T endVector;
-	}
+	private int _runningLoopCount;
+	private bool IsInALoop { get { return _runningLoopCount > 0; } }
+	private float _currentCommandTriggerTime;
 
-	private Stack<Lerp<Vector2>> _velocityLerpStack = new Stack<Lerp<Vector2>>();
-	private Stack<Lerp<Vector3>> _spinLerpStack = new Stack<Lerp<Vector3>>();
-
-	public void SpinTo(Vector3 rotationSpeedAnglesPerSecond, float deltaT)
-	{
-		if (deltaT <= 0f) { CurrentRotSpeedAnglesPerSecond = rotationSpeedAnglesPerSecond; return; }
-		var rotationLerp = new Lerp<Vector3>
-		{
-			startTime = _time,
-			endTime = _time + deltaT,
-			startVector = CurrentRotSpeedAnglesPerSecond,
-			endVector = rotationSpeedAnglesPerSecond
-		};
-
-		_spinLerpStack.Push(rotationLerp);
-	}
-
-	public void AccelerateTo(Vector2 targetVelocity, float deltaT)
-	{
-		if (deltaT <= 0f) { CurrentVelocityViewportPerSecond = targetVelocity; return; }
-
-		var velocityLerp = new Lerp<Vector2>
-		{
-			startTime = _time,
-			endTime = _time + deltaT,
-			startVector = CurrentVelocityViewportPerSecond,
-			endVector = targetVelocity
-		};
-
-		_velocityLerpStack.Push(velocityLerp);
-	}
-
-	private void UpdateMoveControl()
-	{
-		UpdateVelocity();
-		UpdateSpin();
-	}
-
-	//TODO: could be static 
-	private void GetRidOfLerpsInTheFuture<T>(Stack<Lerp<T>> lerpStack, float timeNow)
-	{
-		while (lerpStack.Count > 0 && lerpStack.Peek().startTime > timeNow)
-		{
-			lerpStack.Pop();
-		}
-	}
-
-	private void UpdateSpin()
-	{
-		GetRidOfLerpsInTheFuture(_spinLerpStack, _time);
-
-		//TODO: can we do this nicer? -> it's almost the same as updatevelocity
-		if (!IsRewinding && _spinLerpStack.Count > 0)
-		{
-			var lastLerp = _spinLerpStack.Peek();
-			if (lastLerp.endTime > _time)
-			{
-				var duration = lastLerp.endTime - lastLerp.startTime;
-				var elapsed = _time - lastLerp.startTime;
-				var rate = Mathf.Clamp01(elapsed / duration);
-				CurrentRotSpeedAnglesPerSecond = (Vector3.Lerp(lastLerp.startVector, lastLerp.endVector, rate));
-			}
-		}
-	}
-
-	private void UpdateVelocity()
-	{
-		GetRidOfLerpsInTheFuture(_velocityLerpStack, _time);
-
-		if (!IsRewinding && _velocityLerpStack.Count > 0)
-		{
-			var lastVelocityLerp = _velocityLerpStack.Peek();
-			if (lastVelocityLerp.endTime > _time)
-			{
-				var duration = lastVelocityLerp.endTime - lastVelocityLerp.startTime;
-				var elapsed = _time - lastVelocityLerp.startTime;
-				var rate = Mathf.Clamp01(elapsed / duration);
-				CurrentVelocityViewportPerSecond = (Vector2.Lerp(lastVelocityLerp.startVector, lastVelocityLerp.endVector, rate));
-			}
-		}
-	}
+	public MonoBehaviour CoroutineRunner { get { return this; } }
+	public IMoveControl MoveControl { get { return this; } }
+	public bool IsRewinding { get; protected set; }
 
 	public int CurrentCommandUID
 	{
@@ -196,32 +37,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
-	public Rewindable rewindable;
-
-	public void Stop()
-	{
-		CurrentRotSpeedAnglesPerSecond = Vector3.zero;
-		CurrentVelocityViewportPerSecond = Vector2.zero;
-	}
-
-	public void SetPosition(Vector2 viewportCoords)
-	{
-		CachedTransform.position = ViewportUtility.GetWorldPosition(viewportCoords);
-	}
-
-	//TODO: Surely this can be optimized
-	protected List<ICommand> _commands = new List<ICommand>();
-	protected Stack<int> _commandStack = new Stack<int>();
-	protected Stack<LoopInfo> _loopStack = new Stack<LoopInfo>();
-	protected int _commandPointer = 0;
-	protected bool _isRunning;
-	protected int _runningLoopCount;
-	protected bool IsInALoop { get { return _runningLoopCount > 0; } }
-
-	public MonoBehaviour CoroutineRunner { get { return this; } }
-	public IMoveControl MoveControl { get { return this; } }
-	public bool IsRewinding { get; protected set; }
-
 	protected ISpawner _spawner;
 	public ISpawner Spawner
 	{
@@ -231,6 +46,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
+	#region Script lifecycle
 	public void ResetScript()
 	{
 		_commandStack.Clear();
@@ -239,6 +55,110 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		_currentCommand = null;
 	}
 
+	public void Run(List<ICommand> script)
+	{
+		_commands = script;
+		if (script != null && script.Count > 0)
+		{
+			_time = 0f;
+			_commandStack.Clear();
+			_currentCommand = null;
+			_commandPointer = -1;
+			TryStepOnNextCommand();
+			_isRunning = true;
+		}
+	}
+	#endregion
+
+	#region The main update loop
+	private void FixedUpdate()
+	{
+		if (_isRunning)
+		{
+			var rewinding = rewindable != null && rewindable.IsRewinding;
+			var dt = Time.fixedDeltaTime;
+
+			if (!rewinding)
+			{
+				UpdateTransform();
+			}
+			else
+			{
+				if (rewindable.HadSomethingToRewindToAtFrameStart) { dt *= -1f; }
+				else { dt = 0f; }
+			}
+
+			WaitForAndExecuteCommand(dt);
+			UpdateMoveControl();
+		}
+	}
+
+	private void UpdateTransform()
+	{
+		CachedTransform.Rotate(_spinController.RotationPerFrame);
+		CachedTransform.position += _velocityController.CurrentVelocityUnitsPerFrame;
+	}
+
+	private void UpdateMoveControl()
+	{
+		_velocityController.UpdateVelocity(_time, IsRewinding);
+		_spinController.UpdateSpin(_time, IsRewinding);
+	}
+
+	private void WaitForAndExecuteCommand(float deltaTime)
+	{
+		IsRewinding = deltaTime <= 0f;
+		if (!IsRewinding) { TryGoForwardInTime(); _time += deltaTime; }
+		else { _time += deltaTime; TryRewindtime(); }
+	}
+
+	private void TryGoForwardInTime()
+	{
+		if (_currentCommand == null) { TryStepOnNextCommand(); }
+
+		while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
+		{
+			_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
+			L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
+
+			_currentCommand.Execute(context: this);
+			TryUpdateLoopStack();
+			TryStepOnNextCommand();
+		}
+	}
+
+	private void TryRewindtime()
+	{
+		while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
+		{
+			var nextCommandToExecuteWhenGoingForwardAgain = _commandHistory.Pop();
+			SetCurrentCommand(nextCommandToExecuteWhenGoingForwardAgain);
+			if (_currentCommand != null && _currentCommand.IsControlFlow)
+			{
+				_currentCommand.Execute(this);
+			}
+		}
+
+		/*if (_currentCommand != null) { L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time); }
+		else { L("Couldn't find current command at time " + _time); }*/
+	}
+
+	private void SetCurrentCommand(ExecutedCommand cmd)
+	{
+		_commandPointer = cmd.commandPointer;
+		_currentCommandTriggerTime = cmd.triggerTime;
+		_currentCommand = _commands[_commandPointer];
+	}
+
+	private void TryStepOnNextCommand()
+	{
+		if (_commandPointer < _commands.Count) { _commandPointer++; }
+		_currentCommand = (_commands != null && _commandPointer < _commands.Count) ? _commands[_commandPointer] : null;
+		if (_currentCommand != null) { _currentCommandTriggerTime += _currentCommand.Delay; }
+	}
+	#endregion
+
+	#region loop-related
 	public void StartRepeatLoop()
 	{
 		if (!IsRewinding)
@@ -283,88 +203,17 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
-	protected void SetRotation(Vector3 rotationAngles)
-	{
-		_rotationPerFrame = new Vector3(rotationAngles.x / Consts.IG_FRAMERATE,
-										rotationAngles.y / Consts.IG_FRAMERATE,
-										rotationAngles.z / Consts.IG_FRAMERATE);
-	}
-
-	protected void SetVelocity(Vector2 velocityViewportPerSecond)
-	{
-		var worldVelocity = ViewportUtility.ViewportToWorldVelocity(velocityViewportPerSecond);
-		_currentVelocityUnitsPerFrame = new Vector2(worldVelocity.x / Consts.IG_FRAMERATE,
-													worldVelocity.y / Consts.IG_FRAMERATE);
-	}
-
-	public void Run(List<ICommand> script)
-	{
-		_commands = script;
-		if (script != null && script.Count > 0)
-		{
-			_time = 0f;
-			_commandStack.Clear();
-			_currentCommand = null;
-			_commandPointer = -1;
-			TryStepOnNextCommand();
-			_isRunning = true;
-		}
-	}
-
-	private void FixedUpdate()
-	{
-		if (!_isRunning) { return; }
-
-		// L("ScriptRunner FU");
-
-		var rewinding = rewindable != null && rewindable.IsRewinding;
-		var dt = Time.fixedDeltaTime;
-		if (!rewinding)
-		{
-			TransformUpdate(dt);
-		}
-		else
-		{
-			if (rewindable.HadSomethingToRewindToAtFrameStart) { dt *= -1f; }
-			else { dt = 0f; }
-		}
-
-		WaitForAndExecuteCommand(dt);
-		UpdateMoveControl();
-	}
-
-	private bool ApproximatelySameOrOver(float a, float b)
-	{
-		return a > b || Mathf.Approximately(a, b);
-	}
-
-	private void WaitForAndExecuteCommand(float deltaTime)
-	{
-		IsRewinding = deltaTime <= 0f;
-		if (!IsRewinding) { TryGoForwardInTime(); _time += deltaTime; }
-		else { _time += deltaTime; TryRewindtime(); }
-	}
-
-	private void TryGoForwardInTime()
-	{
-		if (_currentCommand == null)
-		{
-			TryStepOnNextCommand();
-		}
-
-		while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
-		{
-			_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
-			L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
-
-			_currentCommand.Execute(context: this);
-			TryUpdateLoopStack();
-			TryStepOnNextCommand();
-		}
-	}
-
 	private void TryUpdateLoopStack()
 	{
+		// If we're in a loop which we haven't completed yet, count
+		// the non-control-flow commands in it, to be able to give UIDs to spawned entities
+		// (as in: say yo spawn 3 bullets in a loop. on the first iteration, we can just use
+		// the command pointer to uniquely idenfity each. but on subsequent iteration the
+		// uid must also change.)
+
+		// Oh shit. maybe we need a better way for spawn-UIDs;
+		// this will be fucked in nested loops
+
 		if (!_currentCommand.IsControlFlow &&
 			_loopStack.Count > 0 &&
 			_loopStack.Peek().IsCountingCommands)
@@ -372,56 +221,44 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			_loopStack.Peek().commandsWithinLoop += 1;
 		}
 	}
+	#endregion
 
-	private void TryRewindtime()
+	#region IMoveControl
+	public void Stop()
 	{
-		while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
-		{
-			var nextCommandToExecute = _commandHistory.Pop();
-			SetNextCommandTo(nextCommandToExecute);
-			if (_currentCommand != null && _currentCommand.IsControlFlow)
-			{
-				_currentCommand.Execute(this);
-			}
-		}
-
-		/*
-		if (_currentCommand != null)
-		{
-			L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
-		}
-		else
-		{
-			L("Couldn't find current command at time " + _time);
-		}*/
+		_spinController.Stop();
+		_velocityController.Stop();
 	}
 
-	private void SetNextCommandTo(ExecutedCommand cmd)
+	public void AccelerateTo(Vector2 targetVelocity, float deltaT)
 	{
-		_commandPointer = cmd.commandPointer;
-		_currentCommandTriggerTime = cmd.triggerTime;
-		_currentCommand = _commands[_commandPointer];
+		_velocityController.AccelerateTo(targetVelocity, deltaT, _time);
 	}
 
-	private void TryStepOnNextCommand()
+	public void SpinTo(Vector3 rotationSpeedAnglesPerSecond, float deltaT)
 	{
-		if (_commandPointer < _commands.Count)
-		{
-			_commandPointer++;
-		}
-
-		_currentCommand = (_commands != null && _commandPointer < _commands.Count) ? _commands[_commandPointer] : null;
-
-		if (_currentCommand != null)
-		{
-			_currentCommandTriggerTime += _currentCommand.Delay;
-		}
+		_spinController.SpinTo(rotationSpeedAnglesPerSecond, deltaT, _time);
 	}
 
-	private void TransformUpdate(float deltaTime)
+	public void SetPosition(Vector2 viewportCoords)
 	{
-		CachedTransform.Rotate(_rotationPerFrame);
-		CachedTransform.position += _currentVelocityUnitsPerFrame;
+		CachedTransform.position = ViewportUtility.GetWorldPosition(viewportCoords);
+	}
+	#endregion
+
+	private bool ApproximatelySameOrOver(float a, float b)
+	{
+		return a > b || Mathf.Approximately(a, b);
+	}
+
+	private void L(string msg, bool warn = false)
+	{
+		if (log)
+		{
+			var mess = string.Format("{0} // {1} // {2}", msg, InputService.Instance.UpdateCount, _time);
+			if (warn) { Debug.LogWarning(mess); }
+			else { Debug.Log(mess); }
+		}
 	}
 }
 
