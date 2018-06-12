@@ -1098,10 +1098,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scriptToRun: {fileID: 4900000, guid: 2b90503aa9f039c468d862880509bf6b, type: 3}
-  logToConsole: 1
-  replay: 1
+  logToConsole: 0
+  replay: 0
   replayStartFrame: 0
-  logToReplay: {fileID: 4900000, guid: a85950fd1de83aa41bba1947916023ee, type: 3}
+  logToReplay: {fileID: 4900000, guid: fce3a2d84edabe7418fccae488721509, type: 3}
 --- !u!114 &1144996391
 MonoBehaviour:
   m_ObjectHideFlags: 0

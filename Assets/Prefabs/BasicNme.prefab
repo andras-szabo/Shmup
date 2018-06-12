@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee8e302fc64f3545b57bcc351a8a9a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  log: 0
+  log: 1
   rewindable: {fileID: 114576970679946242}
 --- !u!114 &114576970679946242
 MonoBehaviour:

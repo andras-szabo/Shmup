@@ -19,7 +19,7 @@ public class Rewindable : MonoWithCachedTransform
 		public readonly IRewindableEvent[] events;
 	}
 
-	public const int LOG_SIZE_FRAMES = 128;
+	public const int LOG_SIZE_FRAMES = 256;
 	public bool dontLog;
 
 	public bool IsRewinding { get; protected set; }

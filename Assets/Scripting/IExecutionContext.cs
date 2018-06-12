@@ -6,7 +6,8 @@ public interface IExecutionContext
 	IMoveControl MoveControl { get; } 
 	ISpawner Spawner { get; }
 	int CurrentCommandUID { get; }
+	bool IsRewinding { get; }
 
-	void PushCommandPointer();
-	void JumpToCommandPointerOnStack();
+	void StartRepeatLoop();
+	void EndRepeatLoop();
 }

@@ -15,6 +15,38 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		public readonly int commandPointer;
 	}
 
+	public class LoopInfo
+	{
+		public LoopInfo(int completionCount, int commandsWithinLoop)
+		{
+			this.ranToCompletionCount = completionCount;
+			this.commandsWithinLoop = commandsWithinLoop;
+		}
+
+		public bool IsCountingCommands
+		{
+			get
+			{
+				return ranToCompletionCount < 1 && !alreadyCountedCommandsWithinLoop;
+			}
+		}
+
+		public void Completed()
+		{
+			alreadyCountedCommandsWithinLoop = true;
+			ranToCompletionCount += 1;
+		}
+
+		public int GetLoopCommandOffset()
+		{
+			return ranToCompletionCount * commandsWithinLoop;
+		}
+
+		public int ranToCompletionCount;
+		public int commandsWithinLoop;
+		public bool alreadyCountedCommandsWithinLoop;
+	}
+
 	public bool log;
 	public void L(string msg, bool warn = false)
 	{
@@ -61,9 +93,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	{
 		get
 		{
-			//TODO: When we get to rewinding looped scripts, this is going to be messed up,
-			//		so think about how to fix it.
-			return _commandPointer;
+			var loopOffset = _loopStack.Count > 0 ? _loopStack.Peek().GetLoopCommandOffset() : 0;
+			return _commandPointer + loopOffset;
 		}
 	}
 
@@ -83,11 +114,15 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	//TODO: Surely this can be optimized
 	protected List<ICommand> _commands = new List<ICommand>();
 	protected Stack<int> _commandStack = new Stack<int>();
+	protected Stack<LoopInfo> _loopStack = new Stack<LoopInfo>();
 	protected int _commandPointer = 0;
 	protected bool _isRunning;
+	protected int _runningLoopCount;
+	protected bool IsInALoop { get { return _runningLoopCount > 0; } }
 
 	public MonoBehaviour CoroutineRunner { get { return this; } }
 	public IMoveControl MoveControl { get { return this; } }
+	public bool IsRewinding { get; protected set; }
 
 	protected ISpawner _spawner;
 	public ISpawner Spawner
@@ -106,14 +141,48 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		_currentCommand = null;
 	}
 
-	public void PushCommandPointer()
+	public void StartRepeatLoop()
 	{
-		_commandStack.Push(_commandPointer);
+		if (!IsRewinding)
+		{
+			_commandStack.Push(_commandPointer);
+			_loopStack.Push(new LoopInfo(0, 0));
+			_runningLoopCount += 1;
+			L("Starting loop. Count now: " + _runningLoopCount.ToString());
+		}
+		else
+		{
+			_runningLoopCount -= 1;
+			L("Rewound loop start. Count now: " + _runningLoopCount.ToString());
+
+			if (_loopStack.Peek().ranToCompletionCount < 1)
+			{
+				L("Rewound loop to before beginning, popping it from the stack.");
+				_loopStack.Pop();
+			}
+		}
 	}
 
-	public void JumpToCommandPointerOnStack()
+	public void EndRepeatLoop()
 	{
-		_commandPointer = _commandStack.Peek();
+		if (!IsRewinding)
+		{
+			_loopStack.Peek().Completed();
+
+			// Why not pop? because: when we execute repeatEnd, this way we'll
+			// pretend that the last executed command was repeat => so the nex
+			// command to execute will be the first within the loop.
+			_commandPointer = _commandStack.Peek();
+
+			//TODO: If the loop is conditional and we were to exit, then this is where
+			//	we'd increment _loopEndCount;
+			L("Loop end, jumping back.");
+		}
+		else
+		{
+			_loopStack.Peek().ranToCompletionCount -= 1;
+			L("Rewound loop end, completion count now: " + _loopStack.Peek().ranToCompletionCount);
+		}
 	}
 
 	protected void SetRotation(Vector3 rotationAngles)
@@ -148,7 +217,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	{
 		if (!_isRunning) { return; }
 
-		L("ScriptRunner FU");
+		// L("ScriptRunner FU");
 
 		var rewinding = rewindable != null && rewindable.IsRewinding;
 		var dt = Time.fixedDeltaTime;
@@ -173,7 +242,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void WaitForAndExecuteCommand(float deltaTime)
 	{
-		if (deltaTime > 0f) { TryGoForwardInTime(); _time += deltaTime; }
+		IsRewinding = deltaTime <= 0f;
+		if (!IsRewinding) { TryGoForwardInTime(); _time += deltaTime; }
 		else { _time += deltaTime; TryRewindtime(); }
 	}
 
@@ -186,11 +256,22 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 		while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
 		{
-
-			_currentCommand.Execute(context: this);
 			_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
 			L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
+
+			_currentCommand.Execute(context: this);
+			TryUpdateLoopStack();
 			TryStepOnNextCommand();
+		}
+	}
+
+	private void TryUpdateLoopStack()
+	{
+		if (!_currentCommand.IsControlFlow &&
+			_loopStack.Count > 0 &&
+			_loopStack.Peek().IsCountingCommands)
+		{
+			_loopStack.Peek().commandsWithinLoop += 1;
 		}
 	}
 
@@ -199,10 +280,14 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		while (_commandHistory.Count > 0 && ApproximatelySameOrOver(_commandHistory.Peek().triggerTime, _time))
 		{
 			var nextCommandToExecute = _commandHistory.Pop();
-			// TODO: "Reverse execute" the command, if it makes sense
 			SetNextCommandTo(nextCommandToExecute);
+			if (_currentCommand != null && _currentCommand.IsControlFlow)
+			{
+				_currentCommand.Execute(this);
+			}
 		}
 
+		/*
 		if (_currentCommand != null)
 		{
 			L("After rewind-0, next to execute: " + _commandPointer + " time now: " + _time);
@@ -210,7 +295,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		else
 		{
 			L("Couldn't find current command at time " + _time);
-		}
+		}*/
 	}
 
 	private void SetNextCommandTo(ExecutedCommand cmd)

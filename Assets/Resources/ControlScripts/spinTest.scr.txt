@@ -1,6 +1,8 @@
+vel 0 0.2 0
+1 vel 0 0 0
 repeat
-  vel 0.2 0.2 2
-  spin -180 -25 -25 2
-3 spin 0 0 0 3
-  vel -0.2 -0.2 1
-2 endrepeat
+  vel 0.4 0.4 1
+  spin -180 -25 -25 1
+1 spin 0 0 0 1
+  vel -0.4 -0.4 1
+1 endrepeat

@@ -7,9 +7,11 @@ public class ShipScriptRepeat : ACommand
 	{
 	}
 
+	public override bool IsControlFlow { get { return true; } }
+
 	public override void Execute(IExecutionContext context)
 	{
-		context.PushCommandPointer();
+		context.StartRepeatLoop();
 	}
 }
 
@@ -19,9 +21,11 @@ public class ShipScriptEnd : ACommand
 	{
 	}
 
+	public override bool IsControlFlow { get { return true; } }
+
 	public override void Execute(IExecutionContext context)
 	{
-		context.JumpToCommandPointerOnStack();
+		context.EndRepeatLoop();
 	}
 }
 

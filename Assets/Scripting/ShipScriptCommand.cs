@@ -6,6 +6,7 @@ public abstract class ACommand : ICommand
 	public static WaitForSeconds CommandUpdateIntervalObject = new WaitForSeconds(CommandUpdateInterval);
 
 	public float Delay { get { return delay; } }
+	public virtual bool IsControlFlow { get { return false; } }
 
 	public ACommand(SerializedScriptCommand cmd)
 	{
