@@ -66,7 +66,7 @@ public class BasicBullet : APoolable, IDespawnable
 			{
 				if (++_framesSpentInGraveyard == Rewindable.LOG_SIZE_FRAMES)
 				{
-					Despawn();
+					Despawn(despawnBecauseRewind: false);
 				}
 			}
 			else
@@ -119,8 +119,11 @@ public class BasicBullet : APoolable, IDespawnable
 		_isInGraveyard = false;
 	}
 
-	public void Despawn()
+	//TODO: same thing at basicEnemy
+	public override void Despawn(bool despawnBecauseRewind)
 	{
+		base.Despawn(despawnBecauseRewind);
+
 		initialized = false;
 
 		if (_pool != null)

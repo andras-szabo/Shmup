@@ -51,7 +51,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 
 	public override void Init(string param)
 	{
-		// Debug.Log("BasicEnemySpawning at: " + InputService.Instance.UpdateCount);
+		//Debug.Log("BasicEnemySpawning at: " + InputService.Instance.UpdateCount);
 
 		_enemyRewindable.Reset();
 		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordSeparately: true);
@@ -162,7 +162,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 
 			if (_isInGraveyard && ++_framesSpentInGraveyard == Rewindable.LOG_SIZE_FRAMES)
 			{
-				Despawn();
+				Despawn(despawnBecauseRewind: false);
 			}
 		}
 		else
@@ -277,9 +277,11 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 		_enemyRenderer.enabled = true;
 	}
 
-	// This is duplicate code from basicBullet; could be fixed!
-	public void Despawn()
+	//TODO - duplicated code, maybe worth removing
+	public override void Despawn(bool despawnBecauseRewind)
 	{
+		base.Despawn(despawnBecauseRewind);
+
 		if (_pool != null)
 		{
 			_pool.Despawn(this);

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +15,8 @@ public abstract class APoolable : MonoWithCachedTransform
 	public abstract void Init(string param);
 	public abstract void Stop();
 
+	public event Action<bool> OnDespawn;		// Despawn; if true, it was despawned because of rewind
+
 	[SerializeField]
 	protected PoolType _poolType;
 	public PoolType PoolType { get { return _poolType; } }
@@ -22,6 +24,16 @@ public abstract class APoolable : MonoWithCachedTransform
 	public virtual void AssignToPool(GenericPool pool)
 	{
 		_pool = pool;
+	}
+
+	public virtual void Despawn(bool despawnBecauseRewind)
+	{
+		if (OnDespawn != null)
+		{
+			OnDespawn(despawnBecauseRewind);
+		}
+
+		OnDespawn = null;
 	}
 }
 

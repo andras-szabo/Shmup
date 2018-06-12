@@ -57,6 +57,16 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
+	public int CurrentCommandUID
+	{
+		get
+		{
+			//TODO: When we get to rewinding looped scripts, this is going to be messed up,
+			//		so think about how to fix it.
+			return _commandPointer;
+		}
+	}
+
 	public Rewindable rewindable;
 
 	public void Stop()
@@ -163,8 +173,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void WaitForAndExecuteCommand(float deltaTime)
 	{
-		if (deltaTime > 0f) { TryGoForwardInTime(); _time += deltaTime;  }
-		else { _time += deltaTime;  TryRewindtime(); }
+		if (deltaTime > 0f) { TryGoForwardInTime(); _time += deltaTime; }
+		else { _time += deltaTime; TryRewindtime(); }
 	}
 
 	private void TryGoForwardInTime()
@@ -176,6 +186,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 		while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
 		{
+
 			_currentCommand.Execute(context: this);
 			_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
 			L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);

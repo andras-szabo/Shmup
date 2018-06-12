@@ -29,14 +29,14 @@ public class DespawnOnReplayEvent : IRewindableEvent
 	{
 		if (isRewind)
 		{
-			target.Despawn();
+			target.Despawn(true);
 		}
 	}
 }
 
 public interface IDespawnable
 {
-	void Despawn();
+	void Despawn(bool despawnBecauseRewind);
 }
 
 public class HitStunOverEvent : IRewindableEvent

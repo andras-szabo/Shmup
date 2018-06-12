@@ -18,7 +18,7 @@ public class SpawnerScriptSpawn : ACommand
 	{
 		//TODO: Actually deal with the ship type instead of ignoring it
 		context.MoveControl.SetPosition(_position);
-		context.Spawner.SpawnFromPool(_shipScript);
+		context.Spawner.SpawnFromPool(_shipScript, context.CurrentCommandUID);
 	}
 }
 
