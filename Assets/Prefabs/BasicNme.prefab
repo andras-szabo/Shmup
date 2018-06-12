@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee8e302fc64f3545b57bcc351a8a9a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  log: 0
   rewindable: {fileID: 114576970679946242}
 --- !u!114 &114576970679946242
 MonoBehaviour:
@@ -139,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeTimeStart: -1
+  dontLog: 1
 --- !u!114 &114958252797746174
 MonoBehaviour:
   m_ObjectHideFlags: 1

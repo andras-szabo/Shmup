@@ -20,21 +20,31 @@ public class Rewindable : MonoWithCachedTransform
 	}
 
 	public const int LOG_SIZE_FRAMES = 128;
+	public bool dontLog;
 
 	public bool IsRewinding { get; protected set; }
 	public bool HadSomethingToRewindToAtFrameStart { get; protected set; }
+	public int LogCount { get { return _transformLog.Count; } }
 
 	private RingBuffer<TransformData> _transformLog = new RingBuffer<TransformData>(LOG_SIZE_FRAMES);
 	private List<IRewindableEvent> _eventQueue = new List<IRewindableEvent>();
+
+	private bool _recordEventQueueSeparately;
 
 	public void Reset()
 	{
 		_transformLog.Clear();
 	}
 
-	public void EnqueueEvent(IRewindableEvent evt)
+	//TODO - review this naming
+	//		 so the idea is that if the event is "recordSeparately", then after
+	//		 appending it to the _transformLog, it will be cleared and the transform
+	//		 will be logged _again_. This is useful for the initial recording of
+	//		 the "despawnOnReplay" event.
+	public void EnqueueEvent(IRewindableEvent evt, bool recordSeparately = false)
 	{
 		_eventQueue.Add(evt);
+		_recordEventQueueSeparately = recordSeparately;
 	}
 
 	private void FixedUpdate()
@@ -80,5 +90,16 @@ public class Rewindable : MonoWithCachedTransform
 	{
 		_transformLog.Push(new TransformData(CachedTransform.position, CachedTransform.rotation, _eventQueue));
 		_eventQueue.Clear();
+
+		if (_recordEventQueueSeparately)
+		{
+			_recordEventQueueSeparately = false;
+			_transformLog.Push(new TransformData(CachedTransform.position, CachedTransform.rotation, _eventQueue));
+		}
+		
+		if (!dontLog)
+		{
+			Debug.LogFormat("-- rewindable pushed; count: {0}, FU: {1}", LogCount, InputService.Instance.UpdateCount);
+		}
 	}
 }

@@ -24,7 +24,8 @@ public class InputService : MonoBehaviour
 	public bool RewindKey { get; protected set; }
 
 	public bool PlaybackMode { get; protected set; }
-	public int FrameCount { get; protected set; }
+	public int UpdateCount { get; protected set; }
+	public bool Initialized { get; protected set; }
 
 	public bool LogToConsole { get; set; }
 
@@ -48,7 +49,8 @@ public class InputService : MonoBehaviour
 	public void Init()
 	{
 		Debug.Log("[InputService] Init");
-		FrameCount = 0;
+		UpdateCount = 0;
+		Initialized = true;
 	}
 
 	public void Playback(List<CustomInputEvent> eventStream, string streamName, int customStartFrameCount = 0)
@@ -56,20 +58,24 @@ public class InputService : MonoBehaviour
 		Debug.LogFormat("[InputService] Starting playback of {0}; from frame count: {1} // {2}",
 						 streamName, customStartFrameCount, Time.frameCount);
 
-		FrameCount = customStartFrameCount;
+		UpdateCount = customStartFrameCount;
 		_log = eventStream;
 		PlaybackMode = true;
 		_playbackLogIndex = 0;
+		Initialized = true;
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
-		FrameCount++;
-
-		GetStatusChangeSinceLastUpdate();
-		if (_statusChanges.Count > 0)
+		if (Initialized)
 		{
-			LogStatusChanges(_statusChanges);
+			UpdateCount++;
+
+			GetStatusChangeSinceLastUpdate();
+			if (_statusChanges.Count > 0)
+			{
+				LogStatusChanges(_statusChanges);
+			}
 		}
 	}
 
@@ -103,7 +109,7 @@ public class InputService : MonoBehaviour
 #endif
 		}
 
-		while ((_playbackLogIndex < log.Count) && (log[_playbackLogIndex].frameCount == FrameCount))
+		while ((_playbackLogIndex < log.Count) && (log[_playbackLogIndex].updateCount == UpdateCount))
 		{
 			ProcessRecordedEvent(log[_playbackLogIndex]);
 			statusChanges.Push(log[_playbackLogIndex]);
@@ -148,7 +154,7 @@ public class InputService : MonoBehaviour
 		RewindKey = Input.GetKey(REWIND_KEY);
 		if (RewindKey != previousKeyState)
 		{
-			statusChanges.Push(new CustomInputEvent(FrameCount, CustomInputEvent.Type.Key, REWIND_KEY, RewindKey));
+			statusChanges.Push(new CustomInputEvent(UpdateCount, CustomInputEvent.Type.Key, REWIND_KEY, RewindKey));
 		}
 	}
 
@@ -158,7 +164,7 @@ public class InputService : MonoBehaviour
 		MouseLeftButton = Input.GetMouseButton(0);
 		if (previousButtonState != MouseLeftButton)
 		{
-			statusChanges.Push(new CustomInputEvent(FrameCount, CustomInputEvent.Type.MouseButton, 0, MouseLeftButton));
+			statusChanges.Push(new CustomInputEvent(UpdateCount, CustomInputEvent.Type.MouseButton, 0, MouseLeftButton));
 		}
 	}
 
@@ -171,7 +177,7 @@ public class InputService : MonoBehaviour
 		//TODO - is this quick enough?
 		if (delta.x > 0f || delta.x < 0f || delta.y > 0f || delta.y < 0f)
 		{
-			statusChanges.Push(new CustomInputEvent(FrameCount, CustomInputEvent.Type.MousePositionDelta, delta));
+			statusChanges.Push(new CustomInputEvent(UpdateCount, CustomInputEvent.Type.MousePositionDelta, delta));
 		}
 	}
 
@@ -190,7 +196,7 @@ public class InputService : MonoBehaviour
 
 			if (LogToConsole)
 			{
-				Debug.LogFormat("{0} // {1}", FrameCount, lastStatusChange.ToString());
+				Debug.LogFormat("{0} // {1}", UpdateCount, lastStatusChange.ToString());
 			}
 		}
 	}

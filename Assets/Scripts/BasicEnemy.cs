@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Utilities;
 
 [RequireComponent(typeof(ScriptRunner))]
 public class BasicEnemy : APoolable, IHittable, IDespawnable
@@ -50,10 +51,10 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 
 	public override void Init(string param)
 	{
-		Debug.Log("BasicEnemySpawning at: " + Time.frameCount);
+		// Debug.Log("BasicEnemySpawning at: " + InputService.Instance.UpdateCount);
 
 		_enemyRewindable.Reset();
-		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this));
+		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordSeparately: true);
 
 		GetOutOfGraveyard();
 		_framesSpentInGraveyard = 0;
@@ -148,6 +149,8 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 
 	private void FixedUpdate()
 	{
+		// Debug.LogFormat("BasicEnemy / LogCount: {0} / FU: {1}", _enemyRewindable.LogCount, InputService.Instance.UpdateCount);
+
 		UpdateStatus();
 
 		if (!_enemyRewindable.IsRewinding)

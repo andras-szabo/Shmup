@@ -13,7 +13,7 @@ public class CustomInputEvent
 
 	public CustomInputEvent(int frameCount, Type type, Vector3 vectorParam)
 	{
-		this.frameCount = frameCount;
+		this.updateCount = frameCount;
 		this.type = type;
 		this.vectorParam = vectorParam;
 		this.intParam = 0;
@@ -23,7 +23,7 @@ public class CustomInputEvent
 
 	public CustomInputEvent(int frameCount, Type type, int intParam, bool boolParam)
 	{
-		this.frameCount = frameCount;
+		this.updateCount = frameCount;
 		this.type = type;
 		this.intParam = intParam;
 		this.boolParam = boolParam;
@@ -33,7 +33,7 @@ public class CustomInputEvent
 
 	public CustomInputEvent(int frameCount, Type type, KeyCode keyParam, bool boolParam)
 	{
-		this.frameCount = frameCount;
+		this.updateCount = frameCount;
 		this.type = type;
 		this.intParam = 0;
 		this.boolParam = boolParam;
@@ -46,11 +46,11 @@ public class CustomInputEvent
 	public int intParam;
 	public bool boolParam;
 	public KeyCode keyParam;
-	public int frameCount;
+	public int updateCount;
 
 	public override string ToString()
 	{
-		return string.Format("FC: {0} - {1}", frameCount, GetParamsAsString());
+		return string.Format("FC: {0} - {1}", updateCount, GetParamsAsString());
 	}
 
 	private string GetParamsAsString()

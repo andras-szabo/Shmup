@@ -20,7 +20,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	{
 		if (log)
 		{
-			var mess = string.Format("{0} // {1} // {2}", msg, Time.frameCount, _time);
+			var mess = string.Format("{0} // {1} // {2}", msg, InputService.Instance.UpdateCount, _time);
 			if (warn) { Debug.LogWarning(mess); }
 			else { Debug.Log(mess); }
 		}
@@ -74,10 +74,10 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	protected List<ICommand> _commands = new List<ICommand>();
 	protected Stack<int> _commandStack = new Stack<int>();
 	protected int _commandPointer = 0;
+	protected bool _isRunning;
 
 	public MonoBehaviour CoroutineRunner { get { return this; } }
 	public IMoveControl MoveControl { get { return this; } }
-
 
 	protected ISpawner _spawner;
 	public ISpawner Spawner
@@ -130,11 +130,16 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			_currentCommand = null;
 			_commandPointer = -1;
 			TryStepOnNextCommand();
+			_isRunning = true;
 		}
 	}
 
 	private void FixedUpdate()
 	{
+		if (!_isRunning) { return; }
+
+		L("ScriptRunner FU");
+
 		var rewinding = rewindable != null && rewindable.IsRewinding;
 		var dt = Time.fixedDeltaTime;
 
@@ -158,10 +163,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private void WaitForAndExecuteCommand(float deltaTime)
 	{
-		if (deltaTime > 0f) { TryGoForwardInTime(); }
-		else { TryRewindtime(); }
-
-		_time += deltaTime;
+		if (deltaTime > 0f) { TryGoForwardInTime(); _time += deltaTime;  }
+		else { _time += deltaTime;  TryRewindtime(); }
 	}
 
 	private void TryGoForwardInTime()
@@ -218,8 +221,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		if (_currentCommand != null)
 		{
 			_currentCommandTriggerTime += _currentCommand.Delay;
-
-			L("CCTTV: " + _currentCommandTriggerTime);
 		}
 	}
 
