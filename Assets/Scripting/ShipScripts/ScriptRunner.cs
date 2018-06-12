@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
 public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionContext
 {
+	//TODO: cleanup
 	public struct ExecutedCommand
 	{
 		public ExecutedCommand(float triggerTime, int commandPointer)
@@ -15,6 +19,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		public readonly int commandPointer;
 	}
 
+	//TODO: cleanup
 	public class LoopInfo
 	{
 		public LoopInfo(int completionCount, int commandsWithinLoop)
@@ -47,6 +52,9 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		public bool alreadyCountedCommandsWithinLoop;
 	}
 
+
+
+	//TODO: cleanup
 	public bool log;
 	public void L(string msg, bool warn = false)
 	{
@@ -67,7 +75,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	//TODO: Separate spinner component maybe
 	private Vector3 _rotationPerFrame;
 	private Vector3 _rotationPerSecond;
-	public Vector3 CurrentRotSpeedAnglesPerSecond
+	private Vector3 CurrentRotSpeedAnglesPerSecond
 	{
 		get { return _rotationPerSecond; }
 		set
@@ -79,13 +87,103 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private Vector2 _currentVelocityViewportPerSecond;
 	private Vector3 _currentVelocityUnitsPerFrame;
-	public Vector2 CurrentVelocityViewportPerSecond
+	private Vector2 CurrentVelocityViewportPerSecond
 	{
 		get { return _currentVelocityViewportPerSecond; }
 		set
 		{
 			_currentVelocityViewportPerSecond = value;
 			SetVelocity(_currentVelocityViewportPerSecond);
+		}
+	}
+
+	public class Lerp<T>
+	{
+		public float startTime;
+		public float endTime;
+		public T startVector;
+		public T endVector;
+	}
+
+	private Stack<Lerp<Vector2>> _velocityLerpStack = new Stack<Lerp<Vector2>>();
+	private Stack<Lerp<Vector3>> _spinLerpStack = new Stack<Lerp<Vector3>>();
+
+	public void SpinTo(Vector3 rotationSpeedAnglesPerSecond, float deltaT)
+	{
+		if (deltaT <= 0f) { CurrentRotSpeedAnglesPerSecond = rotationSpeedAnglesPerSecond; return; }
+		var rotationLerp = new Lerp<Vector3>
+		{
+			startTime = _time,
+			endTime = _time + deltaT,
+			startVector = CurrentRotSpeedAnglesPerSecond,
+			endVector = rotationSpeedAnglesPerSecond
+		};
+
+		_spinLerpStack.Push(rotationLerp);
+	}
+
+	public void AccelerateTo(Vector2 targetVelocity, float deltaT)
+	{
+		if (deltaT <= 0f) { CurrentVelocityViewportPerSecond = targetVelocity; return; }
+
+		var velocityLerp = new Lerp<Vector2>
+		{
+			startTime = _time,
+			endTime = _time + deltaT,
+			startVector = CurrentVelocityViewportPerSecond,
+			endVector = targetVelocity
+		};
+
+		_velocityLerpStack.Push(velocityLerp);
+	}
+
+	private void UpdateMoveControl()
+	{
+		UpdateVelocity();
+		UpdateSpin();
+	}
+
+	//TODO: could be static 
+	private void GetRidOfLerpsInTheFuture<T>(Stack<Lerp<T>> lerpStack, float timeNow)
+	{
+		while (lerpStack.Count > 0 && lerpStack.Peek().startTime > timeNow)
+		{
+			lerpStack.Pop();
+		}
+	}
+
+	private void UpdateSpin()
+	{
+		GetRidOfLerpsInTheFuture(_spinLerpStack, _time);
+
+		//TODO: can we do this nicer? -> it's almost the same as updatevelocity
+		if (!IsRewinding && _spinLerpStack.Count > 0)
+		{
+			var lastLerp = _spinLerpStack.Peek();
+			if (lastLerp.endTime > _time)
+			{
+				var duration = lastLerp.endTime - lastLerp.startTime;
+				var elapsed = _time - lastLerp.startTime;
+				var rate = Mathf.Clamp01(elapsed / duration);
+				CurrentRotSpeedAnglesPerSecond = (Vector3.Lerp(lastLerp.startVector, lastLerp.endVector, rate));
+			}
+		}
+	}
+
+	private void UpdateVelocity()
+	{
+		GetRidOfLerpsInTheFuture(_velocityLerpStack, _time);
+
+		if (!IsRewinding && _velocityLerpStack.Count > 0)
+		{
+			var lastVelocityLerp = _velocityLerpStack.Peek();
+			if (lastVelocityLerp.endTime > _time)
+			{
+				var duration = lastVelocityLerp.endTime - lastVelocityLerp.startTime;
+				var elapsed = _time - lastVelocityLerp.startTime;
+				var rate = Mathf.Clamp01(elapsed / duration);
+				CurrentVelocityViewportPerSecond = (Vector2.Lerp(lastVelocityLerp.startVector, lastVelocityLerp.endVector, rate));
+			}
 		}
 	}
 
@@ -221,7 +319,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 		var rewinding = rewindable != null && rewindable.IsRewinding;
 		var dt = Time.fixedDeltaTime;
-
 		if (!rewinding)
 		{
 			TransformUpdate(dt);
@@ -233,6 +330,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 
 		WaitForAndExecuteCommand(dt);
+		UpdateMoveControl();
 	}
 
 	private bool ApproximatelySameOrOver(float a, float b)

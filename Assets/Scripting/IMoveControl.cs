@@ -2,9 +2,8 @@
 
 public interface IMoveControl
 {
-	Vector3 CurrentRotSpeedAnglesPerSecond { get; set; } 
-	Vector2 CurrentVelocityViewportPerSecond { get; set; }
-
 	void Stop();
 	void SetPosition(Vector2 viewportCoords);
+	void AccelerateTo(Vector2 targetVelocity, float deltaT);
+	void SpinTo(Vector3 rotationSpeedAnglesPerSecond, float deltaT);
 }

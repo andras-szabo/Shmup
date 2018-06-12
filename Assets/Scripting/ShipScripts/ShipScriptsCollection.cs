@@ -42,21 +42,7 @@ public class ShipScriptVelocity : ACommand
 
 	public override void Execute(IExecutionContext context)
 	{
-		context.CoroutineRunner.StartCoroutine(Accelerate(context.MoveControl));
-	}
-
-	public IEnumerator Accelerate(IMoveControl moveControl)
-	{
-		var elapsedTime = 0f;
-		var startVelocity = moveControl.CurrentVelocityViewportPerSecond;
-		while (elapsedTime < _deltaT)
-		{
-			moveControl.CurrentVelocityViewportPerSecond = _velocity.LerpFrom(startVelocity, elapsedTime / _deltaT);
-			yield return ACommand.CommandUpdateIntervalObject;
-			elapsedTime += ACommand.CommandUpdateInterval;
-		}
-
-		moveControl.CurrentVelocityViewportPerSecond = _velocity;
+		context.MoveControl.AccelerateTo(_velocity, _deltaT);
 	}
 }
 
@@ -74,19 +60,6 @@ public class ShipScriptSpin : ACommand
 
 	public override void Execute(IExecutionContext context)
 	{
-		context.CoroutineRunner.StartCoroutine(SetRotationOverTime(context.MoveControl));
-	}
-
-	protected IEnumerator SetRotationOverTime(IMoveControl moveControl)
-	{
-		var elapsedTime = 0f;
-		var startRotation = moveControl.CurrentRotSpeedAnglesPerSecond;
-		while (elapsedTime < _deltaT)
-		{
-			moveControl.CurrentRotSpeedAnglesPerSecond = _rotation.LerpFrom(startRotation, elapsedTime / _deltaT);
-			yield return ACommand.CommandUpdateIntervalObject;
-			elapsedTime += ACommand.CommandUpdateInterval;
-		}
-		moveControl.CurrentRotSpeedAnglesPerSecond = _rotation;
+		context.MoveControl.SpinTo(_rotation, _deltaT);
 	}
 }
