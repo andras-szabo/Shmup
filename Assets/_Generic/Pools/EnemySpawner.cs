@@ -9,7 +9,7 @@ public class EnemySpawner : MonoWithCachedTransform
 
 	public void SpawnWithScript(string scriptName)
 	{
-		spawner.SpawnFromPool(scriptName, uid++);
+		spawner.SpawnFromPool("basicenemy", uid++, scriptName);
 	}
 
 }

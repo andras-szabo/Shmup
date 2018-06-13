@@ -51,7 +51,7 @@ public class ShipController : MonoWithCachedTransform
 			_elapsedSeconds = 0f;
 			foreach (var spawner in _bulletSpawners)
 			{
-				spawner.SpawnFromPool(string.Empty, Spawner.DONT_TRACK_SPAWNED_ID);
+				spawner.SpawnFromPool(string.Empty, Spawner.DONT_TRACK_SPAWNED_ID, string.Empty);
 			}
 		}
 	}

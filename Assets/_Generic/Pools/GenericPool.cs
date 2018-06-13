@@ -20,6 +20,7 @@ public abstract class APoolable : MonoWithCachedTransform
 	[SerializeField]
 	protected PoolType _poolType;
 	public PoolType PoolType { get { return _poolType; } }
+	public string TypeName { get; protected set; }
 
 	public virtual void AssignToPool(GenericPool pool)
 	{

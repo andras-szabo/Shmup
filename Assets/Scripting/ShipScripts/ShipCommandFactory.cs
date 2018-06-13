@@ -16,6 +16,7 @@ public class ShipCommandFactory : IParser
 			case 2: return new ShipScriptSpin(cmd);
 			case 3: return new ShipScriptEnd(cmd);
 			case 4: return new ShipScriptVelocity(cmd);
+			case 5: return new ShipScriptShoot(cmd);
 		}
 
 		return null;

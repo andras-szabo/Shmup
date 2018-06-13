@@ -758,7 +758,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2024d7086db0dd648ad9bfd4c7db3035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolTypes: 0100000002000000
+  poolTypes: 010000000200000003000000
 --- !u!4 &734225894
 Transform:
   m_ObjectHideFlags: 0
@@ -879,8 +879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3937d732ea8eb23479771f32d76f22e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prototype: {fileID: 114668481406775224, guid: 53efe73de1fb16349afde577af6215d5,
-    type: 2}
+  prototypes:
+  - {fileID: 114668481406775224, guid: 53efe73de1fb16349afde577af6215d5, type: 2}
 --- !u!33 &782369235
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1031,8 +1031,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3937d732ea8eb23479771f32d76f22e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prototype: {fileID: 114668481406775224, guid: 53efe73de1fb16349afde577af6215d5,
-    type: 2}
+  prototypes:
+  - {fileID: 114668481406775224, guid: 53efe73de1fb16349afde577af6215d5, type: 2}
 --- !u!33 &1067877829
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1084,8 +1084,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3937d732ea8eb23479771f32d76f22e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prototype: {fileID: 114209129737698206, guid: 59e66ef5674e3aa46a3a622255c91349,
-    type: 2}
+  prototypes:
+  - {fileID: 114209129737698206, guid: 59e66ef5674e3aa46a3a622255c91349, type: 2}
+  - {fileID: 114209129737698206, guid: 19f33863e1755ff4a9a8e67029ac2832, type: 2}
 --- !u!114 &1144996390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1099,7 +1100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scriptToRun: {fileID: 4900000, guid: 2b90503aa9f039c468d862880509bf6b, type: 3}
   logToConsole: 0
-  replay: 1
+  replay: 0
   replayStartFrame: 0
   logToReplay: {fileID: 4900000, guid: a120d6130088c7f448106c0f3597f436, type: 3}
 --- !u!114 &1144996391

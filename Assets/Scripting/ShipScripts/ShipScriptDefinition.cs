@@ -37,7 +37,9 @@ public static class ShipScriptDefinition
 			typeof(float)
 		});
 
-		def.Add(repeat, spin, end, vel);
+		var shoot = new ScriptCommandDefinition(5, "shoot", 0, null);
+
+		def.Add(repeat, spin, end, vel, shoot);
 
 		return def;
 	}

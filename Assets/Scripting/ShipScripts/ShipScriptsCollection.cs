@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class ShipScriptRepeat : ACommand
 {
@@ -26,6 +25,18 @@ public class ShipScriptEnd : ACommand
 	public override void Execute(IExecutionContext context)
 	{
 		context.EndRepeatLoop();
+	}
+}
+
+public class ShipScriptShoot : ACommand
+{
+	public ShipScriptShoot(SerializedScriptCommand cmd) : base(cmd)
+	{
+	}
+
+	public override void Execute(IExecutionContext context)
+	{
+		context.Spawner.SpawnFromPool(string.Empty, context.CurrentCommandUID, string.Empty);
 	}
 }
 

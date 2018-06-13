@@ -31,6 +31,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 	public Material normalMaterial;
 	public Material hitMaterial;
 
+	public string typename;
 	public float startingHP = 10;
 	protected float currentHP;
 
@@ -51,6 +52,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 	public override void Init(string param)
 	{
 		//Debug.Log("BasicEnemySpawning at: " + InputService.Instance.UpdateCount);
+		TypeName = typename;
 
 		_enemyRewindable.Reset();
 		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);

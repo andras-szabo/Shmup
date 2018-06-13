@@ -36,6 +36,8 @@ public class BasicBullet : APoolable, IDespawnable
 
 	public override void Init(string param)
 	{
+		TypeName = "basicbullet";
+
 		CachedRewindable.Reset(_velocityController, _spinController);
 		CachedRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);
 
