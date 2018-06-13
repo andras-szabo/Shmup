@@ -66,6 +66,24 @@ namespace RingBuffer
 			return itemToReturn;
 		}
 
+		public T Peek()
+		{
+			if (IsEmpty) { throw new System.ArgumentException("Trying to peek into empty ringbuffer."); }
+			return _list[_endIndex - 1];
+		}
+
+		public void UpdateLastEntry(System.Func<T, T> updateMethod)
+		{
+			if (IsEmpty) { throw new System.ArgumentException("Trying to update last entry in empty ringbuffer."); }
+
+			if (updateMethod != null)
+			{
+				var lastIndex = _endIndex - 1;
+				_list[lastIndex] = updateMethod(_list[lastIndex]);
+			}
+
+		}
+
 		public void Clear()
 		{
 			_startIndex = (_list.Count < Capacity) ? _list.Count : 0;

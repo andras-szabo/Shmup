@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Utilities;
 
 [RequireComponent(typeof(ScriptRunner))]
 public class BasicEnemy : APoolable, IHittable, IDespawnable
@@ -45,7 +44,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 
 	public override void Stop()
 	{
-		scriptRunner.MoveControl.Stop();
+		scriptRunner.ResetScript();
 		SwapMaterials(false);
 	}
 
@@ -54,7 +53,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 		//Debug.Log("BasicEnemySpawning at: " + InputService.Instance.UpdateCount);
 
 		_enemyRewindable.Reset();
-		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordSeparately: true);
+		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);
 
 		GetOutOfGraveyard();
 		_framesSpentInGraveyard = 0;
@@ -81,7 +80,10 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 	{
 		//TODO: there must be a better way to do this,
 		// without GetComponent; via UID...?!
-		GetHit(other.GetComponent<Damage>());
+		if (!_enemyRewindable.IsRewinding)
+		{
+			GetHit(other.GetComponent<Damage>());
+		}
 	}
 
 	private void GetHit(Damage dmg)

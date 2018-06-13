@@ -8,6 +8,12 @@ using RingBuffer;
 
 public class RingBufferTests
 {
+	public class TestData
+	{
+		public TestData(int v) { someValue = v; }
+		public int someValue;
+	}
+
 	[Test]
 	public void CtorTest()
 	{
@@ -34,6 +40,20 @@ public class RingBufferTests
 		}
 
 		Assert.IsTrue(buffer.Count == 40, buffer.Count.ToString());
+	}
+
+	[Test]
+	public void EdgeCaseTest()
+	{
+		var b = new RingBuffer<int>(128);
+		for (int i = 0; i < 128; ++i) { b.Push(i); }
+		Assert.IsTrue(b.Count == 128);
+
+		for (int i = 0; i < 3; ++i) { b.Push(-1); }
+		Assert.IsTrue(b.Count == 128);
+
+		for (int i = 0; i < 3; ++i) { b.Pop(); }
+		Assert.IsTrue(b.Peek() == 127);
 	}
 
 	[Test]
@@ -101,6 +121,86 @@ public class RingBufferTests
 		buffer.Clear();
 
 		Assert.IsTrue(buffer.IsEmpty && buffer.Count == 0);
+	}
+
+	[Test]
+	public void PeekTest()
+	{
+		var b = new RingBuffer<string>(4);
+
+		b.Push("John");
+		b.Push("Paul");
+		b.Push("George");
+		b.Push("Ringo");
+
+		Assert.IsTrue(b.Peek() == "Ringo", b.Peek());
+		Assert.IsTrue(b.Count == 4);
+
+		b.Push("Pete");
+
+		Assert.IsTrue(b.Peek() == "Pete", b.Peek());
+		Assert.IsTrue(b.Count == 4);
+
+		b.Pop();
+
+		Assert.IsTrue(b.Peek() == "Ringo", b.Peek());
+		Assert.IsTrue(b.Count == 3);
+	}
+
+	[Test]
+	public void UpdateLastEntryTest()
+	{
+		var b = new RingBuffer<string>(4);
+
+		b.Push("John");	b.Push("Paul");	b.Push("George"); b.Push("Pete");
+
+		b.UpdateLastEntry(entry => "Ringo");
+
+		Assert.IsTrue(b.Peek() == "Ringo", b.Peek());
+	}
+
+	[Test]
+	public void UpdateVectorLastEntryTest()
+	{
+		var b = new RingBuffer<Vector2>(3);
+
+		for (int i = 0; i < 3; ++i)
+		{
+			b.Push(new Vector2(1f, 1f));
+		}
+
+		Assert.IsTrue(b.Peek() == Vector2.one, b.Peek().ToString());
+
+		b.UpdateLastEntry(vec => new Vector2(vec.x + 2f, vec.y + 2f));
+
+		var target = new Vector2(3f, 3f);
+
+		Assert.IsTrue(b.Peek() == target, b.Peek().ToString());
+
+		b.Pop();
+
+		Assert.IsTrue(b.Peek() == new Vector2(1f, 1f));
+
+		b.UpdateLastEntry(vec => { vec.x = 2f; return vec; });	// this copies twice
+
+		Assert.IsTrue(b.Peek() == new Vector2(2f, 1f));
+
+		// but this wouldn't work: b.Peek().x = 4; because T is Vector2 which is a struct
+	}
+
+	[Test]
+	public void UpdateClassData()
+	{
+		var b = new RingBuffer<TestData>(4);
+		for (int i = 0; i < 4; ++i) { b.Push(new TestData(i)); }
+		Assert.IsTrue(b.Peek().someValue == 3, b.Peek().someValue.ToString());
+
+		b.UpdateLastEntry(entry => { entry.someValue = 9; return entry; });
+		Assert.IsTrue(b.Peek().someValue == 9, b.Peek().someValue.ToString());
+
+		b.Peek().someValue = 12;
+
+		Assert.IsTrue(b.Peek().someValue == 12, b.Peek().someValue.ToString());
 	}
 
 	[Test]

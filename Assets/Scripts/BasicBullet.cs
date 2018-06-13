@@ -5,48 +5,55 @@ public class BasicBullet : APoolable, IDespawnable
 	public Renderer myRenderer;
 	public Collider myCollider;
 
+	private VelocityController _velocityController = new VelocityController();
+	private SpinController _spinController = new SpinController();
+
 	private float _elapsedSeconds;
 	private int _framesSpentInGraveyard;
 	private bool _isInGraveyard;
 
 	public float lifespan = 2f;
-	public float speedUnitPerSeconds = 50f;
-
-	private Rigidbody _rb;
-	private Rigidbody RB
-	{
-		get
-		{
-			return _rb ?? (_rb = GetComponent<Rigidbody>());
-		}
-	}
+	public float speedViewportPerSecond = 1f;
 
 	private bool initialized = false;
 
-	private Rewindable _rewindable;
-	private Rewindable Rewindable
+	private BulletRewindable _rewindable;
+	private BulletRewindable CachedRewindable
 	{
 		get
 		{
-			return _rewindable ?? (_rewindable = GetComponent<Rewindable>());
+			return _rewindable ?? (_rewindable = GetComponent<BulletRewindable>());
 		}
 	}
 
 	private void OnTriggerEnter(Collider other)
 	{
-		PutInGraveyard();
+		if (!CachedRewindable.IsRewinding)
+		{
+			PutInGraveyard();
+		}
 	}
 
 	public override void Init(string param)
 	{
-		RB.velocity = transform.up * speedUnitPerSeconds;
-		_elapsedSeconds = 0f;
+		CachedRewindable.Reset(_velocityController, _spinController);
+		CachedRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);
 
-		Rewindable.Reset();
-		Rewindable.EnqueueEvent(new DespawnOnReplayEvent(this));
+		_velocityController.AccelerateTo(transform.up * speedViewportPerSecond, 0f, 0f);
+		_elapsedSeconds = 0f;
+		_framesSpentInGraveyard = 0;
 
 		GetOutOfGraveyard();
 		initialized = true;
+	}
+
+	private void UpdateTransform()
+	{
+		if (!_isInGraveyard)
+		{
+			CachedTransform.Rotate(_spinController.RotationPerFrame);
+			CachedTransform.position += _velocityController.CurrentVelocityUnitsPerFrame;
+		}
 	}
 
 	private void FixedUpdate()
@@ -57,9 +64,9 @@ public class BasicBullet : APoolable, IDespawnable
 			return;
 		}
 
-		if (!Rewindable.IsRewinding)
+		if (!CachedRewindable.IsRewinding)
 		{
-			if (RB.isKinematic) { RB.isKinematic = false; RB.velocity = transform.up * speedUnitPerSeconds; }
+			UpdateTransform();
 			_elapsedSeconds += Time.fixedDeltaTime;
 
 			if (_isInGraveyard)
@@ -76,7 +83,7 @@ public class BasicBullet : APoolable, IDespawnable
 		}
 		else
 		{
-			if (_isInGraveyard) 
+			if (_isInGraveyard)
 			{
 				if (--_framesSpentInGraveyard == 0)
 				{
@@ -85,13 +92,12 @@ public class BasicBullet : APoolable, IDespawnable
 			}
 
 			_elapsedSeconds -= Time.fixedDeltaTime;
-			if (!RB.isKinematic) { RB.isKinematic = true; }
 		}
 	}
 
 	public override void Stop()
 	{
-		RB.velocity = Vector3.zero;
+		CachedRewindable.Reset(_velocityController, _spinController);
 	}
 
 	private void CheckOutOfBounds()
@@ -107,15 +113,13 @@ public class BasicBullet : APoolable, IDespawnable
 		_isInGraveyard = true;
 		myCollider.enabled = false;
 		myRenderer.enabled = false;
-		RB.isKinematic = true;
-		_framesSpentInGraveyard = 0;	
+		_framesSpentInGraveyard = 0;
 	}
 
 	private void GetOutOfGraveyard()
 	{
 		myCollider.enabled = true;
 		myRenderer.enabled = true;
-		RB.isKinematic = false;
 		_isInGraveyard = false;
 	}
 

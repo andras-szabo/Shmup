@@ -26,16 +26,11 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	public MonoBehaviour CoroutineRunner { get { return this; } }
 	public IMoveControl MoveControl { get { return this; } }
-	public bool IsRewinding { get; protected set; }
+	public bool IsRewinding { get; private set; }
 
-	public int CurrentCommandUID
-	{
-		get
-		{
-			var loopOffset = _loopStack.Count > 0 ? _loopStack.Peek().GetLoopCommandOffset() : 0;
-			return _commandPointer + loopOffset;
-		}
-	}
+	//TODO: if _commandHistory is replaced by a ringbuffer, you won't be
+	//		able to use it to uniquely identify executed commands.
+	public int CurrentCommandUID { get { return _commandHistory.Count; } }
 
 	protected ISpawner _spawner;
 	public ISpawner Spawner
@@ -50,6 +45,10 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	public void ResetScript()
 	{
 		_commandStack.Clear();
+		_commandHistory.Clear();
+		_velocityController.Reset();
+		_spinController.Reset();
+
 		_time = 0f;
 		_commandPointer = -1;
 		_currentCommand = null;
@@ -62,6 +61,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		{
 			_time = 0f;
 			_commandStack.Clear();
+			_commandHistory.Clear();
+
 			_currentCommand = null;
 			_commandPointer = -1;
 			TryStepOnNextCommand();
@@ -122,7 +123,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
 
 			_currentCommand.Execute(context: this);
-			TryUpdateLoopStack();
 			TryStepOnNextCommand();
 		}
 	}
@@ -203,24 +203,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		}
 	}
 
-	private void TryUpdateLoopStack()
-	{
-		// If we're in a loop which we haven't completed yet, count
-		// the non-control-flow commands in it, to be able to give UIDs to spawned entities
-		// (as in: say yo spawn 3 bullets in a loop. on the first iteration, we can just use
-		// the command pointer to uniquely idenfity each. but on subsequent iteration the
-		// uid must also change.)
-
-		// Oh shit. maybe we need a better way for spawn-UIDs;
-		// this will be fucked in nested loops
-
-		if (!_currentCommand.IsControlFlow &&
-			_loopStack.Count > 0 &&
-			_loopStack.Peek().IsCountingCommands)
-		{
-			_loopStack.Peek().commandsWithinLoop += 1;
-		}
-	}
 	#endregion
 
 	#region IMoveControl

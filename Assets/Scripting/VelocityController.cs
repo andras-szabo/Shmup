@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class VelocityController
 {
-	public Vector3 CurrentVelocityUnitsPerFrame { get; private set; }
+	public Vector3 CurrentVelocityUnitsPerFrame { get; set; }
 
 	private Vector2 _currentVelocityViewportPerSecond;
 	public Vector2 CurrentVelocityViewportPerSecond
@@ -36,6 +36,12 @@ public class VelocityController
 	public void Stop()
 	{
 		CurrentVelocityViewportPerSecond = Vector2.zero;
+	}
+
+	public void Reset()
+	{
+		Stop();
+		_velocityLerpStack.Clear();
 	}
 
 	public void UpdateVelocity(float currentTime, bool isRewinding)

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SpinController
 {
-	public Vector3 RotationPerFrame { get; private set; }
+	public Vector3 RotationPerFrame { get; set; }
 
 	private Vector3 _rotationPerSecond;
 	public Vector3 CurrentRotSpeedAnglesPerSecond
@@ -42,6 +42,12 @@ public class SpinController
 	public void Stop()
 	{
 		CurrentRotSpeedAnglesPerSecond = Vector3.zero;
+	}
+
+	public void Reset()
+	{
+		Stop();
+		_spinLerpStack.Clear();
 	}
 
 	public void UpdateSpin(float currentTime, bool isRewinding)
