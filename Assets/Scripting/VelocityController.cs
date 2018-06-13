@@ -20,7 +20,7 @@ public class VelocityController
 
 	public void AccelerateTo(Vector2 targetVelocity, float deltaT, float currentTime)
 	{
-		if (deltaT <= 0f) { CurrentVelocityViewportPerSecond = targetVelocity; return; }
+		if (deltaT <= 0f) { CurrentVelocityViewportPerSecond = targetVelocity; }
 
 		var velocityLerp = new Lerp<Vector2>
 		{
@@ -51,13 +51,10 @@ public class VelocityController
 		if (!isRewinding && _velocityLerpStack.Count > 0)
 		{
 			var lastVelocityLerp = _velocityLerpStack.Peek();
-			if (lastVelocityLerp.endTime > currentTime)
-			{
-				var duration = lastVelocityLerp.endTime - lastVelocityLerp.startTime;
-				var elapsed = currentTime - lastVelocityLerp.startTime;
-				var rate = Mathf.Clamp01(elapsed / duration);
-				CurrentVelocityViewportPerSecond = (Vector2.Lerp(lastVelocityLerp.startVector, lastVelocityLerp.endVector, rate));
-			}
+			var duration = lastVelocityLerp.endTime - lastVelocityLerp.startTime;
+			var elapsed = currentTime - lastVelocityLerp.startTime;
+			var rate = Mathf.Clamp01(elapsed / duration);
+			CurrentVelocityViewportPerSecond = (Vector2.Lerp(lastVelocityLerp.startVector, lastVelocityLerp.endVector, rate));
 		}
 	}
 

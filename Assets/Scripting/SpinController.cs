@@ -27,7 +27,7 @@ public class SpinController
 
 	public void SpinTo(Vector3 rotationSpeedAnglesPerSecond, float deltaT, float currentTime)
 	{
-		if (deltaT <= 0f) { CurrentRotSpeedAnglesPerSecond = rotationSpeedAnglesPerSecond; return; }
+		if (deltaT <= 0f) { CurrentRotSpeedAnglesPerSecond = rotationSpeedAnglesPerSecond; }
 		var rotationLerp = new Lerp<Vector3>
 		{
 			startTime = currentTime,
@@ -58,13 +58,10 @@ public class SpinController
 		if (!isRewinding && _spinLerpStack.Count > 0)
 		{
 			var lastLerp = _spinLerpStack.Peek();
-			if (lastLerp.endTime > currentTime)
-			{
-				var duration = lastLerp.endTime - lastLerp.startTime;
-				var elapsed = currentTime - lastLerp.startTime;
-				var rate = Mathf.Clamp01(elapsed / duration);
-				CurrentRotSpeedAnglesPerSecond = (Vector3.Lerp(lastLerp.startVector, lastLerp.endVector, rate));
-			}
+			var duration = lastLerp.endTime - lastLerp.startTime;
+			var elapsed = currentTime - lastLerp.startTime;
+			var rate = Mathf.Clamp01(elapsed / duration);
+			CurrentRotSpeedAnglesPerSecond = (Vector3.Lerp(lastLerp.startVector, lastLerp.endVector, rate));
 		}
 	}
 }
