@@ -109,9 +109,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolType: 2
-  _enemyRenderer: {fileID: 23673898916602670}
-  _enemyCollider: {fileID: 65666865516437650}
-  _enemyRewindable: {fileID: 114576970679946242}
+  enemyRenderer: {fileID: 23673898916602670}
+  enemyCollider: {fileID: 65666865516437650}
+  enemyRewindable: {fileID: 114576970679946242}
+  enemyWeight: {fileID: 114958252797746174}
   normalMaterial: {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
   hitMaterial: {fileID: 2100000, guid: 9835a4283c7d82b41acf9be9c9af4bc5, type: 2}
   typename: basicenemy

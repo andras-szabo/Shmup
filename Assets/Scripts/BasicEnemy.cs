@@ -22,9 +22,11 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 		}
 	}
 
-	public Renderer _enemyRenderer;
-	public Collider _enemyCollider;
-	public Rewindable _enemyRewindable;
+	public Renderer enemyRenderer;
+	public Collider enemyCollider;
+	public Rewindable enemyRewindable;
+	public SpaceBendingObject enemyWeight;
+
 	private bool _isInGraveyard;
 	private int _framesSpentInGraveyard;
 
@@ -54,8 +56,8 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 		//Debug.Log("BasicEnemySpawning at: " + InputService.Instance.UpdateCount);
 		TypeName = typename;
 
-		_enemyRewindable.Reset();
-		_enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);
+		enemyRewindable.Reset();
+		enemyRewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);
 
 		GetOutOfGraveyard();
 		_framesSpentInGraveyard = 0;
@@ -82,7 +84,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 	{
 		//TODO: there must be a better way to do this,
 		// without GetComponent; via UID...?!
-		if (!_enemyRewindable.IsRewinding)
+		if (!enemyRewindable.IsRewinding)
 		{
 			GetHit(other.GetComponent<Damage>());
 		}
@@ -103,7 +105,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 	private void EnqueueEvent(IRewindableEvent evt)
 	{
 		_eventQueue.Enqueue(evt);
-		_enemyRewindable.EnqueueEvent(evt);
+		enemyRewindable.EnqueueEvent(evt);
 	}
 
 	public void Hit(int damage, bool isBounds, bool isRewind)
@@ -146,7 +148,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 
 	private void SwapMaterials(bool hit)
 	{
-		_enemyRenderer.material = hit ? hitMaterial : normalMaterial;
+		enemyRenderer.material = hit ? hitMaterial : normalMaterial;
 	}
 
 	#endregion
@@ -157,7 +159,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 
 		UpdateStatus();
 
-		if (!_enemyRewindable.IsRewinding)
+		if (!enemyRewindable.IsRewinding)
 		{
 			if (!_isInGraveyard)
 			{
@@ -182,7 +184,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 	{
 		if (!_isInGraveyard)
 		{
-			var deltaT = _enemyRewindable.IsRewinding ? -Time.fixedDeltaTime : Time.fixedDeltaTime;
+			var deltaT = enemyRewindable.IsRewinding ? -Time.fixedDeltaTime : Time.fixedDeltaTime;
 			ProcessPendingDamage(deltaT);
 		}
 	}
@@ -192,7 +194,7 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 		foreach (var dmg in _pendingDamage)
 		{
 			var shouldApplyDamage = dmg.UpdateAndCheckIfNeedsToApply(deltaTime);
-			if (shouldApplyDamage && !_enemyRewindable.IsRewinding)
+			if (shouldApplyDamage && !enemyRewindable.IsRewinding)
 			{
 				EnqueueEvent(new HitStunOverEvent(dmg.damage, this));
 			}
@@ -268,17 +270,21 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 	private void PutInGraveyard()
 	{
 		_isInGraveyard = true;
-		_enemyCollider.enabled = false;
-		_enemyRenderer.enabled = false;
+		enemyCollider.enabled = false;
+		enemyRenderer.enabled = false;
 		_framesSpentInGraveyard = 0;
+		if (enemyWeight != null) { enemyWeight.enabled = false; }
+		scriptRunner.Pause(true);
 	}
 
 	private void GetOutOfGraveyard()
 	{
 		//TODO - better handling of hits
 		_isInGraveyard = false;
-		_enemyCollider.enabled = true;
-		_enemyRenderer.enabled = true;
+		enemyCollider.enabled = true;
+		enemyRenderer.enabled = true;
+		if (enemyWeight != null) { enemyWeight.enabled = true; }
+		scriptRunner.Pause(false);
 	}
 
 	//TODO - duplicated code, maybe worth removing

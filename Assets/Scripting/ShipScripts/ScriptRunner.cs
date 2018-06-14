@@ -20,9 +20,10 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 	private int _commandPointer = 0;
 
+	//TODO: do we need the loop count?
 	private int _runningLoopCount;
-	private bool IsInALoop { get { return _runningLoopCount > 0; } }
 	private float _currentCommandTriggerTime;
+	private bool _isPaused;
 
 	public MonoBehaviour CoroutineRunner { get { return this; } }
 	public IMoveControl MoveControl { get { return this; } }
@@ -69,6 +70,12 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			_isRunning = true;
 		}
 	}
+
+	public void Pause(bool isPaused)
+	{
+		_isPaused = isPaused;
+	}
+
 	#endregion
 
 	#region The main update loop
@@ -77,19 +84,27 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		if (_isRunning)
 		{
 			var rewinding = rewindable != null && rewindable.IsRewinding;
-			var dt = Time.fixedDeltaTime;
+			float deltaT;
 
 			if (!rewinding)
 			{
-				UpdateTransform();
+				if (!_isPaused)
+				{
+					UpdateTransform();
+					deltaT = Time.fixedDeltaTime;
+				}
+				else
+				{
+					deltaT = 0f;
+				}
 			}
 			else
 			{
-				if (rewindable.HadSomethingToRewindToAtFrameStart) { dt *= -1f; }
-				else { dt = 0f; }
+				if (rewindable.HadSomethingToRewindToAtFrameStart) { deltaT = -Time.fixedDeltaTime; }
+				else { deltaT = 0f; }
 			}
 
-			WaitForAndExecuteCommand(dt);
+			WaitForAndExecuteCommand(deltaT);
 			UpdateMoveControl();
 		}
 	}

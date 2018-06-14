@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class ARewindable<T> : MonoWithCachedTransform, IRewindable
 {
-	public const int LOG_SIZE_FRAMES = 256;
+	public const int LOG_SIZE_FRAMES = 128;
 
 	public bool IsRewinding { get; private set; }
 	public bool HadSomethingToRewindToAtFrameStart { get; private set; }

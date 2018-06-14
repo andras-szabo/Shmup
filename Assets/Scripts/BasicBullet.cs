@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 
-public class BasicBullet : APoolable, IDespawnable
+public class BasicBullet : APoolable, IDespawnable 
 {
 	public Renderer myRenderer;
 	public Collider myCollider;
+	public SpaceBendingObject myWeight;
 
 	private VelocityController _velocityController = new VelocityController();
 	private SpinController _spinController = new SpinController();
@@ -116,6 +117,7 @@ public class BasicBullet : APoolable, IDespawnable
 		myCollider.enabled = false;
 		myRenderer.enabled = false;
 		_framesSpentInGraveyard = 0;
+		if (myWeight != null) { myWeight.enabled = false; }
 	}
 
 	private void GetOutOfGraveyard()
@@ -123,6 +125,7 @@ public class BasicBullet : APoolable, IDespawnable
 		myCollider.enabled = true;
 		myRenderer.enabled = true;
 		_isInGraveyard = false;
+		if (myWeight != null) { myWeight.enabled = true; }
 	}
 
 	//TODO: same thing at basicEnemy

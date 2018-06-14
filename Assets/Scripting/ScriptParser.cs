@@ -59,7 +59,14 @@ public class ScriptParser
 	{
 		var tokens = ParserUtility.SplitAndIgnoreWhiteSpaces(line);
 		var queue = new Queue<string>(tokens);
+
+		if (queue.Count < 1)
+		{
+			return new SerializedScriptCommand();
+		}
+
 		var delay = 0f;
+
 
 		// Get delay if posibol
 		var token = queue.Peek();

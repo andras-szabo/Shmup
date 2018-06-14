@@ -138,7 +138,8 @@ MonoBehaviour:
   _poolType: 1
   myRenderer: {fileID: 23788612409872988}
   myCollider: {fileID: 65636612776729548}
-  lifespan: 0.5
+  myWeight: {fileID: 114705276733035074}
+  lifespan: 0.35
   speedViewportPerSecond: 3
 --- !u!114 &114705276733035074
 MonoBehaviour:

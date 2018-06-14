@@ -33,7 +33,6 @@ public class SpaceBendingObject : MonoBehaviour
 				in the case of ripples: x: x, y: y, z: -1, 0, or 1, w: radius
 		 */
 
-
 		if (SpaceBender != null && (!isBullet || SpaceBender.bulletWeight > 0.2f))
 		{
 			_pos = CachedTransform.position;
