@@ -2,26 +2,8 @@
 using UnityEngine;
 
 [RequireComponent(typeof(ScriptRunner))]
-public class BasicEnemy : APoolable, IHittable, IDespawnable
+public class BasicEnemy : APoolable, IHittable
 {
-	public class PendingDamage
-	{
-		public PendingDamage(float timeLeft, int damage)
-		{
-			this.timeLeft = timeLeft;
-			this.damage = damage;
-		}
-
-		public float timeLeft;
-		public int damage;
-
-		public bool UpdateAndCheckIfNeedsToApply(float deltaTime)
-		{
-			timeLeft -= deltaTime;
-			return timeLeft <= 0f && (timeLeft + deltaTime > 0f);
-		}
-	}
-
 	public Renderer enemyRenderer;
 	public Collider enemyCollider;
 	public Rewindable enemyRewindable;
@@ -285,20 +267,5 @@ public class BasicEnemy : APoolable, IHittable, IDespawnable
 		enemyRenderer.enabled = true;
 		if (enemyWeight != null) { enemyWeight.enabled = true; }
 		scriptRunner.Pause(false);
-	}
-
-	//TODO - duplicated code, maybe worth removing
-	public override void Despawn(bool despawnBecauseRewind)
-	{
-		base.Despawn(despawnBecauseRewind);
-
-		if (_pool != null)
-		{
-			_pool.Despawn(this);
-		}
-		else
-		{
-			Object.Destroy(this.gameObject);
-		}
 	}
 }

@@ -58,6 +58,8 @@ public class HitStunOverEvent : IRewindableEvent
 
 public interface IHittable
 {
+	UnityEngine.Collider Collider { get; }
+
 	void Hit(int dmg, bool isBounds, bool isRewind);
 	void ApplyHitStunOver(int dmg, bool isRewind);
 }

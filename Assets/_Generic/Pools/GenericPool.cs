@@ -8,7 +8,7 @@ using UnityEngine;
 //		- things tagged in the same manner get to the same pool 'branch'
 //		- when you look for something in the pool, also supply your tag.
 
-public abstract class APoolable : MonoWithCachedTransform
+public abstract class APoolable : MonoWithCachedTransform, IDespawnable
 {
 	protected GenericPool _pool;
 
@@ -35,6 +35,15 @@ public abstract class APoolable : MonoWithCachedTransform
 		}
 
 		OnDespawn = null;
+
+		if (_pool != null)
+		{
+			_pool.Despawn(this);
+		}
+		else
+		{
+			UnityEngine.Object.Destroy(this.gameObject);
+		}
 	}
 }
 

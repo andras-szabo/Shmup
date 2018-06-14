@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class BasicBullet : APoolable, IDespawnable 
+public class BasicBullet : APoolable
 {
 	public Renderer myRenderer;
 	public Collider myCollider;
@@ -15,8 +15,6 @@ public class BasicBullet : APoolable, IDespawnable
 
 	public float lifespan = 2f;
 	public float speedViewportPerSecond = 1f;
-
-	private bool initialized = false;
 
 	private BulletRewindable _rewindable;
 	private BulletRewindable CachedRewindable
@@ -47,7 +45,6 @@ public class BasicBullet : APoolable, IDespawnable
 		_framesSpentInGraveyard = 0;
 
 		GetOutOfGraveyard();
-		initialized = true;
 	}
 
 	private void UpdateTransform()
@@ -61,12 +58,6 @@ public class BasicBullet : APoolable, IDespawnable
 
 	private void FixedUpdate()
 	{
-		if (!initialized)
-		{
-			Debug.LogWarning("Rewindable not initialized yet");
-			return;
-		}
-
 		if (!CachedRewindable.IsRewinding)
 		{
 			UpdateTransform();
@@ -126,22 +117,5 @@ public class BasicBullet : APoolable, IDespawnable
 		myRenderer.enabled = true;
 		_isInGraveyard = false;
 		if (myWeight != null) { myWeight.enabled = true; }
-	}
-
-	//TODO: same thing at basicEnemy
-	public override void Despawn(bool despawnBecauseRewind)
-	{
-		base.Despawn(despawnBecauseRewind);
-
-		initialized = false;
-
-		if (_pool != null)
-		{
-			_pool.Despawn(this);
-		}
-		else
-		{
-			Object.Destroy(this.gameObject);
-		}
 	}
 }
