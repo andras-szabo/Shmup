@@ -42,8 +42,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1806366837826752}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.64, z: 0}
-  m_LocalScale: {x: 0.1, y: 1.2, z: 0.1}
+  m_LocalPosition: {x: 0.06518173, y: 5.0270977, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9be3a37c8aea4634cac4134225e533bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBullet: 1
+  isPlayerBullet: 0
   weight: 0
 --- !u!114 &114910014097821838
 MonoBehaviour:
@@ -170,8 +170,8 @@ MonoBehaviour:
   myWeight: {fileID: 114705276733035074}
   rewindable: {fileID: 114303905385394718}
   hasLimitedLifeSpan: 1
-  lifeSpanSeconds: 0.35
-  startSpeedViewportPerSecond: 1
+  lifeSpanSeconds: 0.6
+  startSpeedViewportPerSecond: 0.75
   log: 0
 --- !u!114 &114971414930872572
 MonoBehaviour:

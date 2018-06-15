@@ -1,13 +1,8 @@
 var firstWaveDelay = 0.5
 var secondWaveDelay = 0.3
-bgVel 0 -2 20
 
-1 for i = 1 to 4
-	0.2 spawn shooter i*0.2 1.5 shootTest
-end
+bgVel 0 -1 20
 
-1 bgRot 25 5
-1 bgRot -25 5
 1 for i = 1 to 2
 	for j = 1 to 4
 		firstWaveDelay spawn shooter j*0.1 1.5 simpleSpinner
@@ -18,13 +13,24 @@ end
 					   spawn shooter 1-(j*0.1) 1.5 simpleSpinner
 	end
 end
+
 bgRot 0 20
-bgVel 0 0 20
+bgVel 0 -0.5 20
+
 1 for j = 1 to 2 
 	for i = 1 to 5
 		secondWaveDelay spawn shooter i*0.2 1.5 simpleSpinner
 	end
 	for i = 1 to 5
 		secondWaveDelay spawn shooter 1-(i*0.2) 1.5 simpleSpinner
+	end
+end
+
+var y = 1.2
+
+0.5 for j = 1 to 2
+	for i = 1 to 4
+		0.5	spawn shooter 0.1*i y shootTest
+			spawn shooter 1-(i*0.1) y shootTestInverse
 	end
 end

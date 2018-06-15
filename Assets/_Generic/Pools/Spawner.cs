@@ -2,6 +2,7 @@
 
 public interface ISpawner
 {
+	int SpawnerID { get; }
 	APoolable SpawnFromPool(string typeToSpawn, int spawnedEntityID, string scriptToRun);
 }
 

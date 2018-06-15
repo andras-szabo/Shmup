@@ -11,7 +11,7 @@ public class SpaceBendingObject : MonoBehaviour
 		}
 	}
 
-	public bool isBullet;
+	public bool isPlayerBullet;
 	public float weight = 1f;
 
 	private Vector4 _posAndWeight = new Vector4();
@@ -33,14 +33,14 @@ public class SpaceBendingObject : MonoBehaviour
 				in the case of ripples: x: x, y: y, z: -1, 0, or 1, w: radius
 		 */
 
-		if (SpaceBender != null && (!isBullet || SpaceBender.bulletWeight > 0.2f))
+		if (SpaceBender != null && (!isPlayerBullet || SpaceBender.bulletWeight > 0.2f))
 		{
 			_pos = CachedTransform.position;
 
 			_posAndWeight.x = _pos.x;
 			_posAndWeight.y = _pos.y;
 			_posAndWeight.z = _pos.z;
-			_posAndWeight.w = isBullet ? SpaceBender.bulletWeight : weight;
+			_posAndWeight.w = isPlayerBullet ? SpaceBender.bulletWeight : weight;
 
 			SpaceBender.SetPosition(_posAndWeight);
 		}

@@ -53,6 +53,14 @@ public class InputService : MonoBehaviour
 		Initialized = true;
 	}
 
+	public void Reset()
+	{
+		if (!PlaybackMode)
+		{
+			_log.Clear();
+		}
+	}
+
 	public void Playback(List<CustomInputEvent> eventStream, string streamName, int customStartFrameCount = 0)
 	{
 		Debug.LogFormat("[InputService] Starting playback of {0}; from frame count: {1} // {2}",

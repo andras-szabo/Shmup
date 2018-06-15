@@ -40,6 +40,21 @@ public class ShipScriptShoot : ACommand
 	}
 }
 
+public class ShipScriptRot : ACommand
+{
+	private Vector3 _rotationEuler;
+
+	public ShipScriptRot(SerializedScriptCommand cmd) : base(cmd)
+	{
+		_rotationEuler = new Vector3((float)cmd.args[0], (float)cmd.args[1], (float)cmd.args[2]);
+	}
+
+	public override void Execute(IExecutionContext context)
+	{
+		context.MoveControl.SetRotation(_rotationEuler);
+	}
+}
+
 public class ShipScriptVelocity : ACommand
 {
 	protected readonly Vector2 _velocity;

@@ -15,11 +15,13 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 	private Vector2 _currentScrollVelocity;
 	private float _currentRotAngleInRad;
 
+	private bool _paused;
 	private bool _shouldUpdate;
+	private bool _shouldCalculatePastDisplacement;
 	private Vector2 _desiredVelocity;
 
-	private float _elapsedTime;
-	private Vector4 _pastDisplacement;
+	public float ElapsedTime { get; set; }
+	public Vector4 PastDisplacement { get; set; }
 
 	private void Awake()
 	{
@@ -44,31 +46,43 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 		return _currentScrollVelocity;	
 	}
 
-	public void SetScrollVelocity(Vector2 velocity)
+	public void Pause(bool pause)
+	{
+		if (pause)
+		{
+			SetScrollVelocity(Vector2.zero, false);
+		}
+	}
+
+	public void SetScrollVelocity(Vector2 velocity, bool calculatePastDisplacement = true)
 	{
 		_desiredVelocity = velocity;
 		_shouldUpdate = true;
+		_shouldCalculatePastDisplacement = calculatePastDisplacement;
 	}
 
-	private void LateUpdate()
+	private void FixedUpdate()
 	{
-		backgroundMaterial.SetFloat("_ElapsedTime", _elapsedTime);
+		backgroundMaterial.SetFloat("_ElapsedTime", ElapsedTime);
 
 		if (_shouldUpdate)
 		{
-			DoSetVelocity(_desiredVelocity);
+			DoSetVelocity(_desiredVelocity, _shouldCalculatePastDisplacement);
 			_shouldUpdate = false;
-			_elapsedTime = 0f;
+			ElapsedTime = 0f;
 		}
 
-		_elapsedTime += Time.smoothDeltaTime;
+		ElapsedTime += Time.smoothDeltaTime;
 	}
 
-	private void DoSetVelocity(Vector2 velocity)
+	private void DoSetVelocity(Vector2 velocity, bool shouldCalculateDisplacement)
 	{
-		SetPastDisplacement();
-		backgroundMaterial.SetVector("_PastDisplacement", _pastDisplacement);
+		if (shouldCalculateDisplacement)
+		{
+			SetPastDisplacement();
+		}
 
+		backgroundMaterial.SetVector("_PastDisplacement", PastDisplacement);
 		backgroundMaterial.SetFloat("_ScrollSpeedX", velocity.x);
 
 		/*
@@ -84,10 +98,14 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 
 	private void SetPastDisplacement()
 	{
-		_pastDisplacement.x += _currentScrollVelocity.x * _elapsedTime;
-		_pastDisplacement.y -= _currentScrollVelocity.y * _elapsedTime;
+		var _pastDisplacement = PastDisplacement;
+
+		_pastDisplacement.x += _currentScrollVelocity.x * ElapsedTime;
+		_pastDisplacement.y -= _currentScrollVelocity.y * ElapsedTime;
 
 		_pastDisplacement.x -= (float)(System.Math.Truncate(_pastDisplacement.x));
 		_pastDisplacement.y -= (float)(System.Math.Truncate(_pastDisplacement.y));
+
+		PastDisplacement = _pastDisplacement;
 	}
 }

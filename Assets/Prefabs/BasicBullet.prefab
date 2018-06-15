@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9be3a37c8aea4634cac4134225e533bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBullet: 1
+  isPlayerBullet: 1
   weight: 0
 --- !u!114 &114738997598284892
 MonoBehaviour:

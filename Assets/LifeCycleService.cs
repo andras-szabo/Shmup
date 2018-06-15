@@ -11,5 +11,6 @@ public class LifeCycleService : MonoBehaviour
 	{
 		shipController.Reset();
 		levelScriptRunner.ResetScript();
+		InputService.Instance.Reset();
 	}
 }

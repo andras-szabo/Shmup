@@ -243,6 +243,11 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	{
 		CachedTransform.position = ViewportUtility.GetWorldPosition(viewportCoords);
 	}
+
+	public void SetRotation(Vector3 rotationEuler)
+	{
+		CachedTransform.rotation = Quaternion.Euler(rotationEuler);
+	}
 	#endregion
 
 	private bool ApproximatelySameOrOver(float a, float b)

@@ -36,7 +36,10 @@ public class SpawnerScriptBgRot : ACommand
 	public override void Execute(IExecutionContext context)
 	{
 		var bgController = BackgroundController.Instance;
-		context.CoroutineRunner.StartCoroutine(RotateOverTime(bgController));
+		if (!SpawnerUtility.IsAlreadySpawned(context.Spawner.SpawnerID, context.CurrentCommandUID))
+		{
+			context.CoroutineRunner.StartCoroutine(RotateOverTime(bgController));
+		}
 	}
 
 	public IEnumerator RotateOverTime(IBackgroundController bgController)
@@ -68,7 +71,10 @@ public class SpawnerScriptBgVel : ACommand
 	public override void Execute(IExecutionContext context)
 	{
 		var bgController = BackgroundController.Instance;
-		context.CoroutineRunner.StartCoroutine(Accelerate(bgController));
+		if (!SpawnerUtility.IsAlreadySpawned(context.Spawner.SpawnerID, context.CurrentCommandUID))
+		{
+			context.CoroutineRunner.StartCoroutine(Accelerate(bgController));
+		}
 	}
 
 	public IEnumerator Accelerate(IBackgroundController bgController)
