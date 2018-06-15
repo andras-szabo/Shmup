@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(PoolableEntity))]
-public class Hittable : MonoBehaviour, IHittable
+public class Hittable : AHittable
 {
 	public PoolableEntity myEntity;
-	public Collider myCollider;
 
 	public float startingHP = 10;
 	protected float currentHP;
@@ -20,16 +18,14 @@ public class Hittable : MonoBehaviour, IHittable
 
 	private List<PendingDamage> _pendingDamage = new List<PendingDamage>();
 
-	public Collider Collider { get { return myCollider; } }
-
-	public void Init()
+	public override void Init()
 	{
 		currentHP = startingHP;
 		RefreshVisuals(hit: false);
 		_pendingDamage.Clear();
 	}
 
-	public void ApplyHitStunOver(int damage, bool isRewind)
+	public override void ApplyHitStunOver(int damage, bool isRewind)
 	{
 		if (!isRewind)
 		{
@@ -45,7 +41,7 @@ public class Hittable : MonoBehaviour, IHittable
 	//			=> but actually maybe with better names,
 	//			that already suggest how getting hit works
 	//			e.g. "HitStartEvent" and "HitFinishEvent"
-	public void Hit(int damage, bool wasHitByOutOfBoundsBarrier, bool isRewind)
+	public override void Hit(int damage, bool wasHitByOutOfBoundsBarrier, bool isRewind)
 	{
 		if (wasHitByOutOfBoundsBarrier)
 		{
@@ -64,7 +60,7 @@ public class Hittable : MonoBehaviour, IHittable
 		}
 	}
 
-	public void Stop()
+	public override void Stop()
 	{
 		RefreshVisuals(false);
 	}

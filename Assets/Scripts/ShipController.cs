@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ShipController : MonoWithCachedTransform
 {
+	public const float INPUT_SENSITIVITY = 1.4f;
+
 	private Camera _mainCamera;
 	public Camera MainCamera
 	{
@@ -21,9 +23,14 @@ public class ShipController : MonoWithCachedTransform
 
 	public float shootIntervalInSeconds = 0.1f;
 
+	private Vector3 _previousInputPosition = new Vector3(0f, 0f, -1f);
+	private Vector3 _startingPosition;
+
 	#region Unity lifecycle
 	private void Start()
 	{
+		_startingPosition = CachedTransform.position;
+
 		_worldMin = MainCamera.ViewportToWorldPoint(new Vector3(0f, 0f, 10f));
 		_worldMax = MainCamera.ViewportToWorldPoint(new Vector3(1f, 1f, 10f));
 
@@ -42,6 +49,11 @@ public class ShipController : MonoWithCachedTransform
 	}
 	#endregion
 
+	public void Reset()
+	{
+		CachedTransform.position = _startingPosition;
+	}
+
 	private void TryShoot(float delta)
 	{
 		_elapsedSeconds += delta;
@@ -59,7 +71,21 @@ public class ShipController : MonoWithCachedTransform
 	private void UpdatePosition()
 	{
 		var mouseWorldPos = MainCamera.ScreenToWorldPoint(GetInputScreenPosition());
-		CachedTransform.position = ClampToScreenBounds(mouseWorldPos);
+
+		if (_previousInputPosition.z > -1 && mouseWorldPos != _previousInputPosition)
+		{
+			var delta = (mouseWorldPos - _previousInputPosition) * INPUT_SENSITIVITY;
+			CachedTransform.position = ClampToScreenBounds(CachedTransform.position + delta);
+		}
+
+		if (InputService.Instance.MouseLeftButton)
+		{
+			_previousInputPosition = mouseWorldPos;
+		}
+		else
+		{
+			_previousInputPosition = new Vector3(0f, 0f, -1f);
+		}
 	}
 
 	private bool IsShooting()

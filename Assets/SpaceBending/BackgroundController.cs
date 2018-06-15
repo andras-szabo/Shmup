@@ -70,9 +70,13 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 		backgroundMaterial.SetVector("_PastDisplacement", _pastDisplacement);
 
 		backgroundMaterial.SetFloat("_ScrollSpeedX", velocity.x);
+
+		/*
 		#if UNITY_ANDROID && !UNITY_EDITOR
 		velocity.y *= -1f;
 		#endif
+		*/
+
 		backgroundMaterial.SetFloat("_ScrollSpeedY", velocity.y);
 
 		_currentScrollVelocity = velocity;

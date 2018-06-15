@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 114303905385394718}
   - component: {fileID: 54825028331685656}
   - component: {fileID: 114910014097821838}
+  - component: {fileID: 114738997598284892}
   m_Layer: 8
   m_Name: basicbullet
   m_TagString: Untagged
@@ -138,6 +139,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isBullet: 1
   weight: 0
+--- !u!114 &114738997598284892
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1806366837826752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9989de3939b5a744ebed52c012a9069a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCollider: {fileID: 65636612776729548}
+  myEntity: {fileID: 114910014097821838}
 --- !u!114 &114910014097821838
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -152,7 +166,7 @@ MonoBehaviour:
   _poolType: 1
   myRenderer: {fileID: 23788612409872988}
   myCollider: {fileID: 65636612776729548}
-  hittable: {fileID: 0}
+  hittable: {fileID: 114738997598284892}
   myWeight: {fileID: 114705276733035074}
   rewindable: {fileID: 114303905385394718}
   hasLimitedLifeSpan: 1

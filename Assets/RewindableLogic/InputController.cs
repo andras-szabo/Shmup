@@ -2,6 +2,9 @@
 
 public class InputController : MonoBehaviour
 {
+	public const float DOUBLE_TAP_INTERVAL_SECONDS = 0.5f;
+	public const float MAX_TAP_LENGTH_SECONDS = 0.2f;
+
 	public static InputController Instance { get; private set; }
 
 	public bool IsHoldingDoubleTap { get; private set; }
@@ -10,6 +13,7 @@ public class InputController : MonoBehaviour
 	private int _touchesLastFrame;
 	private float _elapsedTimeSinceLastTap;
 	private bool _startedDoubleTap;
+	private float _elapsedTimeDuringPreviousTap;
 
 	public bool IsShooting()
 	{
@@ -30,7 +34,7 @@ public class InputController : MonoBehaviour
 		{
 			if (_startedDoubleTap)
 			{
-				if (_elapsedTimeSinceLastTap < 0.5f)
+				if (_elapsedTimeSinceLastTap < DOUBLE_TAP_INTERVAL_SECONDS)
 				{
 					IsHoldingDoubleTap = true;
 				}
@@ -41,12 +45,18 @@ public class InputController : MonoBehaviour
 			}
 		}
 
+		if (_touchesThisFrame > 0)
+		{
+			_elapsedTimeDuringPreviousTap += Time.fixedDeltaTime;
+		}
+
 		_elapsedTimeSinceLastTap += Time.fixedDeltaTime;
 
 		if (_touchesThisFrame < _touchesLastFrame)
 		{
 			_elapsedTimeSinceLastTap = 0f;
-			_startedDoubleTap = true;
+			_startedDoubleTap = _elapsedTimeDuringPreviousTap < MAX_TAP_LENGTH_SECONDS;
+			_elapsedTimeDuringPreviousTap = 0f;
 			IsHoldingDoubleTap = false;
 		}
 

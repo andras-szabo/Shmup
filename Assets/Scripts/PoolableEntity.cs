@@ -6,7 +6,7 @@ public class PoolableEntity : APoolable
 {
 	public Renderer myRenderer;
 	public Collider myCollider;
-	public Hittable hittable;
+	public AHittable hittable;
 	public SpaceBendingObject myWeight;
 	public ABaseRewindable rewindable;
 
@@ -15,8 +15,6 @@ public class PoolableEntity : APoolable
 	private float _elapsedLifeSpanSeconds = 0f;
 
 	public float startSpeedViewportPerSecond;
-
-	public event System.Action<bool> OnMovedToGraveyard;
 
 	protected SpinController _spinController = new SpinController();
 	protected VelocityController _velocityController = new VelocityController();
@@ -167,9 +165,7 @@ public class PoolableEntity : APoolable
 	private void EnableVisuals(bool enable)
 	{
 		myRenderer.enabled = enable;
-		//TODO: fix this double reference to collider
 		if (hittable != null) { hittable.Collider.enabled = enable; }
-		else { if (myCollider != null) { myCollider.enabled = enable; } }
 		if (myWeight != null) { myWeight.enabled = enable; }
 	}
 }

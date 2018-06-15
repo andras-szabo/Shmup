@@ -58,6 +58,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		_commandPointer = -1;
 		_currentCommand = null;
 		_currentCommandTriggerTime = 0f;
+
+		SpawnerUtility.ClearSpawnHistory();
 	}
 
 	public void Run(List<ICommand> script)

@@ -31,6 +31,7 @@ public class Spawner : MonoWithCachedTransform, ISpawner
 	{
 		if (spawnedEntityID != DONT_TRACK_SPAWNED_ID && SpawnerUtility.IsAlreadySpawned(SpawnerID, spawnedEntityID))
 		{
+			UnityEngine.Debug.Log("already spawned");
 			return null;
 		}
 

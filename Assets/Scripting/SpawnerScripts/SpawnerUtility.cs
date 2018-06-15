@@ -39,4 +39,9 @@ public static class SpawnerUtility
 
 		_spawnedIDs[spawnerID] = stored;
 	}
+
+	public static void ClearSpawnHistory()
+	{
+		_spawnedIDs.Clear();
+	}
 }
