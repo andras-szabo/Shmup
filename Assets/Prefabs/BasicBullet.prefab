@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b922ac5c667454cbf02434547a1252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  log: 0
 --- !u!114 &114705276733035074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -150,6 +151,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _poolType: 1
   myRenderer: {fileID: 23788612409872988}
+  myCollider: {fileID: 65636612776729548}
+  hittable: {fileID: 0}
   myWeight: {fileID: 114705276733035074}
   rewindable: {fileID: 114303905385394718}
   hasLimitedLifeSpan: 1
