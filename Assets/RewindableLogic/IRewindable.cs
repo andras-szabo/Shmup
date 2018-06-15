@@ -7,7 +7,9 @@ public interface IRewindable
 	bool HadSomethingToRewindToAtFrameStart { get; }
 	int LogCount { get; }
 
-	void EnqueueEvent(IRewindableEvent evt, bool recordSeparately = false);
+	void Init(VelocityController velocityController, SpinController spinController);
+	void Reset();
+	void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false);
 }
 
 public struct TransformData

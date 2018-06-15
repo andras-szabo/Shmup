@@ -62,4 +62,7 @@ public interface IHittable
 
 	void Hit(int dmg, bool isBounds, bool isRewind);
 	void ApplyHitStunOver(int dmg, bool isRewind);
+	void Init();		
+	void Stop();		// maybe not the best name; called
+						// when dude gets despawned
 }

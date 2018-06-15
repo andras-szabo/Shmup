@@ -3,11 +3,11 @@ using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Renderer))]
-public class HittableEnemy : MonoBehaviour, IHittable
+[RequireComponent(typeof(PoolableEntity))]
+public class Hittable : MonoBehaviour, IHittable
 {
+	public PoolableEntity myEntity;
 	public Collider myCollider;
-	public Renderer myRenderer;
-	public APoolableEntity myEntity;
 
 	public float startingHP = 10;
 	protected float currentHP;
@@ -21,6 +21,13 @@ public class HittableEnemy : MonoBehaviour, IHittable
 	private List<PendingDamage> _pendingDamage = new List<PendingDamage>();
 
 	public Collider Collider { get { return myCollider; } }
+
+	public void Init()
+	{
+		currentHP = startingHP;
+		RefreshVisuals(hit: false);
+		_pendingDamage.Clear();
+	}
 
 	public void ApplyHitStunOver(int damage, bool isRewind)
 	{
@@ -57,6 +64,11 @@ public class HittableEnemy : MonoBehaviour, IHittable
 		}
 	}
 
+	public void Stop()
+	{
+		RefreshVisuals(false);
+	}
+
 	private void AddPendingDamage(int damage)
 	{
 		_pendingDamage.Add(new PendingDamage(timeLeft: _visualHitStunSeconds, damage: damage));
@@ -67,7 +79,7 @@ public class HittableEnemy : MonoBehaviour, IHittable
 	{
 		//TODO: there must be a better way to do this,
 		// without GetComponent; via UID...?!
-		if (!myEntity.IsRewinding)
+		if (!myEntity.IsRewinding && !myEntity.IsInGraveyard)
 		{
 			TryEnqueueHitEvent(other.GetComponent<Damage>());
 		}
@@ -98,7 +110,10 @@ public class HittableEnemy : MonoBehaviour, IHittable
 	{
 		currentHP -= damage;
 		TryRemoveFromPendingDamage(damage, isRewind);
-		if (currentHP <= 0 && !myEntity.IsInGraveyard) { myEntity.GoToGraveyard(); }
+		if (currentHP <= 0 && !myEntity.IsInGraveyard)
+		{
+			myEntity.GoToGraveyard();
+		}
 	}
 
 	private void UndoDamageButMakeItPending(int damage)
@@ -169,7 +184,7 @@ public class HittableEnemy : MonoBehaviour, IHittable
 		if (_isHit != hit)
 		{
 			_isHit = hit;
-			myRenderer.material = hit ? hitMaterial : normalMaterial;
+			myEntity.myRenderer.material = hit ? hitMaterial : normalMaterial;
 		}
 	}
 }

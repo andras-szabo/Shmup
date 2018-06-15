@@ -5,7 +5,15 @@ public class BulletRewindable : ARewindable<VelocityData>
 	private VelocityController _velocityController;
 	private SpinController _spinController;
 
-	public void Reset(VelocityController velocityController, SpinController spinController)
+	public override void Reset()
+	{
+		_log.Clear();
+
+		if (_velocityController != null) { _velocityController.Stop(); }
+		if (_spinController != null) { _spinController.Stop(); }
+	}
+
+	public override void Init(VelocityController velocityController, SpinController spinController)
 	{
 		_log.Clear();
 		_velocityController = velocityController;
@@ -17,8 +25,8 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 	protected override void RecordData()
 	{
-		var currentVelocity = _velocityController.CurrentVelocityUnitsPerFrame;
-		var currentSpin = _spinController.RotationPerFrame;
+		var currentVelocity = TryGetCurrentVelocity();
+		var currentSpin = TryGetCurrentSpin();
 
 		if (_eventQueue.Count > 0 || ShouldRecordNewEntry(currentVelocity, currentSpin))
 		{
@@ -28,6 +36,16 @@ public class BulletRewindable : ARewindable<VelocityData>
 		{
 			UpdateLastRecordedDataEntry(deltaFrameCount: 1);
 		}
+	}
+
+	private Vector3 TryGetCurrentVelocity()
+	{
+		return _velocityController != null ? _velocityController.CurrentVelocityUnitsPerFrame : Vector3.zero;
+	}
+
+	private Vector3 TryGetCurrentSpin()
+	{
+		return _spinController != null ? _spinController.RotationPerFrame : Vector3.zero;
 	}
 
 	private void RecordNewDataEntry(Vector3 currentVelocity, Vector3 currentSpin)

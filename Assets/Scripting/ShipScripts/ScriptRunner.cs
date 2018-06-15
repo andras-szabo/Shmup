@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionContext
 {
-	public Rewindable rewindable;
 	public bool log;
+	public ABaseRewindable rewindable;
 
-	private SpinController _spinController = new SpinController();
-	private VelocityController _velocityController = new VelocityController();
+	private SpinController _spinController;
+	private VelocityController _velocityController;
 
 	private bool _isRunning;
 	private float _time;
@@ -43,12 +43,16 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	}
 
 	#region Script lifecycle
+	public void Init(VelocityController velocityController, SpinController spinController)
+	{
+		_velocityController = velocityController;
+		_spinController = spinController;
+	}
+
 	public void ResetScript()
 	{
 		_commandStack.Clear();
 		_commandHistory.Clear();
-		_velocityController.Reset();
-		_spinController.Reset();
 
 		_time = 0f;
 		_commandPointer = -1;
@@ -90,7 +94,6 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			{
 				if (!_isPaused)
 				{
-					UpdateTransform();
 					deltaT = Time.fixedDeltaTime;
 				}
 				else
@@ -105,14 +108,16 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 			}
 
 			WaitForAndExecuteCommand(deltaT);
-			UpdateMoveControl();
-		}
-	}
 
-	private void UpdateTransform()
-	{
-		CachedTransform.Rotate(_spinController.RotationPerFrame);
-		CachedTransform.position += _velocityController.CurrentVelocityUnitsPerFrame;
+			if (!IsRewinding)
+			{
+				//So the problem is that MoveControl needs time to handle lerps
+				//and it's the scriptRunner that knows about time reliably
+				//which is why the update is called from here. Maybe something
+				//to fix mkay.
+				UpdateMoveControl();
+			}
+		}
 	}
 
 	private void UpdateMoveControl()

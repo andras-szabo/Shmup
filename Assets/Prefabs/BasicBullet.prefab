@@ -22,11 +22,11 @@ GameObject:
   - component: {fileID: 33545553181653444}
   - component: {fileID: 23788612409872988}
   - component: {fileID: 65636612776729548}
-  - component: {fileID: 114668481406775224}
   - component: {fileID: 114705276733035074}
   - component: {fileID: 114971414930872572}
   - component: {fileID: 114303905385394718}
   - component: {fileID: 54825028331685656}
+  - component: {fileID: 114910014097821838}
   m_Layer: 8
   m_Name: basicbullet
   m_TagString: Untagged
@@ -124,23 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b922ac5c667454cbf02434547a1252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114668481406775224
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1806366837826752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80a3beb13f2e65c4291d80b7041ec4c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _poolType: 1
-  myRenderer: {fileID: 23788612409872988}
-  myCollider: {fileID: 65636612776729548}
-  myWeight: {fileID: 114705276733035074}
-  lifespan: 0.35
-  speedViewportPerSecond: 3
 --- !u!114 &114705276733035074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -154,6 +137,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isBullet: 1
   weight: 0
+--- !u!114 &114910014097821838
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1806366837826752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69d9bf3bdd4cc1d4fac2db521dd9971e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _poolType: 1
+  myRenderer: {fileID: 23788612409872988}
+  myWeight: {fileID: 114705276733035074}
+  rewindable: {fileID: 114303905385394718}
+  hasLimitedLifeSpan: 1
+  lifeSpanSeconds: 0.35
+  startSpeedViewportPerSecond: 3
+  log: 0
 --- !u!114 &114971414930872572
 MonoBehaviour:
   m_ObjectHideFlags: 1

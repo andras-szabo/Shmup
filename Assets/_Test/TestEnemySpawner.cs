@@ -16,6 +16,9 @@ public class TestEnemySpawner : MonoBehaviour
 	private List<ICommand> _script;
 	private List<CustomInputEvent> _replay;
 
+	private VelocityController _velocityController = new VelocityController();
+	private SpinController _spinController = new SpinController();
+
 	private void Awake()
 	{
 		_enemySpawner = GetComponent<EnemySpawner>();
@@ -24,11 +27,17 @@ public class TestEnemySpawner : MonoBehaviour
 
 	private void Start()
 	{
-		Debug.Log("[Tester Compile Check]edfdfd");
+		Debug.Log("[Tester Compile Check]");
 
 		TryLoadReplay();        // this goes first because it may override level script
+		InitScriptRunner();
 		LoadScript();
 		TryStartScriptAndReplay();
+	}
+
+	private void InitScriptRunner()
+	{
+		_scriptRunner.Init(_velocityController, _spinController);
 	}
 
 	private void TryStartScriptAndReplay()

@@ -22,10 +22,11 @@ GameObject:
   - component: {fileID: 33623379498662594}
   - component: {fileID: 65666865516437650}
   - component: {fileID: 23673898916602670}
-  - component: {fileID: 114209129737698206}
   - component: {fileID: 114273259584044436}
   - component: {fileID: 114958252797746174}
-  - component: {fileID: 114576970679946242}
+  - component: {fileID: 114658536353282026}
+  - component: {fileID: 114735950793740868}
+  - component: {fileID: 114431344568335944}
   m_Layer: 9
   m_Name: basicenemy
   m_TagString: Untagged
@@ -97,27 +98,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114209129737698206
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1811827714071982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed07e9f9fedbc2446a3c63b30ec19301, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _poolType: 2
-  enemyRenderer: {fileID: 23673898916602670}
-  enemyCollider: {fileID: 65666865516437650}
-  enemyRewindable: {fileID: 114576970679946242}
-  enemyWeight: {fileID: 114958252797746174}
-  normalMaterial: {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
-  hitMaterial: {fileID: 2100000, guid: 9835a4283c7d82b41acf9be9c9af4bc5, type: 2}
-  typename: basicenemy
-  startingHP: 10
-  scriptRunner: {fileID: 114273259584044436}
 --- !u!114 &114273259584044436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -129,9 +109,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee8e302fc64f3545b57bcc351a8a9a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rewindable: {fileID: 114576970679946242}
   log: 0
---- !u!114 &114576970679946242
+  rewindable: {fileID: 114431344568335944}
+--- !u!114 &114431344568335944
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -139,9 +119,47 @@ MonoBehaviour:
   m_GameObject: {fileID: 1811827714071982}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
+  m_Script: {fileID: 11500000, guid: b0b922ac5c667454cbf02434547a1252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114658536353282026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1811827714071982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331bdd6836c5ee944a210a6f4f657bae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _poolType: 2
+  myRenderer: {fileID: 23673898916602670}
+  hittable: {fileID: 114735950793740868}
+  myWeight: {fileID: 114958252797746174}
+  rewindable: {fileID: 114431344568335944}
+  hasLimitedLifeSpan: 0
+  lifeSpanSeconds: 0.35
+  startSpeedViewportPerSecond: 0
+  log: 1
+  typename: basicenemy
+  scriptRunner: {fileID: 114273259584044436}
+--- !u!114 &114735950793740868
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1811827714071982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ae8c951c0d3788409023e4ad6f6e7c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myEntity: {fileID: 114658536353282026}
+  myCollider: {fileID: 65666865516437650}
+  startingHP: 10
+  normalMaterial: {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
+  hitMaterial: {fileID: 2100000, guid: 9835a4283c7d82b41acf9be9c9af4bc5, type: 2}
 --- !u!114 &114958252797746174
 MonoBehaviour:
   m_ObjectHideFlags: 1

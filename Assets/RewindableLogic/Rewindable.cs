@@ -3,9 +3,14 @@
 //		transform data, without trying to be clever about it
 public class Rewindable : ARewindable<TransformData>
 {
-	public void Reset()
+	public override void Reset()
 	{
 		_log.Clear();
+	}
+
+	public override void Init(VelocityController velocityController, SpinController spinController)
+	{
+		// NOP
 	}
 
 	protected override void TryApplyRecordedData()

@@ -1,19 +1,25 @@
 ﻿using System.Collections.Generic;
 using RingBuffer;
-using UnityEngine;
 
-public abstract class ARewindable<T> : MonoWithCachedTransform, IRewindable
+public abstract class ABaseRewindable : MonoWithCachedTransform, IRewindable
+{
+	public bool IsRewinding { get; protected set; }
+	public bool HadSomethingToRewindToAtFrameStart { get; protected set; }
+	public int LogCount { get; protected set; }
+
+	public abstract void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false);
+	public abstract void Init(VelocityController velocityController, SpinController spinController);
+	public abstract void Reset();
+}
+
+public abstract class ARewindable<T> : ABaseRewindable
 {
 	public const int LOG_SIZE_FRAMES = 128;
-
-	public bool IsRewinding { get; private set; }
-	public bool HadSomethingToRewindToAtFrameStart { get; private set; }
-	public int LogCount { get; private set; }
 
 	protected List<IRewindableEvent> _eventQueue = new List<IRewindableEvent>();
 	protected RingBuffer<T> _log = new RingBuffer<T>(LOG_SIZE_FRAMES);
 
-	public void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false)
+	public override void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false)
 	{
 		_eventQueue.Add(evt);
 		if (recordImmediately) { RecordData(); }
