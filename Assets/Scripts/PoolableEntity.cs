@@ -15,6 +15,8 @@ public class PoolableEntity : APoolable
 
 	public float startSpeedViewportPerSecond;
 
+	public event System.Action<bool> OnMovedToGraveyard;
+
 	protected SpinController _spinController = new SpinController();
 	protected VelocityController _velocityController = new VelocityController();
 
@@ -84,6 +86,11 @@ public class PoolableEntity : APoolable
 	{
 		IsInGraveyard = true;
 		_framesSpentInGraveyard = 0;
+
+		//TODO: so this should be unified: either just do the call
+		//		and clients can listen to it, or have the entity
+		//		call all the relevant guys to do their shit.
+		//		also maybe init could be better via signals.
 		EnableVisuals(false);
 	}
 

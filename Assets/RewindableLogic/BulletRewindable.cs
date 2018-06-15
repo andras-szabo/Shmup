@@ -4,10 +4,14 @@ public class BulletRewindable : ARewindable<VelocityData>
 {
 	private VelocityController _velocityController;
 	private SpinController _spinController;
+	private int _recordedUpdateCount;
+
+	public bool log;
 
 	public override void Reset()
 	{
 		_log.Clear();
+		_recordedUpdateCount = 0;
 
 		if (_velocityController != null) { _velocityController.Stop(); }
 		if (_spinController != null) { _spinController.Stop(); }
@@ -16,6 +20,7 @@ public class BulletRewindable : ARewindable<VelocityData>
 	public override void Init(VelocityController velocityController, SpinController spinController)
 	{
 		_log.Clear();
+		_recordedUpdateCount = 0;
 		_velocityController = velocityController;
 		_spinController = spinController;
 
@@ -23,8 +28,14 @@ public class BulletRewindable : ARewindable<VelocityData>
 		_spinController.Stop();
 	}
 
+	protected override void CheckIfRewindingPossible()
+	{
+		HadSomethingToRewindToAtFrameStart = !_log.IsEmpty && _recordedUpdateCount > 0;
+	}
+
 	protected override void RecordData()
 	{
+		_recordedUpdateCount = Mathf.Min(_recordedUpdateCount + 1, LOG_SIZE_FRAMES);
 		var currentVelocity = TryGetCurrentVelocity();
 		var currentSpin = TryGetCurrentSpin();
 
@@ -81,8 +92,9 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 	protected override void TryApplyRecordedData()
 	{
-		if (!_log.IsEmpty)
+		if (!_log.IsEmpty && _recordedUpdateCount > 0)
 		{
+			_recordedUpdateCount -= 1;
 			var lastRecordedData = _log.Peek();
 			CachedTransform.position = lastRecordedData.GetCurrentPosition();
 			CachedTransform.rotation = lastRecordedData.GetCurrentRotation();
@@ -91,6 +103,11 @@ public class BulletRewindable : ARewindable<VelocityData>
 			_spinController.RotationPerFrame = lastRecordedData.spinPerFrame;
 
 			_log.UpdateLastEntry(entry => { entry.UpdateFrameCount(-1); return entry; });
+
+			if (log)
+			{
+				Debug.LogWarningFormat("LogCount: {0}, last log framecount: {1}", _log.Count, _log.Peek().FrameCount);
+			}
 
 			if (_log.Peek().FrameCount == 0)
 			{

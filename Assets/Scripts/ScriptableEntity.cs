@@ -19,4 +19,16 @@
 		scriptRunner.Init(_velocityController, _spinController);
 		scriptRunner.Run(script);
 	}
+
+	public override void GoToGraveyard()
+	{
+		base.GoToGraveyard();
+		scriptRunner.Pause(true);
+	}
+
+	public override void GetOutOfGraveyard()
+	{
+		base.GetOutOfGraveyard();
+		scriptRunner.Pause(false);
+	}
 }

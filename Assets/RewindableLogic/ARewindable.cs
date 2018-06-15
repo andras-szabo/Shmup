@@ -46,7 +46,7 @@ public abstract class ARewindable<T> : ABaseRewindable
 		}
 	}
 
-	private void CheckIfRewindingPossible()
+	protected virtual void CheckIfRewindingPossible()
 	{
 		HadSomethingToRewindToAtFrameStart = !_log.IsEmpty;
 	}

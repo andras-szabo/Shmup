@@ -57,6 +57,7 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		_time = 0f;
 		_commandPointer = -1;
 		_currentCommand = null;
+		_currentCommandTriggerTime = 0f;
 	}
 
 	public void Run(List<ICommand> script)
@@ -70,14 +71,15 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 
 			_currentCommand = null;
 			_commandPointer = -1;
+			_currentCommandTriggerTime = 0f;
 			TryStepOnNextCommand();
 			_isRunning = true;
 		}
 	}
 
-	public void Pause(bool isPaused)
+	public void Pause(bool pause)
 	{
-		_isPaused = isPaused;
+		_isPaused = pause;
 	}
 
 	#endregion
@@ -85,21 +87,14 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 	#region The main update loop
 	private void FixedUpdate()
 	{
-		if (_isRunning)
+		if (_isRunning && !_isPaused)
 		{
 			var rewinding = rewindable != null && rewindable.IsRewinding;
 			float deltaT;
 
 			if (!rewinding)
 			{
-				if (!_isPaused)
-				{
-					deltaT = Time.fixedDeltaTime;
-				}
-				else
-				{
-					deltaT = 0f;
-				}
+				deltaT = Time.fixedDeltaTime;
 			}
 			else
 			{
