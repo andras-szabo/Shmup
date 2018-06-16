@@ -49,6 +49,8 @@ public abstract class APoolable : MonoWithCachedTransform, IDespawnable
 
 public class GenericPool : MonoWithCachedTransform
 {
+	public static int pooledObjectCount;
+
 	public PoolType[] poolTypes;
 	private Dictionary<PoolType, Stack<APoolable>> _poolsByType = new Dictionary<PoolType, Stack<APoolable>>();
 
@@ -106,8 +108,11 @@ public class GenericPool : MonoWithCachedTransform
 	private APoolable CreateNew(APoolable prototype, Transform templateTransform, string param)
 	{
 		var newObject = Instantiate<APoolable>(prototype, templateTransform.position, templateTransform.rotation, null);
+
 		newObject.AssignToPool(this);
 		newObject.Init(param);
+
+		pooledObjectCount++;
 
 		return newObject;
 	}
