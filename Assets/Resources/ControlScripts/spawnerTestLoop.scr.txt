@@ -14,8 +14,7 @@ bgVel 0 -1 20
 	end
 end
 
-bgRot 0 20
-bgVel 0 -0.5 20
+bgRot 5 1+(secondWaveDelay*20)
 
 1 for j = 1 to 2 
 	for i = 1 to 5
@@ -25,6 +24,8 @@ bgVel 0 -0.5 20
 		secondWaveDelay spawn shooter 1-(i*0.2) 1.5 simpleSpinner
 	end
 end
+
+0.5 bgRot -5 10
 
 var y = 1.2
 

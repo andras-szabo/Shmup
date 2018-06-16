@@ -24,6 +24,48 @@ public class RingBufferTests
 	}
 
 	[Test]
+	public void ToArrayTest()
+	{
+		var buffer = new RingBuffer<int>(20);
+		for (int i = 0; i < 20; ++i)
+		{
+			buffer.Push(i);
+		}
+
+		var array = new int[20];
+		buffer.ToArray(array);
+
+		for (int i = 0; i < 20; ++i)
+		{
+			Assert.IsTrue(array[i] == i, array[i].ToString());
+		}
+
+		buffer.ToArray(array, reverse: true);
+		for (int i = 0; i < 20; ++i)
+		{
+			Assert.IsTrue(array[i] == 19 - i, array[i].ToString());
+		}
+	}
+
+	[Test]
+	public void ToArrayWrapAroundTest()
+	{
+		var b = new RingBuffer<int>(20);
+		for (int i = 0; i < 30; ++i)
+		{
+			b.Push(i);
+		}
+
+		var a = new int[20];
+		b.ToArray(a);
+
+		for (int i = 0; i < 20; ++i)
+		{
+			Assert.IsTrue(a[i] == 10 + i, a[i].ToString());
+		}
+	}
+
+	[Test]
 	public void SimplePushTest()
 	{
 		var buffer = new RingBuffer<int>(50);

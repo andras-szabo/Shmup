@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using RingBuffer;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class DebugLogger : MonoBehaviour
@@ -12,6 +13,7 @@ public class DebugLogger : MonoBehaviour
 	}
 
 	public const int MEMORY_SAMPLE_PER_FRAME = 60;
+	public const int FPS_HISTOGRAM_COUNT = 60;
 	public const float FPS_LOW = 24f;
 	public const float FPS_MID = 35f;
 
@@ -21,11 +23,17 @@ public class DebugLogger : MonoBehaviour
 
 	public Color fpsLowColor, fpsMidColor, fpsHighColor;
 	public Image fpsIndicatorImage;
+	public Material fpsHistogram;
 
 	private bool _tookFirstMeasurement;
 	private float _fpsMin, _fpsMax, _fpsAvg;
 	private FPSQuality _fpsTrend;
 	private int _framesOfCurrentTrend;
+
+	private RingBuffer<float> _pastFps = new RingBuffer<float>(FPS_HISTOGRAM_COUNT);
+	private float[] _fpsArray = new float[FPS_HISTOGRAM_COUNT];
+	private Color[] _colArray = new Color[FPS_HISTOGRAM_COUNT];
+	
 	private int _framesLeftUntilMemorySample = MEMORY_SAMPLE_PER_FRAME;
 
 	public void Reset()
@@ -76,7 +84,21 @@ public class DebugLogger : MonoBehaviour
 			_fpsAvg = (_fpsAvg + current) / 2f;
 		}
 
-		ShowTrendIndicator();
+		//ShowTrendIndicator();
+		ShowFpsHistogram(current);
+	}
+
+	private void ShowFpsHistogram(float current)
+	{
+		_pastFps.Push(current);
+		_pastFps.ToArray(_fpsArray);
+		for (int i = 0; i < _fpsArray.Length; ++i)
+		{
+			_colArray[i] = _fpsArray[i] < FPS_LOW ? fpsLowColor
+												  : _fpsArray[i] < FPS_MID ? fpsMidColor : fpsHighColor;
+
+			fpsHistogram.SetColorArray("_Array", _colArray);
+		}
 	}
 
 	private void ShowTrendIndicator()

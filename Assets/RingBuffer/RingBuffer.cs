@@ -81,7 +81,6 @@ namespace RingBuffer
 				var lastIndex = _endIndex - 1;
 				_list[lastIndex] = updateMethod(_list[lastIndex]);
 			}
-
 		}
 
 		public void Clear()
@@ -89,6 +88,44 @@ namespace RingBuffer
 			_startIndex = (_list.Count < Capacity) ? _list.Count : 0;
 			_endIndex = _startIndex;
 			IsEmpty = true;
+		}
+
+		public void ToArray(T[] array, bool reverse = false)
+		{
+			if (array == null || array.Length < _list.Capacity)
+			{
+				throw new System.ArgumentException("Trying to copy ringbuffer to array of mismatching size.");
+			}
+
+			if (!IsEmpty)
+			{
+				var copyIndex = _startIndex;
+				var destinationIndex = reverse ? array.Length - 1 : 0;
+				var destIndexIncrement = reverse ? -1 : 1;
+
+				if (_startIndex < _endIndex)
+				{
+					for ( ;copyIndex < _endIndex; ++copyIndex)
+					{
+						array[destinationIndex] = _list[copyIndex];
+						destinationIndex += destIndexIncrement;
+					}
+				}
+				else
+				{
+					for ( ; copyIndex < _list.Count; ++copyIndex)
+					{
+						array[destinationIndex] = _list[copyIndex];
+						destinationIndex += destIndexIncrement;
+					}
+
+					for (copyIndex = 0; copyIndex < _endIndex; ++copyIndex)
+					{
+						array[destinationIndex] = _list[copyIndex];
+						destinationIndex += destIndexIncrement;
+					}
+				}
+			}
 		}
 
 		public override string ToString()

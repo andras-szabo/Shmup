@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ShipController : MonoWithCachedTransform
 {
-	public const float INPUT_SENSITIVITY = 1.5f;
+	public const float INPUT_SENSITIVITY = 2f;
 
 	private Camera _mainCamera;
 	public Camera MainCamera
