@@ -13,10 +13,13 @@ namespace RingBuffer
 			{
 				if (IsEmpty) { return 0; }
 				if (_endIndex > _startIndex) {	return _endIndex - _startIndex; }
-				if (IsEmpty || _endIndex == 0) { return 0; }
-				return Capacity - (_endIndex - _startIndex);
+				if (_endIndex == 0) { return 0; }
+				return Capacity - (_startIndex - _endIndex);
+				// 
 			}
 		}
+
+		public event System.Action<T> OnOverrideExistingItem;
 
 		protected List<T> _list;
 		protected int _startIndex;
@@ -39,6 +42,11 @@ namespace RingBuffer
 			else
 			{
 				var newLastIndexCandidate = FindInsertionIndex();
+				if (OnOverrideExistingItem != null)
+				{
+					OnOverrideExistingItem(_list[newLastIndexCandidate]);
+				}
+
 				_list[newLastIndexCandidate] = newItem;
 				_endIndex = newLastIndexCandidate + 1;
 
@@ -83,8 +91,13 @@ namespace RingBuffer
 			}
 		}
 
-		public void Clear()
+		public void Clear(bool deallocate = false)
 		{
+			if (deallocate)
+			{
+				_list.Clear();
+			}
+
 			_startIndex = (_list.Count < Capacity) ? _list.Count : 0;
 			_endIndex = _startIndex;
 			IsEmpty = true;

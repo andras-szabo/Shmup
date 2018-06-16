@@ -27,7 +27,7 @@ public class TestEnemySpawner : MonoBehaviour
 
 	private void Start()
 	{
-		Debug.Log("[Tester Compile Check] fuck you");
+		Debug.Log("[Tester Compile Check] llaabbccddeeffgghhiijjkkllmm");
 
 		TryLoadReplay();        // this goes first because it may override level script
 		InitScriptRunner();

@@ -28,7 +28,6 @@ public abstract class ARewindable<T> : ABaseRewindable
 	protected abstract void RecordData();
 	protected abstract void TryApplyRecordedData();
 
-	//Shit, this could also go to ARewindable
 	private void FixedUpdate()
 	{
 		CheckIfRewindingRequested();

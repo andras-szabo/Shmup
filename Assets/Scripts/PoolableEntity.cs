@@ -32,6 +32,12 @@ public class PoolableEntity : APoolable
 		InitializeGraveyardStatus();
 		InitializeHittable();
 		InitializeTransformControllers(startSpeedViewportPerSecond);
+		OnDespawn += CleanupRewindable;
+	}
+
+	private void CleanupRewindable(bool despawnBecauseRewind)
+	{
+		rewindable.Reset();
 	}
 
 	public override void Stop()

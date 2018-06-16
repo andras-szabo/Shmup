@@ -23,12 +23,13 @@ public class DebugLogger : MonoBehaviour
 
 	public Color fpsLowColor, fpsMidColor, fpsHighColor;
 	public Image fpsIndicatorImage;
-	public Material fpsHistogram;
+	public Material fpsHistogramMaterial;
+	public Material fpsDistributionMaterial;
 
 	private bool _tookFirstMeasurement;
 	private float _fpsMin, _fpsMax, _fpsAvg;
-	private FPSQuality _fpsTrend;
-	private int _framesOfCurrentTrend;
+
+	private int _fpsLowCount, _fpsMidCount, _fpsHighCount;
 
 	private RingBuffer<float> _pastFps = new RingBuffer<float>(FPS_HISTOGRAM_COUNT);
 	private float[] _fpsArray = new float[FPS_HISTOGRAM_COUNT];
@@ -39,6 +40,10 @@ public class DebugLogger : MonoBehaviour
 	public void Reset()
 	{
 		_tookFirstMeasurement = false;
+		_pastFps.Clear(deallocate: true);
+		_fpsLowCount = 1;
+		_fpsMidCount = 1;
+		_fpsHighCount = 1;
 	}
 
 	private void Update()
@@ -51,7 +56,8 @@ public class DebugLogger : MonoBehaviour
 
 	private void UpdateEntityLabel()
 	{
-		entityLabel.text = string.Format("Pooled entity count: {0}", GenericPool.pooledObjectCount);
+		entityLabel.text = string.Format("Entities: {0} / TrDataPool available: {1}", GenericPool.pooledObjectCount,
+																					  TransformDataPool.Instance.Pool.AvailableCount);
 	}
 
 	private void UpdateMemoryLabelIfNeeded()
@@ -84,41 +90,44 @@ public class DebugLogger : MonoBehaviour
 			_fpsAvg = (_fpsAvg + current) / 2f;
 		}
 
-		//ShowTrendIndicator();
 		ShowFpsHistogram(current);
+		ShowDistributionOverTime(current);
 	}
 
-	private void ShowFpsHistogram(float current)
+	private void ShowFpsHistogram(float currentFPS)
 	{
-		_pastFps.Push(current);
+		_pastFps.Push(currentFPS);
 		_pastFps.ToArray(_fpsArray);
 		for (int i = 0; i < _fpsArray.Length; ++i)
 		{
 			_colArray[i] = _fpsArray[i] < FPS_LOW ? fpsLowColor
 												  : _fpsArray[i] < FPS_MID ? fpsMidColor : fpsHighColor;
 
-			fpsHistogram.SetColorArray("_Array", _colArray);
+			fpsHistogramMaterial.SetColorArray("_Array", _colArray);
 		}
 	}
 
-	private void ShowTrendIndicator()
+	private void ShowDistributionOverTime(float currentFPS)
 	{
-		var currentTrend = _fpsAvg < FPS_LOW ? FPSQuality.Low
-											 : _fpsAvg < FPS_MID ? FPSQuality.Mid : FPSQuality.High;
-
-		if (_fpsTrend != currentTrend)
+		if (currentFPS < FPS_LOW)
 		{
-			if (--_framesOfCurrentTrend <= 0)
-			{
-				_fpsTrend = currentTrend;
-				fpsIndicatorImage.color = _fpsTrend == FPSQuality.Low ? fpsLowColor
-																	  : _fpsTrend == FPSQuality.Mid ? fpsMidColor : fpsHighColor;
-			}
+			_fpsLowCount++;
+		}
+		else if (currentFPS < FPS_MID)
+		{
+			_fpsMidCount++;
 		}
 		else
 		{
-			_framesOfCurrentTrend = Mathf.Min(10, _framesOfCurrentTrend + 1);
+			_fpsHighCount++;
 		}
+
+		float sum = _fpsLowCount + _fpsMidCount + _fpsHighCount;
+		var lowMid = (float)_fpsLowCount / sum;
+		var midHi = (float)(sum - _fpsHighCount) / sum;
+
+		fpsDistributionMaterial.SetFloat("_LowMidThreshold", lowMid);
+		fpsDistributionMaterial.SetFloat("_MidHighThreshold", midHi);
 	}
 
 	private void TakeFirstMeasurement(float currentFPS)

@@ -26,8 +26,8 @@ GameObject:
   - component: {fileID: 114958252797746174}
   - component: {fileID: 114658536353282026}
   - component: {fileID: 114735950793740868}
-  - component: {fileID: 114778285334880042}
   - component: {fileID: 114250088347827444}
+  - component: {fileID: 114634297576098604}
   m_Layer: 9
   m_Name: shooter
   m_TagString: Untagged
@@ -124,7 +124,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   log: 0
-  rewindable: {fileID: 114778285334880042}
+  rewindable: {fileID: 114634297576098604}
+--- !u!114 &114634297576098604
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1811827714071982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114658536353282026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -141,7 +152,7 @@ MonoBehaviour:
   myCollider: {fileID: 0}
   hittable: {fileID: 114735950793740868}
   myWeight: {fileID: 114958252797746174}
-  rewindable: {fileID: 114778285334880042}
+  rewindable: {fileID: 114634297576098604}
   hasLimitedLifeSpan: 0
   lifeSpanSeconds: 0.35
   startSpeedViewportPerSecond: 0
@@ -159,23 +170,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ae8c951c0d3788409023e4ad6f6e7c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myEntity: {fileID: 114658536353282026}
   myCollider: {fileID: 65666865516437650}
+  myEntity: {fileID: 114658536353282026}
   startingHP: 10
   normalMaterial: {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
   hitMaterial: {fileID: 2100000, guid: 9835a4283c7d82b41acf9be9c9af4bc5, type: 2}
---- !u!114 &114778285334880042
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1811827714071982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0b922ac5c667454cbf02434547a1252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  log: 0
 --- !u!114 &114958252797746174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -187,5 +186,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9be3a37c8aea4634cac4134225e533bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBullet: 0
+  isPlayerBullet: 0
   weight: 0

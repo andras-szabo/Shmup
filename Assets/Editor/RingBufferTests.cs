@@ -117,6 +117,63 @@ public class RingBufferTests
 	}
 
 	[Test]
+	public void PoolTest()
+	{
+		var pool = new List<TransformData>(5);
+		for (int i = 0; i < 5; ++i)
+		{
+			pool.Add(new TransformData(Vector3.zero, Quaternion.identity, null, i));
+		}
+
+		var buffer = new RingBuffer<TransformData>(3);
+
+		// Mock "Get" from pool
+		var a = pool[0];
+		a.position = Vector3.one;
+
+		buffer.Push(a);
+
+		Assert.IsTrue(pool[0].position == Vector3.one);
+	}
+
+	[Test]
+	public void RealPoolTest()
+	{
+		var pool = new DataPool<TransformData>(5);
+		var buffer = new RingBuffer<TransformData>(3);
+		buffer.OnOverrideExistingItem += (item => pool.ReturnToPool(item));
+
+		for (int i = 0; i < 3; ++i)
+		{
+			buffer.Push(pool.GetFromPool());
+		}
+
+		Assert.IsTrue(pool.AvailableCount == 2, pool.AvailableCount.ToString());
+
+		var newItem = pool.GetFromPool();
+
+		Assert.IsTrue(pool.AvailableCount == 1, pool.AvailableCount.ToString());
+
+		buffer.Push(newItem);
+
+		Assert.IsTrue(pool.AvailableCount == 2, pool.AvailableCount.ToString());
+		Assert.IsTrue(pool.IsIndexAvailable(0));
+
+		while (!buffer.IsEmpty)
+		{
+			var item = buffer.Pop();
+			pool.ReturnToPool(item);
+		}
+
+		Assert.IsTrue(pool.AvailableCount == 5, pool.AvailableCount.ToString());
+
+		for (int i = 0; i < 5; ++i)
+		{
+			Assert.IsTrue(pool.IsIndexAvailable(i));
+		}
+	}
+
+	[Test]
 	public void WrapAroundTwiceTest()
 	{
 		var buffer = new RingBuffer<int>(10);

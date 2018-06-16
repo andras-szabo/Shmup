@@ -12,16 +12,27 @@ public interface IRewindable
 	void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false);
 }
 
-public struct TransformData
+public class TransformData : IDataPoolable
 {
-	public TransformData(Vector3 pos, Quaternion rot, List<IRewindableEvent> evts)
+	public TransformData(Vector3 pos, Quaternion rot, List<IRewindableEvent> evts, int indexInPool)
 	{
+		this.IndexInPool = indexInPool;
+
 		position = pos;
 		rotation = rot;
-		events = evts.ToArray();
+		events = (evts == null || evts.Count < 1) ? null : evts.ToArray();
 	}
 
-	public readonly Vector3 position;
-	public readonly Quaternion rotation;
-	public readonly IRewindableEvent[] events;
+	public TransformData()
+	{
+		position = Vector3.zero;
+		rotation = Quaternion.identity;
+		events = null;
+	}
+
+	public int IndexInPool { get; set; }
+
+	public Vector3 position;
+	public Quaternion rotation;
+	public IRewindableEvent[] events;
 }

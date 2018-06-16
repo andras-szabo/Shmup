@@ -41,11 +41,15 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 		if (_eventQueue.Count > 0 || ShouldRecordNewEntry(currentVelocity, currentSpin))
 		{
+			Debug.LogFormat("Record new entry. Start rot: {0}, spin: {1}", CachedTransform.rotation.eulerAngles,
+																		   currentSpin);
 			RecordNewDataEntry(currentVelocity, currentSpin);
 		}
 		else
 		{
 			UpdateLastRecordedDataEntry(deltaFrameCount: 1);
+			_log.Peek().GetCurrentRotation();
+			Debug.LogFormat("vs: {0}", CachedTransform.rotation.eulerAngles);
 		}
 	}
 

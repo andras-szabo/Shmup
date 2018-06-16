@@ -24,10 +24,10 @@ GameObject:
   - component: {fileID: 65636612776729548}
   - component: {fileID: 114705276733035074}
   - component: {fileID: 114971414930872572}
-  - component: {fileID: 114303905385394718}
   - component: {fileID: 54825028331685656}
   - component: {fileID: 114910014097821838}
   - component: {fileID: 114738997598284892}
+  - component: {fileID: 114038169377678316}
   m_Layer: 8
   m_Name: basicbullet
   m_TagString: Untagged
@@ -114,7 +114,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114303905385394718
+--- !u!114 &114038169377678316
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -122,10 +122,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1806366837826752}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0b922ac5c667454cbf02434547a1252, type: 3}
+  m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  log: 0
 --- !u!114 &114705276733035074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -168,7 +167,7 @@ MonoBehaviour:
   myCollider: {fileID: 65636612776729548}
   hittable: {fileID: 114738997598284892}
   myWeight: {fileID: 114705276733035074}
-  rewindable: {fileID: 114303905385394718}
+  rewindable: {fileID: 114038169377678316}
   hasLimitedLifeSpan: 1
   lifeSpanSeconds: 0.35
   startSpeedViewportPerSecond: 3

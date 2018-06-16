@@ -1,0 +1,52 @@
+var firstWaveDelay = 0.5
+var secondWaveDelay = 0.3
+
+bgVel 0 -1 20
+
+var y = 1.2
+
+0.5 for j = 1 to 2
+	for i = 1 to 4
+		0.5	spawn shooter 0.1*i y shootTest
+			spawn shooter 1-(i*0.1) y shootTestInverse
+	end
+end
+
+1 for j = 1 to 2
+	for i = 1 to 4
+		0.5	spawn shooter 0.1*i y shootTest
+			spawn shooter 1-(i*0.1) y shootTestInverse
+	end
+end
+
+1 for j = 1 to 2
+	for i = 1 to 4
+		0.5	spawn shooter 0.1*i y shootTest
+			spawn shooter 1-(i*0.1) y shootTestInverse
+	end
+end
+
+1 for i = 1 to 2
+	for j = 1 to 4
+		firstWaveDelay spawn shooter j*0.1 1.5 simpleSpinner
+					   spawn shooter 1-(j*0.1) 1.5 simpleSpinner
+	end
+	for j = 4 to 1 step -1
+		firstWaveDelay spawn shooter j*0.1 1.5 simpleSpinner
+					   spawn shooter 1-(j*0.1) 1.5 simpleSpinner
+	end
+end
+
+bgRot 5 1+(secondWaveDelay*20)
+
+1 for j = 1 to 2 
+	for i = 1 to 5
+		secondWaveDelay spawn shooter i*0.2 1.5 simpleSpinner
+	end
+	for i = 1 to 5
+		secondWaveDelay spawn shooter 1-(i*0.2) 1.5 simpleSpinner
+	end
+end
+
+0.5 bgRot -5 10
+
