@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LifeCycleService : MonoBehaviour 
 {
@@ -10,6 +8,8 @@ public class LifeCycleService : MonoBehaviour
 	public void Reset()
 	{
 		shipController.Reset();
+		var rewindable = (Rewindable)levelScriptRunner.rewindable;
+		rewindable.Init(null, null);
 		levelScriptRunner.ResetScript();
 		InputService.Instance.Reset();
 	}

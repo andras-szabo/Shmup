@@ -27,7 +27,7 @@ public class TestEnemySpawner : MonoBehaviour
 
 	private void Start()
 	{
-		Debug.Log("[Tester Compile Check] llaabbccddeeffgghhiijjkkllmm");
+		Debug.Log("[Tester Compile Check] full onsssss");
 
 		TryLoadReplay();        // this goes first because it may override level script
 		InitScriptRunner();
@@ -38,6 +38,8 @@ public class TestEnemySpawner : MonoBehaviour
 	private void InitScriptRunner()
 	{
 		_scriptRunner.Init(_velocityController, _spinController);
+		var rewindable = (Rewindable)_scriptRunner.rewindable;
+		rewindable.Init(null, null);
 	}
 
 	private void TryStartScriptAndReplay()
