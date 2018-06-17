@@ -62,7 +62,7 @@ public class DataPool<T> where T : IDataPoolable, new()
 
 	public void ReturnToPool(T item)
 	{
-		if (!_availableIndices.Contains(item.IndexInPool))
+		if (item != null && !_availableIndices.Contains(item.IndexInPool))
 		{
 			_availableIndices.Add(item.IndexInPool);
 			_available.Push(item.IndexInPool);

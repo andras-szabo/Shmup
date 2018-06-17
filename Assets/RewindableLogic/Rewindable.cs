@@ -10,10 +10,8 @@ public class Rewindable : ARewindable<TransformData>
 			TransformDataPool.Instance.Pool.ReturnToPool(_log.Pop());
 		}
 
-		//TODO: So what would be nicer would be a "set to null",
-		//		so that we can add in place; but at least this
-		//		seems to fix one of the issues
-		_log.Clear(true);
+		_log.Clear();
+		Paused = false;
 	}
 
 	public override void Init(VelocityController velocityController, SpinController spinController)
@@ -21,11 +19,15 @@ public class Rewindable : ARewindable<TransformData>
 		_log.Clear();
 		_log.OnOverrideExistingItem -= ReturnItemToPool;
 		_log.OnOverrideExistingItem += ReturnItemToPool;
+		Paused = false;
 	}
 
 	private void ReturnItemToPool(TransformData data)
 	{
-		TransformDataPool.Instance.Pool.ReturnToPool(data);
+		if (data != null)
+		{
+			TransformDataPool.Instance.Pool.ReturnToPool(data);
+		}
 	}
 
 	protected override void TryApplyRecordedData()
@@ -33,6 +35,9 @@ public class Rewindable : ARewindable<TransformData>
 		if (!_log.IsEmpty)
 		{
 			var trData = _log.Pop();
+
+			if (trData == null) { return; }
+
 			CachedTransform.position = trData.position;
 			CachedTransform.rotation = trData.rotation;
 
@@ -50,6 +55,8 @@ public class Rewindable : ARewindable<TransformData>
 
 	protected override void RecordData()
 	{
+		if (Paused) { _log.Push(null); return; }
+
 		var newData = TransformDataPool.Instance.Pool.GetFromPool();
 
 		if (newData == null)

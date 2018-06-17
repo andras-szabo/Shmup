@@ -97,12 +97,14 @@ public class PoolableEntity : APoolable
 		//		call all the relevant guys to do their shit.
 		//		also maybe init could be better via signals.
 		EnableVisuals(false);
+		rewindable.Paused = true;
 	}
 
 	public virtual void GetOutOfGraveyard()
 	{
 		IsInGraveyard = false;
 		EnableVisuals(true);
+		rewindable.Paused = false;
 	}
 
 	protected virtual void FixedUpdate()
@@ -160,12 +162,15 @@ public class PoolableEntity : APoolable
 
 	private void ProcessEventQueue()
 	{
-		foreach (var evt in _eventQueue)
+		if (_eventQueue.Count > 0)
 		{
-			evt.Apply(false);
-		}
+			foreach (var evt in _eventQueue)
+			{
+				evt.Apply(false);
+			}
 
-		_eventQueue.Clear();
+			_eventQueue.Clear();
+		}
 	}
 
 	private void EnableVisuals(bool enable)

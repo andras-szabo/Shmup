@@ -327,6 +327,22 @@ public class RingBufferTests
 	}
 
 	[Test]
+	public void CleanupOnPop()
+	{
+		var buffer = new RingBuffer<TransformData>(5, cleanupOnPop: true);
+		var cleanedUp = false;
+		buffer.OnOverrideExistingItem += (item) => { if (item == null) cleanedUp = true; };
+		buffer.Push(new TransformData(Vector3.one, Quaternion.identity, null, 1));
+		buffer.Pop();
+		for (int i = 0; i < 7; ++i)
+		{
+			buffer.Push(new TransformData(Vector3.up, Quaternion.identity, null, 2 + i));
+		}
+
+		Assert.IsTrue(cleanedUp);
+	}
+
+	[Test]
 	public void ClearBeforeFull()
 	{
 		var buffer = new RingBuffer<int>(50);

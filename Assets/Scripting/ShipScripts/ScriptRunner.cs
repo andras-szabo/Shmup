@@ -137,7 +137,8 @@ public class ScriptRunner : MonoWithCachedTransform, IMoveControl, IExecutionCon
 		while (_currentCommand != null && ApproximatelySameOrOver(_time, _currentCommandTriggerTime))
 		{
 			_commandHistory.Push(new ExecutedCommand(_currentCommandTriggerTime, _commandPointer));
-			L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
+			// If we have to log, let's not use string concatenation which allocates like crazy
+			// L("Execute: " + _commandPointer + " at " + _time + " // trigger: " + _currentCommandTriggerTime, true);
 
 			_currentCommand.Execute(context: this);
 			TryStepOnNextCommand();

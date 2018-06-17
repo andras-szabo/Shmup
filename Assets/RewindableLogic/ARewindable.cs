@@ -6,6 +6,7 @@ public abstract class ABaseRewindable : MonoWithCachedTransform, IRewindable
 	public bool IsRewinding { get; protected set; }
 	public bool HadSomethingToRewindToAtFrameStart { get; protected set; }
 	public int LogCount { get; protected set; }
+	public bool Paused { get; set; }
 
 	public abstract void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false);
 	public abstract void Init(VelocityController velocityController, SpinController spinController);
@@ -17,7 +18,8 @@ public abstract class ARewindable<T> : ABaseRewindable
 	public const int LOG_SIZE_FRAMES = 128;
 
 	protected List<IRewindableEvent> _eventQueue = new List<IRewindableEvent>();
-	protected RingBuffer<T> _log = new RingBuffer<T>(LOG_SIZE_FRAMES);
+	protected RingBuffer<T> _log = new RingBuffer<T>(LOG_SIZE_FRAMES, cleanupOnPop: true);
+	protected InputController _inputController;
 
 	public override void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false)
 	{
@@ -52,6 +54,7 @@ public abstract class ARewindable<T> : ABaseRewindable
 
 	private void CheckIfRewindingRequested()
 	{
-		IsRewinding = InputController.Instance.IsHoldingDoubleTap;
+		if (_inputController == null) { _inputController = InputController.Instance; }
+		IsRewinding = _inputController.IsHoldingDoubleTap;
 	}
 }

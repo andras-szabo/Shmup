@@ -46,11 +46,19 @@ public class VelocityController
 
 	public void UpdateVelocity(float currentTime, bool isRewinding)
 	{
+		//TODO: can we make this faster?
 		LerpUtility.GetRidOfLerpsInTheFuture(_velocityLerpStack, currentTime);
 
 		if (!isRewinding && _velocityLerpStack.Count > 0)
 		{
 			var lastVelocityLerp = _velocityLerpStack.Peek();
+
+			if (lastVelocityLerp.endTime <= currentTime)
+			{
+				CurrentVelocityViewportPerSecond = lastVelocityLerp.endVector;
+				return;
+			}
+
 			var duration = lastVelocityLerp.endTime - lastVelocityLerp.startTime;
 			var elapsed = currentTime - lastVelocityLerp.startTime;
 			var rate = Mathf.Clamp01(elapsed / duration);

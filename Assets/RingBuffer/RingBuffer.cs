@@ -24,12 +24,16 @@ namespace RingBuffer
 		protected List<T> _list;
 		protected int _startIndex;
 		protected int _endIndex;
+		private bool _cleanupOnPop;
+		private T _default;
 
-		public RingBuffer(int size)
+		public RingBuffer(int size, bool cleanupOnPop = false)
 		{
 			Capacity = size;
 			_list = new List<T>(size);
 			IsEmpty = true;
+			_cleanupOnPop = cleanupOnPop;
+			_default = default(T);
 		}
 
 		public void Push(T newItem)
@@ -42,6 +46,7 @@ namespace RingBuffer
 			else
 			{
 				var newLastIndexCandidate = FindInsertionIndex();
+				
 				if (OnOverrideExistingItem != null)
 				{
 					OnOverrideExistingItem(_list[newLastIndexCandidate]);
@@ -65,6 +70,11 @@ namespace RingBuffer
 
 			var lastIndex = _endIndex - 1;
 			var itemToReturn = _list[lastIndex];
+
+			if (_cleanupOnPop)
+			{
+				_list[lastIndex] = _default;
+			}
 
 			if (lastIndex == _startIndex) { IsEmpty = true; }
 

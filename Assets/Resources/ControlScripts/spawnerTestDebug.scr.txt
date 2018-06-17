@@ -1,2 +1,2 @@
-var y = 1.2
-1	spawn shooter 0.2 y simpleSpinner
+var y = 0.8
+1	spawn shooter 0.5 y simpleSpinner

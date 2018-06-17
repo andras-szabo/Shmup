@@ -92,12 +92,15 @@ public class Hittable : AHittable
 
 	private void ProcessPendingDamage(float deltaTime)
 	{
-		foreach (var dmg in _pendingDamage)
+		if (_pendingDamage.Count > 0)
 		{
-			var shouldApplyDamage = dmg.UpdateAndCheckIfNeedsToApply(deltaTime);
-			if (shouldApplyDamage && !myEntity.IsRewinding)
+			foreach (var dmg in _pendingDamage)
 			{
-				myEntity.EnqueueEvent(new HitStunOverEvent(dmg.damage, this));
+				var shouldApplyDamage = dmg.UpdateAndCheckIfNeedsToApply(deltaTime);
+				if (shouldApplyDamage && !myEntity.IsRewinding)
+				{
+					myEntity.EnqueueEvent(new HitStunOverEvent(dmg.damage, this));
+				}
 			}
 		}
 	}

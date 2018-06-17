@@ -58,6 +58,13 @@ public class SpinController
 		if (!isRewinding && _spinLerpStack.Count > 0)
 		{
 			var lastLerp = _spinLerpStack.Peek();
+
+			if (lastLerp.endTime <= currentTime)
+			{
+				CurrentRotSpeedAnglesPerSecond = lastLerp.endVector;
+				return;
+			}
+
 			var duration = lastLerp.endTime - lastLerp.startTime;
 			var elapsed = currentTime - lastLerp.startTime;
 			var rate = Mathf.Clamp01(elapsed / duration);

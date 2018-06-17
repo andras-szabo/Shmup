@@ -5,6 +5,7 @@ public class BulletRewindable : ARewindable<VelocityData>
 	private VelocityController _velocityController;
 	private SpinController _spinController;
 	private int _recordedUpdateCount;
+	private bool _velocityHasChanged;
 
 	public bool log;
 
@@ -15,6 +16,9 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 		if (_velocityController != null) { _velocityController.Stop(); }
 		if (_spinController != null) { _spinController.Stop(); }
+
+		Paused = false;
+		_velocityHasChanged = false;
 	}
 
 	public override void Init(VelocityController velocityController, SpinController spinController)
@@ -26,6 +30,8 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 		_velocityController.Stop();
 		_spinController.Stop();
+		_velocityHasChanged = false;
+		Paused = false;
 	}
 
 	protected override void CheckIfRewindingPossible()
@@ -36,21 +42,39 @@ public class BulletRewindable : ARewindable<VelocityData>
 	protected override void RecordData()
 	{
 		_recordedUpdateCount = Mathf.Min(_recordedUpdateCount + 1, LOG_SIZE_FRAMES);
-		var currentVelocity = TryGetCurrentVelocity();
-		var currentSpin = TryGetCurrentSpin();
 
-		if (_eventQueue.Count > 0 || ShouldRecordNewEntry(currentVelocity, currentSpin))
+		if (Paused)
 		{
-			Debug.LogFormat("Record new entry. Start rot: {0}, spin: {1}", CachedTransform.rotation.eulerAngles,
-																		   currentSpin);
-			RecordNewDataEntry(currentVelocity, currentSpin);
+			_log.Peek().UpdateFrameCount(1);
+			return;
+		}
+
+		var currentVelocity = TryGetCurrentVelocity();
+
+		if (_eventQueue.Count > 0 || (!_velocityHasChanged && VelocityChangesNow(currentVelocity)))
+		{
+			RecordNewDataEntry(currentVelocity);
 		}
 		else
 		{
-			UpdateLastRecordedDataEntry(deltaFrameCount: 1);
-			_log.Peek().GetCurrentRotation();
-			Debug.LogFormat("vs: {0}", CachedTransform.rotation.eulerAngles);
+			//TODO - so it's unsafe, but faster:
+			_log.Peek().UpdateFrameCount(1);
+			//UpdateLastRecordedDataEntry(deltaFrameCount: 1);
 		}
+	}
+
+	private bool VelocityChangesNow(Vector3 currentVelocity)
+	{
+		if (!_log.IsEmpty)
+		{
+			var previousVelocity = _log.Peek().velocityPerFrame;
+			_velocityHasChanged |= previousVelocity.x != currentVelocity.x || 
+								   previousVelocity.y != currentVelocity.y ||
+								   previousVelocity.z != currentVelocity.z;
+			return _velocityHasChanged;
+		}
+
+		return false;
 	}
 
 	private Vector3 TryGetCurrentVelocity()
@@ -58,40 +82,15 @@ public class BulletRewindable : ARewindable<VelocityData>
 		return _velocityController != null ? _velocityController.CurrentVelocityUnitsPerFrame : Vector3.zero;
 	}
 
-	private Vector3 TryGetCurrentSpin()
+	private void RecordNewDataEntry(Vector3 currentVelocity)
 	{
-		return _spinController != null ? _spinController.RotationPerFrame : Vector3.zero;
-	}
-
-	private void RecordNewDataEntry(Vector3 currentVelocity, Vector3 currentSpin)
-	{
-		_log.Push(new VelocityData(currentVelocity, currentSpin, _eventQueue,
-								   CachedTransform.position, CachedTransform.rotation));
+		_log.Push(new VelocityData(currentVelocity, _eventQueue, CachedTransform.position));
 		_eventQueue.Clear();
 	}
 
 	private void UpdateLastRecordedDataEntry(int deltaFrameCount)
 	{
 		_log.UpdateLastEntry(entry => { entry.UpdateFrameCount(deltaFrameCount); return entry; });
-	}
-
-	private bool ShouldRecordNewEntry(Vector3 currentVelocity, Vector3 currentSpin)
-	{
-		var shouldRecordNewEntry = true;
-
-		if (!_log.IsEmpty)
-		{
-			var lastRecordedEntry = _log.Peek();
-			shouldRecordNewEntry = IsDifferent(currentVelocity, lastRecordedEntry.velocityPerFrame) ||
-								   IsDifferent(currentSpin, lastRecordedEntry.spinPerFrame);
-		}
-
-		return shouldRecordNewEntry;
-	}
-
-	private bool IsDifferent(Vector3 a, Vector3 b)
-	{
-		return !Mathf.Approximately((a.x - b.x) + (a.y - b.y) + (a.z - b.z), 0f);
 	}
 
 	protected override void TryApplyRecordedData()
@@ -101,17 +100,8 @@ public class BulletRewindable : ARewindable<VelocityData>
 			_recordedUpdateCount -= 1;
 			var lastRecordedData = _log.Peek();
 			CachedTransform.position = lastRecordedData.GetCurrentPosition();
-			CachedTransform.rotation = lastRecordedData.GetCurrentRotation();
-
 			_velocityController.CurrentVelocityUnitsPerFrame = lastRecordedData.velocityPerFrame;
-			_spinController.RotationPerFrame = lastRecordedData.spinPerFrame;
-
-			_log.UpdateLastEntry(entry => { entry.UpdateFrameCount(-1); return entry; });
-
-			if (log)
-			{
-				Debug.LogWarningFormat("LogCount: {0}, last log framecount: {1}", _log.Count, _log.Peek().FrameCount);
-			}
+			_log.Peek().UpdateFrameCount(-1);
 
 			if (_log.Peek().FrameCount == 0)
 			{
