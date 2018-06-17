@@ -7,7 +7,8 @@ public enum PoolType
 
 	Bullets,
 	Enemies,
-	EnemyBullets
+	EnemyBullets,
+	GhostBullets
 }
 
 public class GameObjectPoolManager : MonoBehaviour

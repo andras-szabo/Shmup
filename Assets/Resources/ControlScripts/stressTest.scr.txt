@@ -7,15 +7,22 @@ var y = 1.2
 
 0.5 for j = 1 to 2
 	for i = 1 to 4
-		0.5	spawn shooter 0.1*i y shootTest
-			spawn shooter 1-(i*0.1) y shootTestInverse
+		0.5	spawn shooter 0.1*i y shootTestInverse
+			spawn shooter 1-(i*0.1) y shootTest
 	end
 end
 
 1 for j = 1 to 2
 	for i = 1 to 4
-		0.5	spawn shooter 0.1*i y shootTest
-			spawn shooter 1-(i*0.1) y shootTestInverse
+		0.5	spawn shooter 0.1*i y shootTestInverse
+			spawn shooter 1-(i*0.1) y shootTest
+	end
+end
+
+1 for j = 1 to 2
+	for i = 1 to 4
+		0.5	spawn shooter 0.1*i y shootTestInverse
+			spawn shooter 1-(i*0.1) y shootTest
 	end
 end
 

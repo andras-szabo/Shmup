@@ -15,7 +15,7 @@ public abstract class ABaseRewindable : MonoWithCachedTransform, IRewindable
 
 public abstract class ARewindable<T> : ABaseRewindable
 {
-	public const int LOG_SIZE_FRAMES = 128;
+	public const int LOG_SIZE_FRAMES = 200;
 
 	protected List<IRewindableEvent> _eventQueue = new List<IRewindableEvent>();
 	protected RingBuffer<T> _log = new RingBuffer<T>(LOG_SIZE_FRAMES, cleanupOnPop: true);
@@ -55,6 +55,6 @@ public abstract class ARewindable<T> : ABaseRewindable
 	private void CheckIfRewindingRequested()
 	{
 		if (_inputController == null) { _inputController = InputController.Instance; }
-		IsRewinding = _inputController.IsHoldingDoubleTap;
+		IsRewinding = _inputController.IsHoldingDoubleTap && !Ghost.IsReplaying;
 	}
 }

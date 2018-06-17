@@ -14,7 +14,9 @@ public class ShipController : MonoWithCachedTransform
 		}
 	}
 
-	private Rewindable _rewindable;
+	public Ghost ghost;
+
+	private PlayerShipRewindable _rewindable;
 
 	private Vector3 _worldMin;
 	private Vector3 _worldMax;
@@ -35,14 +37,14 @@ public class ShipController : MonoWithCachedTransform
 		_worldMax = MainCamera.ViewportToWorldPoint(new Vector3(1f, 1f, 10f));
 
 		_bulletSpawners = new List<ISpawner>(GetComponentsInChildren<ISpawner>());
-		_rewindable = GetComponent<Rewindable>();
+		_rewindable = GetComponent<PlayerShipRewindable>();
 		_rewindable.Init(null, null);
 		
 	}
 
 	private void FixedUpdate()
 	{
-		if (_rewindable != null && !_rewindable.IsRewinding)
+		if (!_rewindable.IsRewinding)
 		{
 			UpdatePosition();
 			TryShoot(Time.fixedDeltaTime);
@@ -66,6 +68,8 @@ public class ShipController : MonoWithCachedTransform
 			{
 				spawner.SpawnFromPool(string.Empty, Spawner.DONT_TRACK_SPAWNED_ID, string.Empty);
 			}
+
+			_rewindable.isShootingThisFrame = true;
 		}
 	}
 

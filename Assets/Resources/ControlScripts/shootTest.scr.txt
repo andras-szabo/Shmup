@@ -1,5 +1,5 @@
 var deg = 180
-vel 0 0.2 0
+vel 0 0.4 0
 rot 0 0 -90
 
 for l = 1 to 2
@@ -20,7 +20,6 @@ for l = 1 to 2
 
 		spin 0 0 0 1
 	end
-	1 vel 0 0.02 0
 end
 
 

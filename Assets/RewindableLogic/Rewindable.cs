@@ -7,7 +7,7 @@ public class Rewindable : ARewindable<TransformData>
 	{
 		while (!_log.IsEmpty)
 		{
-			TransformDataPool.Instance.Pool.ReturnToPool(_log.Pop());
+			DataPoolContainer.Instance.TransformDataPool.ReturnToPool(_log.Pop());
 		}
 
 		_log.Clear();
@@ -26,7 +26,7 @@ public class Rewindable : ARewindable<TransformData>
 	{
 		if (data != null)
 		{
-			TransformDataPool.Instance.Pool.ReturnToPool(data);
+			DataPoolContainer.Instance.TransformDataPool.ReturnToPool(data);
 		}
 	}
 
@@ -49,7 +49,7 @@ public class Rewindable : ARewindable<TransformData>
 				}
 			}
 
-			TransformDataPool.Instance.Pool.ReturnToPool(trData);
+			DataPoolContainer.Instance.TransformDataPool.ReturnToPool(trData);
 		}
 	}
 
@@ -57,7 +57,7 @@ public class Rewindable : ARewindable<TransformData>
 	{
 		if (Paused) { _log.Push(null); return; }
 
-		var newData = TransformDataPool.Instance.Pool.GetFromPool();
+		var newData = DataPoolContainer.Instance.TransformDataPool.GetFromPool();
 
 		if (newData == null)
 		{
@@ -71,6 +71,7 @@ public class Rewindable : ARewindable<TransformData>
 		}
 
 		_log.Push(newData);
-		_eventQueue.Clear();
+
+		if (_eventQueue.Count > 0) { _eventQueue.Clear(); }
 	}
 }

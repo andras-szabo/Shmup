@@ -57,7 +57,7 @@ public class DebugLogger : MonoBehaviour
 	private void UpdateEntityLabel()
 	{
 		entityLabel.text = string.Format("Entities: {0} / TrDataPool available: {1}", GenericPool.pooledObjectCount,
-																					  TransformDataPool.Instance.Pool.AvailableCount);
+																					  DataPoolContainer.Instance.TransformDataPool.AvailableCount);
 	}
 
 	private void UpdateMemoryLabelIfNeeded()
