@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 54825028331685656}
   - component: {fileID: 114910014097821838}
   - component: {fileID: 114340975246389322}
-  - component: {fileID: 114550153120916666}
+  - component: {fileID: 114807637638609918}
   m_Layer: 12
   m_Name: enemybullet
   m_TagString: Untagged
@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myCollider: {fileID: 65636612776729548}
   myEntity: {fileID: 114910014097821838}
---- !u!114 &114550153120916666
+--- !u!114 &114807637638609918
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1806366837826752}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92875cff1bb46a54bb646097b685e45d, type: 3}
+  m_Script: {fileID: 11500000, guid: 05c32d4237136fb43bcb4cc08f12bd0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114910014097821838
@@ -153,7 +153,7 @@ MonoBehaviour:
   myCollider: {fileID: 65636612776729548}
   hittable: {fileID: 114340975246389322}
   myWeight: {fileID: 0}
-  rewindable: {fileID: 114550153120916666}
+  rewindable: {fileID: 114807637638609918}
   canRotate: 0
   hasLimitedLifeSpan: 1
   lifeSpanSeconds: 1.2
