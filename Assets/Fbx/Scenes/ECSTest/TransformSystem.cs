@@ -52,6 +52,8 @@ public class TransformSystem : MonoBehaviour
 		_components[index].startPosition = pos;
 		_components[index].velocity = vel;
 		_components[index].active = true;
+		_components[index].frameCount = 0;
+		_components[index].updateCount = 0;
 	}
 
 	private void Awake()
