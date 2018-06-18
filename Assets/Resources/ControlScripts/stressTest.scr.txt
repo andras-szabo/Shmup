@@ -1,7 +1,8 @@
 var firstWaveDelay = 0.5
 var secondWaveDelay = 0.3
 
-bgVel 0 -1 20
+bgVel 0 1 0
+bgRot 15 1+(secondWaveDelay*20)
 
 var y = 1.2
 
@@ -37,7 +38,7 @@ end
 	end
 end
 
-bgRot 5 1+(secondWaveDelay*20)
+bgRot -15 1+(secondWaveDelay*20)
 
 1 for j = 1 to 2 
 	for i = 1 to 5
@@ -47,6 +48,4 @@ bgRot 5 1+(secondWaveDelay*20)
 		secondWaveDelay spawn shooter 1-(i*0.2) 1.5 simpleSpinner
 	end
 end
-
-0.5 bgRot -5 10
 

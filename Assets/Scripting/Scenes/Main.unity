@@ -212,7 +212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   multiCurvedSpaceMaterial: {fileID: 2100000, guid: 0c5df506b8f5c144e91f03676858bae5,
     type: 2}
-  bulletWeight: 1.2
+  bulletWeight: 0.5
   bulletWeightSlider: {fileID: 1897268079}
   tint: 1
   startTintColor: {r: 0.62068963, g: 0.32439446, b: 0.88235295, a: 0}
@@ -378,7 +378,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 157048748}
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 15, y: 2.7, z: 0}
+  m_LocalPosition: {x: 7.63, y: 2.7, z: 0}
   m_LocalScale: {x: 42.000023, y: 2.000001, z: 12}
   m_Children: []
   m_Father: {fileID: 776635839}
@@ -1890,7 +1890,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1218485467}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -15, y: 2.7, z: 0}
+  m_LocalPosition: {x: -8.34, y: 2.7, z: 0}
   m_LocalScale: {x: 42, y: 2, z: 12}
   m_Children: []
   m_Father: {fileID: 776635839}
@@ -2411,7 +2411,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1627138851}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -8.83, z: 0}
+  m_LocalPosition: {x: 0, y: -5.42, z: 0}
   m_LocalScale: {x: 32, y: 2, z: 12}
   m_Children: []
   m_Father: {fileID: 776635839}
