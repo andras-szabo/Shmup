@@ -28,7 +28,7 @@ GameObject:
   - component: {fileID: 114910014097821838}
   - component: {fileID: 114738997598284892}
   - component: {fileID: 114323157747030084}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: ghostbullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,6 +168,7 @@ MonoBehaviour:
   hittable: {fileID: 114738997598284892}
   myWeight: {fileID: 114705276733035074}
   rewindable: {fileID: 114323157747030084}
+  canRotate: 0
   hasLimitedLifeSpan: 1
   lifeSpanSeconds: 0.4
   startSpeedViewportPerSecond: 3

@@ -30,10 +30,10 @@ public class PoolableEntity : APoolable
 
 	public override void Init(string param)
 	{
+		InitializeTransformControllers(startSpeedViewportPerSecond);
 		InitializeRewindableAndEventQueue();
 		InitializeGraveyardStatus();
 		InitializeHittable();
-		InitializeTransformControllers(startSpeedViewportPerSecond);
 
 		//TODO: warning, watch out with multicast delegate call on each
 		OnDespawn += CleanupRewindable;

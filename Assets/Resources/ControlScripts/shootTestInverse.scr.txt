@@ -1,21 +1,21 @@
-var deg = -180
+var deg = 180
 vel 0 0.4 0
-rot 0 0 90
+rot 0 0 -180
 
 for l = 1 to 2
 	for j = 1 to 2
 
 		(j-1)*1 spin 0 0 deg 1
 
-		for i = 1 to 20
-			0.1 shoot
+		for i = 1 to 30
+			0.05 shoot
 		end
 
 		spin 0 0 0 1
 		1 spin 0 0 -1*deg 1
 
-		for i = 1 to 20
-			0.1 shoot
+		for i = 1 to 30
+			0.05 shoot
 		end
 
 		spin 0 0 0 1
