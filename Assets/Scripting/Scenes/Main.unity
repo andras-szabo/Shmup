@@ -230,6 +230,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2f8ca3c33e501945b78f3b498914fc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &51757535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 51757537}
+  - component: {fileID: 51757536}
+  m_Layer: 0
+  m_Name: RewindableService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &51757536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 51757535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7295a3d471aa52f4aa7e96d74e3c5e62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &51757537
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 51757535}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5.128969, y: 49.328133, z: 149.23613}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &55845168
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,9 +579,7 @@ MonoBehaviour:
   _bulletSpawners:
   - {fileID: 1356899897}
   - {fileID: 651900745}
-  myRenderer: {fileID: 436551641}
-  myCollider: {fileID: 436551642}
-  myWeight: {fileID: 436551639}
+  isAllowed: 1
 --- !u!54 &436551638
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1623,7 +1661,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Entities
+  m_Text: 'TSDP: 99999 PSDP: 9999 RewFrameCount: 999'
 --- !u!222 &1067696312
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1775,7 +1813,7 @@ MonoBehaviour:
   logToConsole: 0
   replay: 0
   replayStartFrame: 0
-  logToReplay: {fileID: 4900000, guid: aef62efcbd0a3654c96f47ba422640e7, type: 3}
+  logToReplay: {fileID: 4900000, guid: f77df0e5f4fefb54da9a5487dbc1be18, type: 3}
 --- !u!114 &1144996391
 MonoBehaviour:
   m_ObjectHideFlags: 0

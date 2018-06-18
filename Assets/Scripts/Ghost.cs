@@ -7,9 +7,7 @@ public class Ghost : MonoWithCachedTransform
 
 	[SerializeField] private Spawner[] _bulletSpawners;
 
-	public Renderer myRenderer;
-	public Collider myCollider;
-	public SpaceBendingObject myWeight;
+	public bool isAllowed;
 
 	public void Hide()
 	{
@@ -26,11 +24,16 @@ public class Ghost : MonoWithCachedTransform
 
 	private void ToggleVisuals(bool state)
 	{
-		this.gameObject.SetActive(state);
+		this.gameObject.SetActive(state && isAllowed);
 	}
 
 	public void Shoot()
 	{
+		if (!isAllowed)
+		{
+			return;
+		}
+
 		foreach (var spawner in _bulletSpawners)
 		{
 			spawner.SpawnFromPool(string.Empty, Spawner.DONT_TRACK_SPAWNED_ID, string.Empty);

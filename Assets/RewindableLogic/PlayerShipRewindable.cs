@@ -14,6 +14,17 @@ public class PlayerShipRewindable : ARewindable<PlayerShipData>
 
 		_log.OnOverrideExistingItem -= ReturnItemToPool;
 		_log.OnOverrideExistingItem += ReturnItemToPool;
+
+		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
+		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
+
+		AlwaysRecord = true;
+	}
+
+	private void HandleGhostDisappeared()
+	{
+		_log.Clear();
+		_ghostRewindData.Clear();
 	}
 
 	public override void Reset()
@@ -23,6 +34,7 @@ public class PlayerShipRewindable : ARewindable<PlayerShipData>
 			var data = _log.Pop();
 			DataPoolContainer.Instance.PlayerShipDataPool.ReturnToPool(data);
 		}
+
 		_log.Clear();
 
 		while (!_ghostRewindData.IsEmpty)
@@ -49,6 +61,7 @@ public class PlayerShipRewindable : ARewindable<PlayerShipData>
 		if (Ghost.IsShown)
 		{
 			PlaybackGhostRewindData();
+			return;
 		}
 
 		var newData = DataPoolContainer.Instance.PlayerShipDataPool.GetFromPool();
@@ -73,7 +86,7 @@ public class PlayerShipRewindable : ARewindable<PlayerShipData>
 			ghost.CachedTransform.position = ghostData.position;
 			if (ghostData.isShooting) { ghost.Shoot(); }
 
-			// And now we can return ghostData to its pool
+			DataPoolContainer.Instance.PlayerShipDataPool.ReturnToPool(ghostData);
 		}
 		else
 		{

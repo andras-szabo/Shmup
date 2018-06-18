@@ -2,8 +2,8 @@
 
 public class DataPoolContainer : MonoBehaviour 
 {
-	public const int INITIAL_SIZE = 25000;
-	public const int PS_INITIAL_SIZE = 1200;
+	public const int INITIAL_SIZE = 24000;
+	public const int PS_INITIAL_SIZE = 500;
 	public static DataPoolContainer Instance;
 
 	public DataPool<TransformData> TransformDataPool = new DataPool<TransformData>(INITIAL_SIZE);

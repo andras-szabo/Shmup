@@ -20,6 +20,14 @@ public class Rewindable : ARewindable<TransformData>
 		_log.OnOverrideExistingItem -= ReturnItemToPool;
 		_log.OnOverrideExistingItem += ReturnItemToPool;
 		Paused = false;
+
+		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
+		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
+	}
+
+	private void HandleGhostDisappeared()
+	{
+		_log.Clear();
 	}
 
 	private void ReturnItemToPool(TransformData data)

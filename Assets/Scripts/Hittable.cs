@@ -8,7 +8,9 @@ public class Hittable : AHittable
 	public PoolableEntity myEntity;
 
 	public float startingHP = 10;
-	protected float currentHP;
+
+	protected float _currentHP;
+	public float CurrentHP { get { return _currentHP; } }
 
 	public Material normalMaterial;
 	public Material hitMaterial;
@@ -18,9 +20,19 @@ public class Hittable : AHittable
 
 	private List<PendingDamage> _pendingDamage = new List<PendingDamage>();
 
+	public List<string> PendingDamageInfo()
+	{
+		var info = new List<string>();
+		foreach (var pendingDamage in _pendingDamage)
+		{
+			info.Add(string.Format("Time left: {0:F3}, dmg: {1}", pendingDamage.timeLeft, pendingDamage.damage));
+		}
+		return info;
+	}
+
 	public override void Init()
 	{
-		currentHP = startingHP;
+		_currentHP = startingHP;
 		RefreshVisuals(hit: false);
 		_pendingDamage.Clear();
 	}
@@ -67,8 +79,11 @@ public class Hittable : AHittable
 
 	private void AddPendingDamage(int damage)
 	{
-		_pendingDamage.Add(new PendingDamage(timeLeft: _visualHitStunSeconds, damage: damage));
-		RefreshVisuals(hit: true);
+		if (!myEntity.IsInGraveyard)
+		{
+			_pendingDamage.Add(new PendingDamage(timeLeft: _visualHitStunSeconds, damage: damage));
+			RefreshVisuals(hit: true);
+		}
 	}
 
 	private void OnTriggerEnter(Collider other)
@@ -107,9 +122,9 @@ public class Hittable : AHittable
 
 	private void DoApplyDamage(int damage, bool isRewind)
 	{
-		currentHP -= damage;
+		_currentHP -= damage;
 		TryRemoveFromPendingDamage(damage, isRewind);
-		if (currentHP <= 0 && !myEntity.IsInGraveyard)
+		if (_currentHP <= 0 && !myEntity.IsInGraveyard)
 		{
 			myEntity.GoToGraveyard();
 		}
@@ -118,16 +133,15 @@ public class Hittable : AHittable
 	private void UndoDamageButMakeItPending(int damage)
 	{
 		_pendingDamage.Add(new PendingDamage(timeLeft: 0f, damage: damage));
-		currentHP += damage;
+		_currentHP += damage;
 		RefreshVisuals(hit: true);
-		if (currentHP > 0 && myEntity.IsInGraveyard) { myEntity.GetOutOfGraveyard(); }
+		if (_currentHP > 0 && myEntity.IsInGraveyard) { myEntity.GetOutOfGraveyard(); }
 	}
 
 	private void TryEnqueueHitEvent(Damage dmg)
 	{
 		if (dmg == null)
 		{
-			Debug.Log("Hit by someting without Damage component");
 			return;
 		}
 
@@ -137,13 +151,13 @@ public class Hittable : AHittable
 
 	private void MoveImmediatelyToOrFromGraveyard(int damage, bool isRewind)
 	{
-		currentHP -= (isRewind ? (damage * -1) : damage);
+		_currentHP -= (isRewind ? (damage * -1) : damage);
 
-		if (currentHP < 0 && !myEntity.IsInGraveyard)
+		if (_currentHP < 0 && !myEntity.IsInGraveyard)
 		{
 			myEntity.GoToGraveyard();
 		}
-		else if (currentHP > 0 && myEntity.IsInGraveyard)
+		else if (_currentHP > 0 && myEntity.IsInGraveyard)
 		{
 			myEntity.GetOutOfGraveyard();
 		}

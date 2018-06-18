@@ -153,7 +153,9 @@ public class PoolableEntity : APoolable
 				Despawn(despawnBecauseRewind: false);
 			}
 
-			if (rewindable.IsRewinding && --_framesSpentInGraveyard == 0)
+			if (rewindable.IsRewinding 
+				&& rewindable.HadSomethingToRewindToAtFrameStart
+				&& --_framesSpentInGraveyard == 0)
 			{
 				GetOutOfGraveyard();
 			}

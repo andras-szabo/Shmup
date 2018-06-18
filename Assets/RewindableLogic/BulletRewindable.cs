@@ -32,6 +32,15 @@ public class BulletRewindable : ARewindable<VelocityData>
 		_spinController.Stop();
 		_velocityHasChanged = false;
 		Paused = false;
+
+		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
+		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
+	}
+
+	private void HandleGhostDisappeared()
+	{
+		_log.Clear();
+		_recordedUpdateCount = 0;
 	}
 
 	protected override void CheckIfRewindingPossible()
@@ -45,21 +54,20 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 		if (Paused)
 		{
-			_log.Peek().UpdateFrameCount(1);
+			if (!_log.IsEmpty) { _log.Peek().UpdateFrameCount(1); }
 			return;
 		}
 
 		var currentVelocity = TryGetCurrentVelocity();
 
-		if (_eventQueue.Count > 0 || (!_velocityHasChanged && VelocityChangesNow(currentVelocity)))
+		if (_eventQueue.Count > 0 || (!_velocityHasChanged && VelocityChangesNow(currentVelocity))
+								  || _log.IsEmpty)
 		{
 			RecordNewDataEntry(currentVelocity);
 		}
 		else
 		{
-			//TODO - so it's unsafe, but faster:
 			_log.Peek().UpdateFrameCount(1);
-			//UpdateLastRecordedDataEntry(deltaFrameCount: 1);
 		}
 	}
 
