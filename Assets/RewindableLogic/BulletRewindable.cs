@@ -52,7 +52,6 @@ public class BulletRewindable : ARewindable<VelocityData>
 	{
 		_log.Clear();
 
-
 		_recordedUpdateCount = 0;
 		_velocityController = velocityController;
 		_spinController = spinController;
@@ -61,8 +60,6 @@ public class BulletRewindable : ARewindable<VelocityData>
 		_spinController.Stop();
 		_velocityHasChanged = false;
 		Paused = false;
-
-
 	}
 
 	private void ReturnDataToPool(VelocityData data)
@@ -75,6 +72,11 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 	private void HandleGhostDisappeared()
 	{
+		while (!_log.IsEmpty)
+		{
+			DataPoolContainer.Instance.VelocityDataPool.ReturnToPool(_log.Pop());
+		}
+
 		_log.Clear();
 		_recordedUpdateCount = 0;
 	}

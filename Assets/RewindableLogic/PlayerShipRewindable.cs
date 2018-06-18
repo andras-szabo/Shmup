@@ -17,6 +17,9 @@ public class PlayerShipRewindable : ARewindable<PlayerShipData>
 		_log.OnOverrideExistingItem -= ReturnItemToPool;
 		_log.OnOverrideExistingItem += ReturnItemToPool;
 
+		_ghostRewindData.OnOverrideExistingItem -= ReturnItemToPool;
+		_ghostRewindData.OnOverrideExistingItem += ReturnItemToPool;
+
 		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
 		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
 
