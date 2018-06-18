@@ -3,7 +3,9 @@ using RingBuffer;
 
 public class PlayerShipRewindable : ARewindable<PlayerShipData>
 {
-	public bool isShootingThisFrame;
+	[HideInInspector] public bool isShootingThisFrame;
+
+	public bool moveWithGhostOnReplay;
 	public Ghost ghost;
 
 	private RingBuffer<PlayerShipData> _ghostRewindData = new RingBuffer<PlayerShipData>(LOG_SIZE_FRAMES, true);
@@ -102,7 +104,11 @@ public class PlayerShipRewindable : ARewindable<PlayerShipData>
 			if (ghostData == null) { return; }
 
 			ghost.CachedTransform.position = ghostData.position;
-			CachedTransform.position = ghostData.position;
+
+			if (moveWithGhostOnReplay)
+			{
+				CachedTransform.position = ghostData.position;
+			}
 
 			_ghostRewindData.Push(ghostData);
 

@@ -1,24 +1,30 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class VelocityData
+public class VelocityData : IDataPoolable
 {
-	public readonly Vector3 velocityPerFrame;
-	public readonly IRewindableEvent[] events;
-
-	private readonly Vector3 _startPosition;
-	private readonly Quaternion _startRotation;
+	public Vector3 velocityPerFrame;
+	public IRewindableEvent[] events;
+	public Vector3 startPosition;
 
 	public int FrameCount { get; set; }
+	public int IndexInPool { get; set; }
 
 	public VelocityData(Vector3 velocityPerFrame, List<IRewindableEvent> events,
 						Vector3 startPosition)
 	{
 		this.velocityPerFrame = velocityPerFrame;
-		this.events = events.ToArray();
-		_startPosition = startPosition;
+		this.events = (events == null || events.Count < 1) ? null : events.ToArray();
+		this.startPosition = startPosition;
 
 		FrameCount = 1;
+	}
+
+	public VelocityData()
+	{
+		velocityPerFrame = Vector3.zero;
+		startPosition = Vector3.zero;
+		events = null;
 	}
 
 	public void UpdateFrameCount(int delta)
@@ -28,6 +34,6 @@ public class VelocityData
 
 	public Vector3 GetCurrentPosition()
 	{
-		return _startPosition + (FrameCount * velocityPerFrame);
+		return startPosition + (FrameCount * velocityPerFrame);
 	}
 }

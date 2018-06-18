@@ -10,6 +10,8 @@ public class PoolableEntity : APoolable
 	public SpaceBendingObject myWeight;
 	public ABaseRewindable rewindable;
 
+	public bool canRotate;
+
 	public bool hasLimitedLifeSpan;
 	public float lifeSpanSeconds = 0.35f;
 	private float _elapsedLifeSpanSeconds = 0f;
@@ -32,6 +34,8 @@ public class PoolableEntity : APoolable
 		InitializeGraveyardStatus();
 		InitializeHittable();
 		InitializeTransformControllers(startSpeedViewportPerSecond);
+
+		//TODO: warning, watch out with multicast delegate call on each
 		OnDespawn += CleanupRewindable;
 	}
 
@@ -121,7 +125,11 @@ public class PoolableEntity : APoolable
 
 	private void UpdateTransform()
 	{
-		CachedTransform.Rotate(_spinController.RotationPerFrame);
+		if (canRotate)
+		{
+			CachedTransform.Rotate(_spinController.RotationPerFrame);
+		}
+
 		CachedTransform.position += _velocityController.CurrentVelocityUnitsPerFrame;
 	}
 

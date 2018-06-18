@@ -56,10 +56,11 @@ public class DebugLogger : MonoBehaviour
 
 	private void UpdateEntityLabel()
 	{
-		entityLabel.text = string.Format("E: {0} TR: {1} PS: {2} RFC: {3}", GenericPool.pooledObjectCount,
-																			DataPoolContainer.Instance.TransformDataPool.AvailableCount,
-																			DataPoolContainer.Instance.PlayerShipDataPool.AvailableCount,
-																			RewindableService.Instance.RewindableFrameCount);
+		entityLabel.text = string.Format("E: {0} TR: {1} VEL: {2} PS: {3} RFC: {4}", GenericPool.pooledObjectCount,
+																		DataPoolContainer.Instance.TransformDataPool.AvailableCount,
+																		DataPoolContainer.Instance.VelocityDataPool.AvailableCount,
+																		DataPoolContainer.Instance.PlayerShipDataPool.AvailableCount,
+																		RewindableService.Instance.RewindableFrameCount);
 	}
 
 	private void UpdateMemoryLabelIfNeeded()

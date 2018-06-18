@@ -9,8 +9,35 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 	public bool log;
 
+	private void Awake()
+	{
+		AddListeners();
+	}
+
+	private void OnDestroy()
+	{
+		RemoveListeners();
+	}
+
+	private void AddListeners()
+	{
+		_log.OnOverrideExistingItem += ReturnDataToPool;
+		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
+	}
+
+	private void RemoveListeners()
+	{
+		_log.OnOverrideExistingItem -= ReturnDataToPool;
+		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
+	}
+
 	public override void Reset()
 	{
+		while (!_log.IsEmpty)
+		{
+			DataPoolContainer.Instance.VelocityDataPool.ReturnToPool(_log.Pop());
+		}
+
 		_log.Clear();
 		_recordedUpdateCount = 0;
 
@@ -24,6 +51,8 @@ public class BulletRewindable : ARewindable<VelocityData>
 	public override void Init(VelocityController velocityController, SpinController spinController)
 	{
 		_log.Clear();
+
+
 		_recordedUpdateCount = 0;
 		_velocityController = velocityController;
 		_spinController = spinController;
@@ -33,8 +62,15 @@ public class BulletRewindable : ARewindable<VelocityData>
 		_velocityHasChanged = false;
 		Paused = false;
 
-		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
-		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
+
+	}
+
+	private void ReturnDataToPool(VelocityData data)
+	{
+		if (data != null)
+		{
+			DataPoolContainer.Instance.VelocityDataPool.ReturnToPool(data);
+		}
 	}
 
 	private void HandleGhostDisappeared()
@@ -76,7 +112,7 @@ public class BulletRewindable : ARewindable<VelocityData>
 		if (!_log.IsEmpty)
 		{
 			var previousVelocity = _log.Peek().velocityPerFrame;
-			_velocityHasChanged |= previousVelocity.x != currentVelocity.x || 
+			_velocityHasChanged |= previousVelocity.x != currentVelocity.x ||
 								   previousVelocity.y != currentVelocity.y ||
 								   previousVelocity.z != currentVelocity.z;
 			return _velocityHasChanged;
@@ -92,8 +128,15 @@ public class BulletRewindable : ARewindable<VelocityData>
 
 	private void RecordNewDataEntry(Vector3 currentVelocity)
 	{
-		_log.Push(new VelocityData(currentVelocity, _eventQueue, CachedTransform.position));
-		_eventQueue.Clear();
+		var newData = DataPoolContainer.Instance.VelocityDataPool.GetFromPool();
+
+		newData.startPosition = CachedTransform.position;
+		newData.velocityPerFrame = currentVelocity;
+		newData.events = _eventQueue.Count < 1 ? null : _eventQueue.ToArray();
+		newData.FrameCount = 1;
+
+		_log.Push(newData);
+		if (_eventQueue.Count > 0) { _eventQueue.Clear(); }
 	}
 
 	private void UpdateLastRecordedDataEntry(int deltaFrameCount)
@@ -115,6 +158,7 @@ public class BulletRewindable : ARewindable<VelocityData>
 			{
 				lastRecordedData = _log.Pop();
 				ApplyRecordedEvents(lastRecordedData);
+				DataPoolContainer.Instance.VelocityDataPool.ReturnToPool(lastRecordedData);
 			}
 		}
 	}

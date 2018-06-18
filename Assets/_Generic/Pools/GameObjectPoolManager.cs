@@ -3,12 +3,12 @@ using UnityEngine;
 
 public enum PoolType
 {
-	None,
+	None = 0,
 
-	Bullets,
-	Enemies,
-	EnemyBullets,
-	GhostBullets
+	Bullets = 1,
+	Enemies = 2,
+	EnemyBullets = 3,
+	GhostBullets = 4
 }
 
 public class GameObjectPoolManager : MonoBehaviour

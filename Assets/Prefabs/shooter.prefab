@@ -153,6 +153,7 @@ MonoBehaviour:
   hittable: {fileID: 114735950793740868}
   myWeight: {fileID: 114958252797746174}
   rewindable: {fileID: 114634297576098604}
+  canRotate: 1
   hasLimitedLifeSpan: 0
   lifeSpanSeconds: 0.35
   startSpeedViewportPerSecond: 0

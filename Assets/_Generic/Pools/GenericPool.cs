@@ -20,6 +20,8 @@ public abstract class APoolable : MonoWithCachedTransform, IDespawnable
 	[SerializeField]
 	protected PoolType _poolType;
 	public PoolType PoolType { get { return _poolType; } }
+	public int PoolTypeAsInt { get { return (int)_poolType; } }
+
 	public string TypeName { get; protected set; }
 
 	public virtual void AssignToPool(GenericPool pool)
@@ -52,22 +54,22 @@ public class GenericPool : MonoWithCachedTransform
 	public static int pooledObjectCount;
 
 	public PoolType[] poolTypes;
-	private Dictionary<PoolType, Stack<APoolable>> _poolsByType = new Dictionary<PoolType, Stack<APoolable>>();
+	private Dictionary<int, Stack<APoolable>> _poolsByType = new Dictionary<int, Stack<APoolable>>();
 
 	private void Awake()
 	{
 		foreach (var poolType in poolTypes)
 		{
 			GameObjectPoolManager.Register(poolType, this);
-			_poolsByType.Add(poolType, new Stack<APoolable>());
+			_poolsByType.Add((int) poolType, new Stack<APoolable>());
 		}
 	}
 
 	public APoolable Spawn(APoolable prototype, Transform templateTransform, string param)
 	{
-		if (HasPooled(prototype.PoolType))
+		if (HasPooled(prototype.PoolTypeAsInt))
 		{
-			return PopFromPool(prototype.PoolType, templateTransform, param);
+			return PopFromPool(prototype.PoolTypeAsInt, templateTransform, param);
 		}
 		else
 		{
@@ -75,7 +77,7 @@ public class GenericPool : MonoWithCachedTransform
 		}
 	}
 
-	private APoolable PopFromPool(PoolType type, Transform templateTransform, string param)
+	private APoolable PopFromPool(int type, Transform templateTransform, string param)
 	{
 		var instance = _poolsByType[type].Pop();
 
@@ -87,7 +89,7 @@ public class GenericPool : MonoWithCachedTransform
 		return instance;
 	}
 
-	private bool HasPooled(PoolType type)
+	private bool HasPooled(int type)
 	{
 		return _poolsByType.ContainsKey(type) && _poolsByType[type].Count > 0;
 	}
@@ -97,12 +99,12 @@ public class GenericPool : MonoWithCachedTransform
 		poolable.Stop();
 		poolable.gameObject.SetActive(false);
 		poolable.CachedTransform.SetParent(CachedTransform);
-		if (!_poolsByType.ContainsKey(poolable.PoolType))
+		if (!_poolsByType.ContainsKey(poolable.PoolTypeAsInt))
 		{
-			_poolsByType[poolable.PoolType] = new Stack<APoolable>();
+			_poolsByType[poolable.PoolTypeAsInt] = new Stack<APoolable>();
 		}
 		
-		_poolsByType[poolable.PoolType].Push(poolable);
+		_poolsByType[poolable.PoolTypeAsInt].Push(poolable);
 	}
 
 	private APoolable CreateNew(APoolable prototype, Transform templateTransform, string param)

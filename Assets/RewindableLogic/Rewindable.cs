@@ -3,6 +3,28 @@
 //		transform data, without trying to be clever about it
 public class Rewindable : ARewindable<TransformData>
 {
+	private void Awake()
+	{
+		AddListeners();
+	}
+
+	private void OnDestroy()
+	{
+		RemoveListeners();
+	}
+
+	private void AddListeners()
+	{
+		_log.OnOverrideExistingItem += ReturnItemToPool;
+		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
+	}
+
+	private void RemoveListeners()
+	{
+		_log.OnOverrideExistingItem -= ReturnItemToPool;
+		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
+	}
+
 	public override void Reset()
 	{
 		while (!_log.IsEmpty)
@@ -17,12 +39,7 @@ public class Rewindable : ARewindable<TransformData>
 	public override void Init(VelocityController velocityController, SpinController spinController)
 	{
 		_log.Clear();
-		_log.OnOverrideExistingItem -= ReturnItemToPool;
-		_log.OnOverrideExistingItem += ReturnItemToPool;
 		Paused = false;
-
-		RewindService.OnGhostDisappeared -= HandleGhostDisappeared;
-		RewindService.OnGhostDisappeared += HandleGhostDisappeared;
 	}
 
 	private void HandleGhostDisappeared()
