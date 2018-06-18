@@ -29,7 +29,8 @@ public class VelocityData : IDataPoolable
 
 	public void UpdateFrameCount(int delta)
 	{
-		FrameCount = Mathf.Max(0, FrameCount + delta);
+		var fc = FrameCount + delta;
+		FrameCount = fc > 0 ? fc : 0;
 	}
 
 	public Vector3 GetCurrentPosition()
