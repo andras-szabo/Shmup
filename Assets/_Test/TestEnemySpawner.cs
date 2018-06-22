@@ -27,8 +27,6 @@ public class TestEnemySpawner : MonoBehaviour
 
 	private void Start()
 	{
-		Debug.Log("[Tester Compile Check] ECS sss englnad tun");
-
 		TryLoadReplay();        // this goes first because it may override level script
 		InitScriptRunner();
 		LoadScript();
