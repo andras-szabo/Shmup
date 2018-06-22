@@ -266,6 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7295a3d471aa52f4aa7e96d74e3c5e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdDoubleTapForRewind: 0
 --- !u!4 &51757537
 Transform:
   m_ObjectHideFlags: 0
@@ -1842,7 +1843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c8da08eb8a06f4ebf0a53445921a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptToRun: {fileID: 4900000, guid: e998cbacc608e8b498fc5fcd4d7ff4e8, type: 3}
+  scriptToRun: {fileID: 4900000, guid: 2b90503aa9f039c468d862880509bf6b, type: 3}
   logToConsole: 0
   replay: 0
   replayStartFrame: 0
@@ -2026,6 +2027,7 @@ GameObject:
   - component: {fileID: 1235416229}
   - component: {fileID: 1235416230}
   - component: {fileID: 1235416231}
+  - component: {fileID: 1235416232}
   m_Layer: 8
   m_Name: Ship
   m_TagString: Untagged
@@ -2157,6 +2159,20 @@ MonoBehaviour:
   isShootingThisFrame: 0
   moveWithGhostOnReplay: 0
   ghost: {fileID: 436551637}
+--- !u!114 &1235416232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1235416223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e36a24dccdf9f44da59da252c2d3dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCollider: {fileID: 1235416225}
+  playerShip: {fileID: 1235416228}
+  startingHP: 10
 --- !u!1 &1356899895
 GameObject:
   m_ObjectHideFlags: 0
@@ -3221,7 +3237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90549517dd09544ebca8e87580cca72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useJobs: 0
 --- !u!4 &1915440080
 Transform:
   m_ObjectHideFlags: 0

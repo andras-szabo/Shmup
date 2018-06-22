@@ -17,6 +17,7 @@ public class ShipController : MonoWithCachedTransform
 	public Ghost ghost;
 
 	private PlayerShipRewindable _rewindable;
+	private PlayerHittable _hittable;
 
 	private Vector3 _worldMin;
 	private Vector3 _worldMax;
@@ -27,6 +28,9 @@ public class ShipController : MonoWithCachedTransform
 
 	private Vector3 _previousInputPosition = new Vector3(0f, 0f, -1f);
 	private Vector3 _startingPosition;
+	private Queue<IRewindableEvent> _eventQueue = new Queue<IRewindableEvent>();
+
+	public bool IsRewinding { get { return _rewindable.IsRewinding; } }
 
 	#region Unity lifecycle
 	private void Start()
@@ -39,6 +43,9 @@ public class ShipController : MonoWithCachedTransform
 		_bulletSpawners = new List<ISpawner>(GetComponentsInChildren<ISpawner>());
 		_rewindable = GetComponent<PlayerShipRewindable>();
 		_rewindable.Init(null, null);
+
+		_hittable = GetComponent<PlayerHittable>();
+		_hittable.Init();
 	}
 
 	private void FixedUpdate()
@@ -46,10 +53,30 @@ public class ShipController : MonoWithCachedTransform
 		if (!_rewindable.IsRewinding)
 		{
 			UpdatePosition();
+			ProcessEventQueue();
 			TryShoot(Time.fixedDeltaTime);
 		}
 	}
 	#endregion
+
+	private void ProcessEventQueue()
+	{
+		if (_eventQueue.Count > 0)
+		{
+			foreach (var evt in _eventQueue)
+			{
+				evt.Apply(false);
+			}
+
+			_eventQueue.Clear();
+		}
+	}
+
+	public void EnqueueEvent(IRewindableEvent evt)
+	{
+		_eventQueue.Enqueue(evt);
+		_rewindable.EnqueueEvent(evt);
+	}
 
 	public void Reset()
 	{

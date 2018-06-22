@@ -127,6 +127,7 @@ public class PlayerShipData : IDataPoolable
 {
 	public Vector3 position;
 	public bool isShooting;
+	public IRewindableEvent[] events;
 
 	public int IndexInPool { get; set; }
 }

@@ -70,7 +70,7 @@ public class InputController : MonoBehaviour
 		_touchesLastFrame = _touchesThisFrame;
 
 #if UNITY_EDITOR
-		//HasDoubleTapped = InputService.Instance.RewindKey;
+		HasDoubleTapped = InputService.Instance.RewindKey;
 #endif
 	}
 }

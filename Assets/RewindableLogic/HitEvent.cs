@@ -1,4 +1,4 @@
-﻿public class HitEvent : IRewindableEvent
+﻿public class HitEvent : IRewindableEvent			// y not struct
 {
 	readonly public int dmg;
 	readonly public bool isBounds;
