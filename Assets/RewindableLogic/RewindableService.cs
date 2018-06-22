@@ -28,8 +28,7 @@ public class RewindableService : MonoBehaviour
 	private void CheckInput()
 	{
 		if (_inputController == null) { _inputController = InputController.Instance; }
-		IsInputRequestingRewind = holdDoubleTapForRewind ? _inputController.IsHoldingDoubleTap
-														 :_inputController.HasDoubleTapped;
+		IsInputRequestingRewind = _inputController.HasDoubleTapped;
 	}
 
 	private void FixedUpdate()

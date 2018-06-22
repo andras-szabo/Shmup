@@ -8,17 +8,16 @@ public class InputController : MonoBehaviour
 	public static InputController Instance { get; private set; }
 
 	public bool HasDoubleTapped { get; private set; }
-	public bool IsHoldingDoubleTap { get; private set; }
 
 	private int _touchesThisFrame;
 	private int _touchesLastFrame;
-	private float _elapsedTimeSinceLastTap;
+	private float _elapsedTimeSinceLastTap = 10f;
 	private bool _startedDoubleTap;
 	private float _elapsedTimeDuringPreviousTap;
 
 	public bool IsShooting()
 	{
-		return !HasDoubleTapped && _touchesThisFrame > 0;
+		return _touchesThisFrame > 0;
 	}
 
 	private void Awake()
@@ -33,44 +32,15 @@ public class InputController : MonoBehaviour
 
 		if (_touchesThisFrame > _touchesLastFrame)
 		{
-			if (_startedDoubleTap)
-			{
-				if (HasDoubleTapped)
-				{
-					HasDoubleTapped = false;
-				}
-
-				if (_elapsedTimeSinceLastTap < DOUBLE_TAP_INTERVAL_SECONDS)
-				{
-					HasDoubleTapped = true;
-					IsHoldingDoubleTap = true;
-				}
-				else
-				{
-					_startedDoubleTap = false;
-				}
-			}
-		}
-
-		if (_touchesThisFrame > 0)
-		{
-			_elapsedTimeDuringPreviousTap += Time.fixedDeltaTime;
+			HasDoubleTapped = _elapsedTimeSinceLastTap < DOUBLE_TAP_INTERVAL_SECONDS;
+			_elapsedTimeSinceLastTap = 0f;
 		}
 
 		_elapsedTimeSinceLastTap += Time.fixedDeltaTime;
-
-		if (_touchesThisFrame < _touchesLastFrame)
-		{
-			_elapsedTimeSinceLastTap = 0f;
-			_startedDoubleTap = _elapsedTimeDuringPreviousTap < MAX_TAP_LENGTH_SECONDS;
-			_elapsedTimeDuringPreviousTap = 0f;
-			IsHoldingDoubleTap = false;
-		}
-
 		_touchesLastFrame = _touchesThisFrame;
 
 #if UNITY_EDITOR
-		HasDoubleTapped = InputService.Instance.RewindKey;
+		//HasDoubleTapped = InputService.Instance.RewindKey;
 #endif
 	}
 }
