@@ -8,7 +8,6 @@
 
 	private IRewindableEvent _despawnOnRewindEvent;
 	private int _myIndex = -1;
-	private VelocityController _velocityController;
 
 	private void FixedUpdate()
 	{
@@ -39,8 +38,6 @@
 
 	public override void Init(VelocityController velocityController, SpinController spinController)
 	{
-		_velocityController = velocityController;
-
 		if (_myIndex < 0)
 		{
 			_myIndex = TransformSystem.GetNewComponent(CachedTransform.position, velocityController.CurrentVelocityUnitsPerFrame);
@@ -53,8 +50,5 @@
 
 	public override void Reset()
 	{
-		//Do I even have to do this?
-		/*TransformSystem.ResetExistingComponent(_myIndex, CachedTransform.position, 
-														 _velocityController.CurrentVelocityUnitsPerFrame);*/
 	}
 }

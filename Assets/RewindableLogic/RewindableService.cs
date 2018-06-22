@@ -15,6 +15,8 @@ public class RewindableService : MonoBehaviour
 
 	public int RewindableFrameCount { get; private set; }
 
+	public bool holdDoubleTapForRewind;
+
 	private bool _ghostShownInPastUpdate;
 	private InputController _inputController;
 
@@ -26,7 +28,8 @@ public class RewindableService : MonoBehaviour
 	private void CheckInput()
 	{
 		if (_inputController == null) { _inputController = InputController.Instance; }
-		IsInputRequestingRewind = _inputController.IsHoldingDoubleTap;
+		IsInputRequestingRewind = holdDoubleTapForRewind ? _inputController.IsHoldingDoubleTap
+														 :_inputController.HasDoubleTapped;
 	}
 
 	private void FixedUpdate()

@@ -7,6 +7,7 @@ public class InputController : MonoBehaviour
 
 	public static InputController Instance { get; private set; }
 
+	public bool HasDoubleTapped { get; private set; }
 	public bool IsHoldingDoubleTap { get; private set; }
 
 	private int _touchesThisFrame;
@@ -17,7 +18,7 @@ public class InputController : MonoBehaviour
 
 	public bool IsShooting()
 	{
-		return !IsHoldingDoubleTap && _touchesThisFrame > 0;
+		return !HasDoubleTapped && _touchesThisFrame > 0;
 	}
 
 	private void Awake()
@@ -34,8 +35,14 @@ public class InputController : MonoBehaviour
 		{
 			if (_startedDoubleTap)
 			{
+				if (HasDoubleTapped)
+				{
+					HasDoubleTapped = false;
+				}
+
 				if (_elapsedTimeSinceLastTap < DOUBLE_TAP_INTERVAL_SECONDS)
 				{
+					HasDoubleTapped = true;
 					IsHoldingDoubleTap = true;
 				}
 				else
@@ -63,7 +70,7 @@ public class InputController : MonoBehaviour
 		_touchesLastFrame = _touchesThisFrame;
 
 #if UNITY_EDITOR
-		IsHoldingDoubleTap = InputService.Instance.RewindKey;
+		//HasDoubleTapped = InputService.Instance.RewindKey;
 #endif
 	}
 }
