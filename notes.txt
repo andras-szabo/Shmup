@@ -1,3 +1,436 @@
+KP:
+	-Input state is updated on Update(); so Unity documentation suggests to make all
+	calls to it on Update as well.
+		-> but for record/playback, syncing through FixedUpdate is needed
+	-if we have a someList = List<SerializableFoo>, what does JsonUtility.ToJson(someList) do?
+		=> it serializes the public fields of the list object (of which there's none).
+		=> so to serialize the contents, it must be wrapped into another serializable class or struct
+	-how to do custom inspector
+		-> which doesn't seem to work with generics tho
+			-> eg. [CustomEditor(typeof(ARewindable<TransformData>))] <---- no dice :(
+			-> also doesn't seem to work with interfaces
+				[CustomEditor(typeof(IRewindable))] <---- also no:(
+	- WOW. Multicast delegates +=, -= ?
+		=> it seems that MulticastDelegate.RemoveImpl() and MulticastDelegate.CombineImpl()
+			both copy the whole sheband on every single operation (which kind of makes
+			sense though); meaning that this _WILL_ allocate, and so with a lot of
+			listeners, this _WILL_ mess performance up. :O
+				=> and this is not even a Unity thing, it's a feature of C#
+
+// unprioritized backlog:
+	- bulletscript: use of string variables
+
+	- bulletscript: shooting
+	- one enemy shooting some kind of bullets
+		- player ship can be hit
+		- player ship can take damage and die
+		- player ship can respawn
+		- when enemy despawns, cleanup after its own spawners
+
+	- rewind UI
+	- input playback UI
+	- recorded input log should contain level script and set it automatically
+	- serviceLocator architecture
+	- parellelize loading of scripts, replays
+	- check hitstun visuals, triple check
+	- relative touch controls
+	- playmode tests
+	- rewind background sh*t
+	- preload scripts so we don't waste time deserializing when we need them
+	- what if recording would be too long
+	- ships in graveyard don't update scripts
+	- particle systems rewound
+	- having to stay in the graveyard for long means that pooling efficiency is
+	  drastically reduced. is there a way we can do something about that?
+		-at least for player bullets we should be able to
+
+
+	- background:
+		- perhaps bg should be treated completely separately,
+		- as in, normal delay things should not apply - because
+		of the interpreted nature of the level script, timing
+		may be fucked up. so instead, let's have a separate
+		background script, where that can be set up. but this
+		really is just super nice to have.
+
+2018.06.18.
+	- ok so we need some kind of central service for replays, because of the ghost.
+	- idea:
+		- when deciding whether or not to rewind, all rewindables ask the service.
+		- the service runs before rewindables.
+		- the service also disallows recording while the ghost is present
+		- ghost updates the service as it is shown / hidden, the frame that
+		  precedes the actual change (like, when the ghost disappears, it
+		  calls the service; but the change will become effective on the
+		  service's FixedUpdate)
+		- when the ghost disappears, every rewindable should do a Clear(),
+		  to make it impossible to rewind before the ghost's time
+
+- ok now todo:
+	o debug overlay
+
+
+//TODO:
+	o "rot" command to ships to fix orientation immediately
+	o don't update scripts when in the graveyard (e.g. dead shooter still shooting)
+	o also bullets in graveyard impact the background
+
+	o rewinding background?	(OR: making it just ignore rewind completely : /)
+		-boagh. but ok let's do this.
+			-... well, maybe later; for now: just ignore bg commands
+			 if spawned after rewind; so make bg non-rewindable.
+				- how? well, keep track of BGcommands in SpawnUtility,
+				same shit.
+
+	o and / or relative mouse?
+		- ok let's do relative mouse first
+			- so InputService.MousePixelPosition: this is where we're tapping
+				right now
+			- what we should have:
+				- previousPositionWhenTapped
+				- currentPositionWhenTapped
+					=> delta needs to apply
+				- when not tapping, we have no previousPosition
+
+			- and then the application?
+				-> ShipController.UpdatePosition needs an InputScreenPosition
+					-> well, maybe ShipController could handle this
+
+
+	- pooling doesn't work with multiple types (e.g. shooter + basicEnemy)
+	- do debug overlay:
+		- fps
+		- consumed memory
+		- entities live / total (in pool)
+	o add a reset button
+	o move that slider from view
+	o bullets now ignore the bounds because they are not hittable
+		=> add simple bullet hittable thing
+
+2018.06.14.
+	- an enemy ship that shoots bullets.
+		o so first check out how the player ship does it
+			ShipController.TryShoot:
+				foreach (var spawner in _bulletSpawners)
+				spawner.SpawnFromPool(script, bullet uid do prevent double spawning)
+
+			_bulletSpawner is a List<ISpawner>,
+			and then Spawner : ISpawner
+				- has publicly exposed APoolable prototype, super simple.
+				- i think we can actually use the spawner for spawning bullets too.			
+
+		o then prepare appropriate ShipScript command for shooting
+			o    1) we have a ShipScriptDefinition, which defines command IDs, string, and param types
+			o    2) we have the actual command object in ShipScriptsCollection (eg: ShipScriptRepeat : ACommand)
+			o    3) how do we make the link between these two? probly through Factory
+
+		o so what command do we need?
+			- for now the simplest will do: just "shoot", no script passed, no nothing. like BasicBullet, basically.
+		
+		o then make sure that we actually can spawn different kinds of ships :/
+			- how about this: the spawner will receive a param that says what it should spawn
+			- if there's no param, or it doesn't know what it is, then just spawns whatever
+			  prototype it happens to have
+			- but if it has a suitably named prototype, then it spawns that one.
+				=> need to update the Spawner.
+
+		o so now we'll have to update all spawners : /
+
+		o then hook up to some enemy variant
+
+		o then write test script to see if it works.
+		
+		- so technically it works, but WTF going on with pooling		
+
+	- then: enemy bullets can actually hurt the player.
+
+2018.06.13.
+	- ok so BulletRewindable is done
+	- but something is wrong with hit stun events, once again, as recorded in fuck.txt input log, 
+		which now at least I can investigate
+	- ok so it was because enemies could get hit also while being rewound
+
+	- but the problem now is that apparently we still have an issue where
+	enemy doesn't get despawned when conditions are right. let's investigate.
+
+	- TODO:
+		o fix spawn uids
+		o cleanup after script runner when being despawned, so that we can clean up memory asap
+		o change the bullet rewindable such that it doesn't actually take a snapshot if it
+		  doesn't have to
+
+			=> ok so how should this work?
+				=> spawn. save despawnOnRewind event, then do the initial save:
+					- record velocity,
+					- record spin,	(angle velocity of rotation)
+					- set count on that initial log entry to 0
+				=> then, record thing.
+					- check velocity, (!! this is velocity / fixedUpdate)
+					- check spin, (!! spin velocity / fixedUpdate)
+					- if any of these is different to previous one,
+					  or there are events in the _eventQ,
+					  make a new entry.
+					- otherwise just update the count on the previous one.
+				=> then, rewinding things.
+					- apply data on top
+					- decrease the counter on top
+					- only pop it if after the count decrease it's now 0.
+					- calculate current position by 
+
+		=> so maybe bullets shouldn't use rigidbody for updates at all; instead,
+			there should be an update, where we'd update by units/frame (well,
+			it's like units/FU)
+		=> so how to do this
+			-well maybe the bullets could just have spinController and velocityController
+
+//TODO
+	- OK, so acceleration over time doesn't seem to work very well
+		=> yup, spin and velocity over time:
+			=> will always try to update moveControl.CurrentRotSpeedanglesPerSecond etc.
+				=> so we have to deal with it.
+	-> ok, but how?
+		- until now, command contains coroutine and runs it on the context object.
+		- conceptually, this is a start -> end, and time.
+		- so what we can do is this:
+			- dear context, i'm giving you a lerp object (start, end, time)
+			- context receives the object, 
+			- when playing forward, lerpable things are updated, using _time to compare
+			- when playing backward:
+				- lerpable things are not updated, but a check is made:
+					- is _time now smaller than the start of the lerpable?
+					- if it is, pop the last lerpable from the stack, and
+					  move on to the previous one
+			- and that's it
+2018.06.12, again:
+	- ok so welcome to rewinding loops.
+	- how do loops work forward?
+		-ha! for loops are actually unrolled on parsing, so as to have params ready.
+
+	- but what about repeat-endrepeat
+		=> so this right now doesn't check any condition, but that can be added later
+		=> so how does it work?
+			=> ShipScriptRepeat: Execute(context) { context.PushCommandPointer(); }
+			=> ShipScriptEnd: Execute(context) { context.JumpToCommandPointerOnStack(); }
+
+		=> so what should happen on rewind?
+			=> if we rewind before the end of the loop to after the beginning,
+			   business as usual
+			=> if we rewind to before the loop, then we need to know how many
+			   times we have looped already:
+				=> so, start rewinding => now we reached a repeatBegin.
+					=> this needs to check what to do: if the loop has no run at all,
+					then we should set the we should pop the _commandStack and do
+					nothing else
+
+					=> if at this point we know that the loop has run already, then
+					we should set things up such that the previous command (i.e. the
+					"next" to execute while rewinding) will be the last one in the loop
+					(so before the repeatEnd)	
+
+					=> and when checking spawners, we should calculate accordingly:
+					ID = _commandPointer + (number_of_times_loop_has_looped * commands_in_the_loop)
+
+			=> TODO:
+				1.) the execution context should know about repeat loops, and track
+					how often they ran; and modify this accordingly on rewind
+				2.) the execution context should also know about how many commands are there
+					in the loop
+					=> when encountering a "repeat", add new guy to the loop stack
+					=> when executing a forward command on repeat, try to count
+						it as number of commands within a loop (if the loop has
+						not run to completion at all)
+					=> when executing a repeatEnd forward, update completion counts
+					=> when executing a repeat backward, update completion counts,
+						or pop it from the loopstack
+
+
+				3.) it's expected that in the future you can add conditions to loops,
+					e.g. do something until your health is X, anticipate that by having
+					loop information on a stack, so we can have multiple loops
+
+2018.06.12:
+	- todo:
+		- syncing of input replays
+			- ok, how to do this?
+				- well the level script runner should start the same
+				frame as the inputservice dude
+					-InputService.Playback(evtStream)
+						=> resets frameCount, sets playbackmode to true
+							=> on next Update, it's on!
+
+					-LevelScriptRunner
+						=> this starts with Run(List<ICommand> script)
+							=> which is loaded by TestEnemySpawner.cs,
+							after loading the script to to script cache,
+							which happens on Start()
+
+		=> so let's do it like this:
+			-> 1.) find out what level I need and load it
+			-> 2.) find out what playback script I need and load it
+			-> Do nothing until both of these are done
+			-> then, when they are done:
+				-> call Run() on the loaded level script
+				-> call either Playback() or Init() on the inputService
+
+		=> so for now we can combine these things into "TestEnemySpawner";
+			=> then we can later add it to serviceLocator architecture
+
+		-> ok so something is still wrong (or again):
+			-> 100: spawn (time == 2)
+			-> 103: start rewinding
+				=> and immediately despawning, wtf?
+				=> and script runner at this point is
+				too far ahead, can't step back to
+				previous command
+
+			=> if the dude spawns at 100, and starts to rewind at 103,
+				how come it doesn't have 3 frames' worth of log to
+				go through first?
+					=> well i'm guessing it's because
+					it starts to load the script into the cache : /
+						=> turns out, no, that's done in 1-2 ms
+					-> but even before this, basicEnemy is not always spawning
+					at the same time. why?. why?. why?. why?
+						=> so the problem is that the InputService records
+						things by frame time, but there can be several FUs
+						in the same frame. Eg:
+							- 0.02 -> 0.22: frame 2
+							- then some frames are skipped ...
+				=> so we need to deal with this using FUs. grreaat.
+
+			=> OK, so we now use FU's, and this seems more reliable.
+			-> however, we can now make the dude disappear:
+				=> 101: spawn (time == 2)
+				=> 126: start rewinding (time == 2.5)
+				=> 149: despawn
+					but time now is only 2.04, so 
+					it can't go back to 2 => new spawn lost
+
+			=> so the question is, if the enemy spawns at 101, why does it not have
+				enough in its logs to despawn when time is also 2, not 2.04?
+				
+	- 201: spawn; time == 2f
+	- 202: BE has 1 log, so that means that it will despawn at 202. that's not good
+	- 248: start to rewind
+		- BE has 45 log, because it already consumed one this frame.
+	- 293: despawn; time == 2.04 => 2 FU's too early
+	
+	=> so how to fix this?
+		-> what we need is this:
+			-> spawn at FU == 100
+			-> 101, we start to rewind.
+				-> if at 101, do nothing (no update)
+				-> at 102, despawn
+				-> so if shit changes at 103 again, we'll be ok to spawn again
+
+		=> OK so problem:
+			-> we only get the first FU _AFTER_ the dude was spawned. So this is not
+			-> good. But we can actually easily fix it: on the first attempt, just
+			   add the initial dude twice.
+				=> ok so this is done.
+		=> then problem #2:
+			--- if this is a problem ?
+			- so the moment we start rewinding, we start consuming rewind data.
+			- this makes sense because the input service is first, so the moment
+				it knows that we're rewinding, we should just do that and
+			- the problem is tho with the script runner.
+
+	- 201: spawn, time == 2f
+	- 248: start rewinding
+		-> script runner now first does the check: oh, we're rewinding?
+			-> only then does it decrease the time. so this is problematic,
+			-> but is here to prevent double spawning.
+				=> because what would happen if we update time first?
+					-> 201: spawn
+					-> 202: start rewinding => update time => 2 => spawn again!
+						=> well, except no, because it won't spawn on rewind
+
+	- => but let's test again, against double spawns
+	=> haha, well, of course this happens again, but at least we can now reproduce it.
+
+	-> so:
+	-> 101: spawn.
+	-> 102: start replay
+		=> because we update the time right now, scriptRunner prepares for next spawn
+		=> but at the same time we don't despawn yet, because on the first FU we add
+			a double update
+		
+		=> whereas is we don't update the time right now, then: scriptRunner doesn't prepare
+			for next step
+		=> and then in next frame we once again go forward => we missed a spawn.
+
+			===> Workaround: spawners track their spawned; and don't spawn it if they are alive.
+
+	-> 103: stop replay
+		=> start to go forward: boom, spawn. now we have 2 enemies.
+
+2018.06.11:
+	- ok so now let's find out why hitstun is broken
+		=> ok so it was broken because when fixing a compiler warning about an unused
+		variable, I removed the line which used to remove hits taken care of from the
+		pending damage pool.	// d'oh
+
+	- ok now let's try to record / reproduce multi-spawning of enemies with
+		debug script.
+
+		=> OK so 1 thing: replay is NOT deterministic; there seem to be small
+		changes, not sure why
+			=> OK so this seems related to not starting in the same exact frame / FU
+			all the time, so we should do a better job at syncing
+
+		=> what's definitely sure is that double spawning does occur.
+			=> OK _NOW_ it should work; but to confirm we should do the syncing bit next;
+			to make sure that everything occurs when we say everything should occur
+
+2018.06.10:
+	-OK, so for testing / debugging, we need some kind of system to log frame / FU data,
+	so that we can catch / reproduce / retest bugs; e.g. why sometimes rewinding scripts
+	leads to redundant spawns of entities.
+
+	-how to do this?
+		- how about this:
+			- we create a middle layer between receiving input and forwarding it
+			to whoever is receiving it
+			- this is an input event stream, to which we can feed direct input
+			(in which case it just logs it (but such that it becomes replayable)),
+			or a previously recorded log, or a log that's hand-edited - so we
+			can create / reproduce test cases.
+
+				=> have inputHandler dude
+				=> it's ticked by FixedUpdate, executed before anyone else
+				=> keeps track of both frameCount and FUcount
+				=> if in "record" mode, it just takes input as it is,
+					translates into our input event, and logs it
+				=> if in "playback" mode, it takes a recorded or
+					hand edited input log, and just plays it back.
+
+				=> clients don't ask for Input.GetKey(... etc); they
+					ask this guy (InputService)
+
+					=> OK so we can do the first iteration of this
+						in a separate scene, just logging to the
+						console;
+					=> then we can put it together with the other parts
+						of the game.
+					=> and then we can test and see if we can reproduce double spawning.
+
+
+		=> OK. So, InputService:
+			- MonoSingleton
+			- Execution Order: before clients
+			- first: just playback.
+				- keep dictionary of <int, List<CustomInputEvent>> -?
+				- keep input state
+				- query said input state via interface similar to Input.GetKey &c
+
+				- because of being mobile, only care about touch
+					-> so for now, only keep mouse status,
+					-> and, OK, rewind key.
+
+			=> ok now we can record things; we can make the log smaller later.
+
+
+
 2018.06.07:
 	- turning hits into rewindable events:
 		-> Enemy.OnTriggerEnter: create appropriate hit event, and add it to the rewindable event Q,

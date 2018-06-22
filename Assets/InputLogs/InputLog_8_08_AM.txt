@@ -1,0 +1,64 @@
+{
+    "log": [
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 270.0,
+                "y": 214.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 1
+        },
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": true,
+            "keyParam": 119,
+            "updateCount": 129
+        },
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 119,
+            "updateCount": 179
+        },
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": true,
+            "keyParam": 119,
+            "updateCount": 248
+        },
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 119,
+            "updateCount": 295
+        }
+    ]
+}

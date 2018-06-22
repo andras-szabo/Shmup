@@ -1,0 +1,40 @@
+{
+    "log": [
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": true,
+            "keyParam": 119,
+            "updateCount": 103
+        },
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 119,
+            "updateCount": 108
+        },
+		{
+            "type": 1,
+            "vectorParam": {
+                "x": 157.0,
+                "y": 165.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 999
+        }
+    ]
+}
