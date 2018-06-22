@@ -20,6 +20,7 @@ public class TransformSystem : MonoBehaviour
 	public const int MAX_COUNT = 5000;
 
 	private TransformComponent[] _components = new TransformComponent[MAX_COUNT];
+
 	private int _inUseCount = 0;
 	public int InUseCount { get { return _inUseCount; } }
 
@@ -60,6 +61,12 @@ public class TransformSystem : MonoBehaviour
 	{
 		Instance = this;
 		AddListeners();
+		SetupPhysics();
+	}
+
+	private void SetupPhysics()
+	{
+		Physics.autoSyncTransforms = false;
 	}
 
 	private void OnDestroy()
@@ -89,16 +96,21 @@ public class TransformSystem : MonoBehaviour
 	private void FixedUpdate()
 	{
 		var isRewinding = RewindService.ShouldRewind;
-		var delta = isRewinding ? -1 : 1;
+		var frameCountDelta = isRewinding ? -1 : 1;
 
+		UpdateWithoutJobs(frameCountDelta);
+	}
+
+	private void UpdateWithoutJobs(int frameCountDelta)
+	{
 		for (int i = 0; i < _inUseCount; ++i)
 		{
 			if (_components[i].active)
 			{
-				_components[i].frameCount = _components[i].frameCount + delta;
-				_components[i].updateCount = Clamp(_components[i].updateCount + delta);
+				_components[i].frameCount = _components[i].frameCount + frameCountDelta;
+				_components[i].updateCount = Clamp(_components[i].updateCount + frameCountDelta);
 
-				if (delta < 0)
+				if (frameCountDelta < 0)
 				{
 					_components[i].currentPosition = _components[i].startPosition + (_components[i].velocity * _components[i].frameCount);
 					if (_components[i].updateCount == 0)
