@@ -5,6 +5,7 @@ public class LifeCycleService : MonoBehaviour
 	public ScriptRunner levelScriptRunner;
 	public ShipController shipController;
 
+	//TODO: actually maybe call this guy?
 	public void Reset()
 	{
 		shipController.Reset();

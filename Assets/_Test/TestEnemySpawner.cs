@@ -29,8 +29,15 @@ public class TestEnemySpawner : MonoBehaviour
 	{
 		TryLoadReplay();        // this goes first because it may override level script
 		InitScriptRunner();
+		InitServices();
 		LoadScript();
 		TryStartScriptAndReplay();
+	}
+
+	private void InitServices()
+	{
+		//TODO proper bootstrap sequence
+		ParticleService.Instance.Init();
 	}
 
 	private void InitScriptRunner()

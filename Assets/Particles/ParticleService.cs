@@ -35,7 +35,7 @@ public class ParticleService : MonoBehaviour
 	private const uint MAX_UID = 12000;
 	private uint _nextUID = 0;
 
-	public ParticleSystem template;
+	public ParticlePool pool;
 	public Transform particleParent;
 	public GameObject rewindMarker;
 
@@ -54,7 +54,8 @@ public class ParticleService : MonoBehaviour
 
 	public void Init()
 	{
-		_rewindable.Init(null, null);	
+		_rewindable.Init(null, null);
+		pool.Preload(psType: 0, count: 20);
 	}
 
 	// script execution: should happen before rewindable
@@ -121,10 +122,10 @@ public class ParticleService : MonoBehaviour
 		_runningParticleSystems.Add(uid, particleSystem);
 	}
 
-	//TODO: get from pool
 	private void DespawnParticles(uint uid)
 	{
-		Destroy(_runningParticleSystems[uid].gameObject);
+		//Destroy(_runningParticleSystems[uid].gameObject);
+		pool.ReturnToPool(0, _runningParticleSystems[uid]);
 		_runningParticleSystems.Remove(uid);
 	}
 
@@ -136,7 +137,10 @@ public class ParticleService : MonoBehaviour
 
 	public void SpawnParticles(ParticleSystemSpawnEvent evt)
 	{
-		var newParticleSystem = Instantiate(template, evt.position, template.transform.rotation, particleParent);
+		var newParticleSystem = pool.GetFromPool(evt.psType);
+
+		newParticleSystem.transform.position = evt.position;
+		newParticleSystem.transform.SetParent(particleParent, true);
 		SaveParticleSystemInfo(evt.uid, 0f, evt.position, newParticleSystem);
 
 		newParticleSystem.randomSeed = evt.uid;
@@ -157,7 +161,11 @@ public class ParticleService : MonoBehaviour
 
 	public void SpawnOnRewind(ParticleSystemDespawnEvent evt)
 	{
-		var newPS = Instantiate(template, evt.position, Quaternion.identity, particleParent);
+		var newPS = pool.GetFromPool(evt.psType);
+
+		newPS.transform.position = evt.position;
+		newPS.transform.SetParent(particleParent, true);
+
 		SaveParticleSystemInfo(evt.uid, newPS.main.duration, evt.position, newPS);
 	}
 }

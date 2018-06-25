@@ -2600,6 +2600,7 @@ GameObject:
   - component: {fileID: 1645381685}
   - component: {fileID: 1645381684}
   - component: {fileID: 1645381683}
+  - component: {fileID: 1645381686}
   m_Layer: 0
   m_Name: ParticleService
   m_TagString: Untagged
@@ -2629,7 +2630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a4bdf523701d54a8c72d7b389dd2df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  template: {fileID: 198345924890754026, guid: 63c07029fad2d754ca68eb837d49019d, type: 2}
+  pool: {fileID: 1645381686}
   particleParent: {fileID: 185830281}
   rewindMarker: {fileID: 2068062092}
 --- !u!4 &1645381685
@@ -2645,6 +2646,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1645381686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1645381682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba1b5e3fc4d04ba4a9bce057cfbc7e3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  templates:
+  - {fileID: 198345924890754026, guid: 63c07029fad2d754ca68eb837d49019d, type: 2}
 --- !u!1 &1686821408
 GameObject:
   m_ObjectHideFlags: 0

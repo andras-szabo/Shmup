@@ -34,13 +34,6 @@ public class ParticlesRewindable : ARewindable<ParticleSystemRewindData>
 	{
 		if (!_log.IsEmpty)
 		{
-			if (RewindableService.Instance.RewindableFrameCount < 1)
-			{
-				Debug.LogWarning("OK, frame discrepancy; PR has still: " + _log.Count);
-				_log.Clear();
-				return;
-			}
-
 			var prEvent = _log.Pop();
 			if (prEvent != null && prEvent.events != null && prEvent.events.Length > 0)
 			{
