@@ -20,6 +20,7 @@ public class TransformSystem : MonoBehaviour
 	public const int MAX_COUNT = 5000;
 
 	private TransformComponent[] _components = new TransformComponent[MAX_COUNT];
+	private ECSBulletRewindable[] _transforms = new ECSBulletRewindable[MAX_COUNT];
 
 	private int _inUseCount = 0;
 	public int InUseCount { get { return _inUseCount; } }
@@ -34,17 +35,19 @@ public class TransformSystem : MonoBehaviour
 		return _components[index].updateCount;
 	}
 
-	public int GetNewComponent(Vector3 startPos, Vector3 vel)
+	public int GetNewComponent(ECSBulletRewindable bulletRewindable, Vector3 vel)
 	{
-		_components[_inUseCount++] = new TransformComponent
+		_components[_inUseCount] = new TransformComponent
 		{
-			startPosition = startPos,
+			startPosition = bulletRewindable.Position,
 			velocity = vel,
 			updateCount = 0,
 			frameCount = 0,
 			active = true
 		};
 
+		_transforms[_inUseCount] = bulletRewindable;
+		_inUseCount++;
 		return _inUseCount - 1;
 	}
 
@@ -110,6 +113,8 @@ public class TransformSystem : MonoBehaviour
 		{
 			if (_components[i].active)
 			{
+				_transforms[i].SetIsRewind(isRewinding, _components[i].updateCount > 0);
+
 				if (!isRewinding || rewindableFrameCount > 0)
 				{
 					_components[i].frameCount = _components[i].frameCount + frameCountDelta;
@@ -118,9 +123,18 @@ public class TransformSystem : MonoBehaviour
 
 				if (isRewinding && rewindableFrameCount >= 0 && _components[i].updateCount >= 0)
 				{
-					_components[i].currentPosition = _components[i].startPosition + (_components[i].velocity * _components[i].frameCount);
+					//_components[i].currentPosition = _components[i].startPosition + (_components[i].velocity * _components[i].frameCount);
+					var currentPos = _components[i].startPosition + (_components[i].velocity * _components[i].frameCount);
+
+					_components[i].currentPosition = currentPos;
+					_transforms[i].Position = currentPos;
+
 					if (_components[i].updateCount == 0)
 					{
+						//TODO: somehow call despawnonrewind on the affected transform -> well, make it
+						// an ISomething maybe
+						// but also need to set IsRewinding on the transform
+						_transforms[i].CallDespawnOnRewind();
 						_components[i].active = false;
 					}
 				}

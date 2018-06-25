@@ -1,4 +1,6 @@
-﻿public class ECSBulletRewindable : ABaseRewindable
+﻿using UnityEngine;
+
+public class ECSBulletRewindable : ABaseRewindable
 {
 	private RewindableService _rewindService;
 	protected RewindableService RewindService { get { return _rewindService ?? (_rewindService = RewindableService.Instance); } }
@@ -9,6 +11,13 @@
 	private IRewindableEvent _despawnOnRewindEvent;
 	private int _myIndex = -1;
 
+	public Vector3 Position
+	{
+		get { return CachedTransform.position; }
+		set { CachedTransform.position = value; }
+	}
+
+	/*
 	private void FixedUpdate()
 	{
 		IsRewinding = RewindService.ShouldRewind;
@@ -21,6 +30,23 @@
 				_despawnOnRewindEvent.Apply(isRewind: true);
 			}
 		}
+	}
+	*/
+
+	public void SetIsRewind(bool rewind, bool hadSomething)
+	{
+		IsRewinding = rewind;
+		HadSomethingToRewindToAtFrameStart = hadSomething;
+	}
+
+	public void SetHadSomethingToRewind(bool state)
+	{
+		HadSomethingToRewindToAtFrameStart = state;
+	}
+
+	public void CallDespawnOnRewind()
+	{
+		_despawnOnRewindEvent.Apply(isRewind: true);
 	}
 
 	private int CheckIfRewindingPossible()
@@ -40,7 +66,7 @@
 	{
 		if (_myIndex < 0)
 		{
-			_myIndex = TransformSystem.GetNewComponent(CachedTransform.position, velocityController.CurrentVelocityUnitsPerFrame);
+			_myIndex = TransformSystem.GetNewComponent(this, velocityController.CurrentVelocityUnitsPerFrame);
 		}
 		else
 		{
