@@ -103,14 +103,19 @@ public class TransformSystem : MonoBehaviour
 
 	private void UpdateWithoutJobs(int frameCountDelta)
 	{
+		var rewindableFrameCount = RewindableService.Instance.RewindableFrameCount;
+
 		for (int i = 0; i < _inUseCount; ++i)
 		{
 			if (_components[i].active)
 			{
-				_components[i].frameCount = _components[i].frameCount + frameCountDelta;
-				_components[i].updateCount = Clamp(_components[i].updateCount + frameCountDelta);
+				if (frameCountDelta > 0 || rewindableFrameCount > 0)
+				{
+					_components[i].frameCount = _components[i].frameCount + frameCountDelta;
+					_components[i].updateCount = Clamp(_components[i].updateCount + frameCountDelta);
+				}
 
-				if (frameCountDelta < 0)
+				if (frameCountDelta < 0 && rewindableFrameCount > 0)
 				{
 					_components[i].currentPosition = _components[i].startPosition + (_components[i].velocity * _components[i].frameCount);
 					if (_components[i].updateCount == 0)

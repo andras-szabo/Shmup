@@ -9,6 +9,12 @@ public class Ghost : MonoWithCachedTransform
 
 	public bool isAllowed;
 
+	private TrailRenderer _trailRenderer;
+	public TrailRenderer TrailRenderer
+	{
+		get { return _trailRenderer ?? (_trailRenderer = GetComponent<TrailRenderer>()); }
+	}
+
 	public void Hide()
 	{
 		ToggleVisuals(false);
@@ -19,6 +25,7 @@ public class Ghost : MonoWithCachedTransform
 	public void Show()
 	{
 		ToggleVisuals(true);
+		TrailRenderer.enabled = true;
 		IsShown = true;
 	}
 
