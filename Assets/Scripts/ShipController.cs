@@ -45,6 +45,13 @@ public class ShipController : MonoWithCachedTransform
 
 		_hittable = GetComponent<PlayerHittable>();
 		_hittable.Init();
+
+		CameraService.Instance.OnCameraPositionChanged += HandleCameraPositionChanged;
+	}
+
+	public void HandleCameraPositionChanged(Vector3 newCameraPosition)
+	{
+		RecalculateWorldBounds();
 	}
 
 	public void RecalculateWorldBounds()

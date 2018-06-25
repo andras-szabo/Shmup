@@ -87,5 +87,16 @@ public class TestEnemySpawner : MonoBehaviour
 		{
 			_enemySpawner.SpawnWithScript("simpleSpinner");
 		}
+
+		if (Input.GetKeyDown(KeyCode.KeypadPlus))
+		{
+			CameraService.Instance.ZoomTo(-10f, 1f);
+		}
+
+		if (Input.GetKeyDown(KeyCode.KeypadMinus))
+		{
+			CameraService.Instance.ZoomTo(-20f, 1f);
+		}
+
 	}
 }

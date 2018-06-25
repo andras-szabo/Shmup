@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SnapToEdgeOfScreen : MonoWithCachedTransform
 {
@@ -19,9 +17,18 @@ public class SnapToEdgeOfScreen : MonoWithCachedTransform
 	[Range(0f, 50f)]
 	public float paddingPercent = 10f;
 
+	private Vector2 _viewportPosition;
+
 	private void Start()
 	{
-		CachedTransform.position = ViewportUtility.GetWorldPosition(CalculateViewportPosition());
+		_viewportPosition = CalculateViewportPosition();
+		CachedTransform.position = ViewportUtility.GetWorldPosition(_viewportPosition);
+		CameraService.Instance.OnCameraPositionChanged += HandleCameraPositionChanged;
+	}
+
+	private void HandleCameraPositionChanged(Vector3 position)
+	{
+		CachedTransform.position = ViewportUtility.GetWorldPosition(_viewportPosition);
 	}
 
 	private Vector2 CalculateViewportPosition()
