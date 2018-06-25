@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ShipController : MonoWithCachedTransform
 {
-	public const float INPUT_SENSITIVITY = 2f;
+	public const float INPUT_SENSITIVITY = 2.25f;
 
 	private Camera _mainCamera;
 	public Camera MainCamera
@@ -37,8 +37,7 @@ public class ShipController : MonoWithCachedTransform
 	{
 		_startingPosition = CachedTransform.position;
 
-		_worldMin = MainCamera.ViewportToWorldPoint(new Vector3(0f, 0f, 10f));
-		_worldMax = MainCamera.ViewportToWorldPoint(new Vector3(1f, 1f, 10f));
+		RecalculateWorldBounds();
 
 		_bulletSpawners = new List<ISpawner>(GetComponentsInChildren<ISpawner>());
 		_rewindable = GetComponent<PlayerShipRewindable>();
@@ -46,6 +45,12 @@ public class ShipController : MonoWithCachedTransform
 
 		_hittable = GetComponent<PlayerHittable>();
 		_hittable.Init();
+	}
+
+	public void RecalculateWorldBounds()
+	{
+		_worldMin = MainCamera.ViewportToWorldPoint(new Vector3(0f, 0f, -MainCamera.transform.position.z));
+		_worldMax = MainCamera.ViewportToWorldPoint(new Vector3(1f, 1f, -MainCamera.transform.position.z));
 	}
 
 	private void FixedUpdate()
@@ -130,7 +135,7 @@ public class ShipController : MonoWithCachedTransform
 		var mouseOnScreen = InputService.Instance.MousePixelPosition;
 		return new Vector3(mouseOnScreen.x,
 						   mouseOnScreen.y,
-						   10f);
+						   -MainCamera.transform.position.z);
 	}
 
 	private Vector3 ClampToScreenBounds(Vector3 inputPos)

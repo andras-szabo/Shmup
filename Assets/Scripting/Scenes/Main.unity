@@ -202,7 +202,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 6530556}
   m_LocalRotation: {x: -0.066391766, y: -0, z: -0, w: 0.9977936}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -374,8 +374,9 @@ GameObject:
   - component: {fileID: 157048752}
   - component: {fileID: 157048751}
   - component: {fileID: 157048750}
+  - component: {fileID: 157048755}
   m_Layer: 10
-  m_Name: Left
+  m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -476,6 +477,19 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 157048748}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &157048755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 157048748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b117657c70e9684b9e54c8fbe87ced7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  edge: 2
+  paddingPercent: 20
 --- !u!1 &185830280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1940,8 +1954,9 @@ GameObject:
   - component: {fileID: 1218485471}
   - component: {fileID: 1218485470}
   - component: {fileID: 1218485469}
+  - component: {fileID: 1218485474}
   m_Layer: 10
-  m_Name: Right
+  m_Name: Left
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2042,6 +2057,19 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1218485467}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1218485474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1218485467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b117657c70e9684b9e54c8fbe87ced7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  edge: 4
+  paddingPercent: 20
 --- !u!1 &1235416223
 GameObject:
   m_ObjectHideFlags: 0
@@ -2489,6 +2517,7 @@ GameObject:
   - component: {fileID: 1627138854}
   - component: {fileID: 1627138853}
   - component: {fileID: 1627138857}
+  - component: {fileID: 1627138858}
   m_Layer: 10
   m_Name: Bottom
   m_TagString: Untagged
@@ -2591,6 +2620,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1627138858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1627138851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b117657c70e9684b9e54c8fbe87ced7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  edge: 3
+  paddingPercent: 30
 --- !u!1 &1645381682
 GameObject:
   m_ObjectHideFlags: 0
@@ -3206,6 +3248,7 @@ GameObject:
   - component: {fileID: 1908978588}
   - component: {fileID: 1908978587}
   - component: {fileID: 1908978591}
+  - component: {fileID: 1908978592}
   m_Layer: 10
   m_Name: Top
   m_TagString: Untagged
@@ -3308,6 +3351,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1908978592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1908978585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b117657c70e9684b9e54c8fbe87ced7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  edge: 1
+  paddingPercent: 30
 --- !u!1 &1915440078
 GameObject:
   m_ObjectHideFlags: 0
@@ -3583,9 +3639,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2032953350}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5081cbd5e0afc8b4aa7159e4f3627131, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b117657c70e9684b9e54c8fbe87ced7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  edge: 1
+  paddingPercent: 10
 --- !u!1 &2068062092
 GameObject:
   m_ObjectHideFlags: 0
