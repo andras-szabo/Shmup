@@ -1079,7 +1079,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -36.234993, y: 0}
+  m_AnchoredPosition: {x: -36.234375, y: 0}
   m_SizeDelta: {x: -72.47, y: 86.49}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &647819403
@@ -1204,6 +1204,7 @@ MonoBehaviour:
   fpsLabel: {fileID: 1755693821}
   memLabel: {fileID: 1545765745}
   entityLabel: {fileID: 1067696311}
+  rewindMarker: {fileID: 2068062092}
   fpsLowColor: {r: 1, g: 0.5588235, b: 0.5588235, a: 0.497}
   fpsMidColor: {r: 0.95669377, g: 1, b: 0.5514706, a: 0.559}
   fpsHighColor: {r: 0.45328718, g: 0.9632353, b: 0.5412093, a: 0.572}
@@ -2632,7 +2633,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pool: {fileID: 1645381686}
   particleParent: {fileID: 185830281}
-  rewindMarker: {fileID: 2068062092}
 --- !u!4 &1645381685
 Transform:
   m_ObjectHideFlags: 0
@@ -3618,7 +3618,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -51.96, y: 37.12}
+  m_AnchoredPosition: {x: -51.960938, y: 37.119995}
   m_SizeDelta: {x: 103.93, y: 74.24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2068062094

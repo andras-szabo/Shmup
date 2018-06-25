@@ -53,6 +53,34 @@ KP:
 		background script, where that can be set up. but this
 		really is just super nice to have.
 
+2018.06.25. Cleanup of particle system
+	o pool particle systems
+	x make _psInfos fixed size, or "only growing", and invalidate previous ones,
+	  to avoid moving around shit in the list all the time
+	x add info about whether or not we need to restart the ps when returning to forward play
+	o move rewind marker logic out
+
+	- clean up warnings	
+	o ignore double taps that happen while the ghost is on screen
+
+2018.06.22.
+	- making the player ship hittable.
+	- so currently player uses PlayerShipData to record stuff, which has position and isShooting; but
+	no events yet. so we could change that and apply an enemyhittable to the ship? except with
+	different entity type (so as to react to correct polarity bullets)
+
+	- Hittable needs ref to PoolableEntity because:
+		-myEntity.IsInGraveyard
+		-myEntity.IsRewinding
+		-myEntity.EnqueueEvent
+		-myEntity.GoToGraveyard
+		-myEntity.GetOutOfGraveyard
+		-myEntity.myRenderer.material
+
+	- and dude needs to be set up
+	- ok, let's create playerHittable, and then see what we need to unify
+
+
 2018.06.18.
 	- ok so we need some kind of central service for replays, because of the ghost.
 	- idea:

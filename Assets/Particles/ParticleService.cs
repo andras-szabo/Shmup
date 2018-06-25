@@ -37,7 +37,6 @@ public class ParticleService : MonoBehaviour
 
 	public ParticlePool pool;
 	public Transform particleParent;
-	public GameObject rewindMarker;
 
 	private uint GetNextUID()
 	{
@@ -63,27 +62,26 @@ public class ParticleService : MonoBehaviour
 	private void FixedUpdate()
 	{
 		var deltaTime = _rewindable.IsRewinding ? -Time.fixedDeltaTime : Time.fixedDeltaTime;
-		rewindMarker.SetActive(_rewindable.IsRewinding);
+
+		var isActuallyRewinding = _rewindable.IsRewinding && _rewindable.HadSomethingToRewindToAtFrameStart;
 
 		for (int i = 0; i < _psInfos.Count; ++i)
 		{
 			var current = _psInfos[i];
-			var newInfo = new ParticleSystemInfo(current.uid, current.elapsedTime + deltaTime, current.duration, current.position);
+			var newInfo = new ParticleSystemInfo(current.uid, current.elapsedTime + deltaTime, current.duration, 
+												 current.position);
 			_psInfos[i] = newInfo;
+			var runningParticleSystem = _runningParticleSystems[current.uid];
 
-			if (_rewindable.IsRewinding && _rewindable.HadSomethingToRewindToAtFrameStart)
+			if (isActuallyRewinding)
 			{
-				_runningParticleSystems[current.uid].Simulate(current.elapsedTime, true, true);
+				runningParticleSystem.Simulate(current.elapsedTime, true, true);
 			}
 			else
 			{
-				rewindMarker.SetActive(false);
-
-				//TODO - this is really sub-optimal here; we could mark the flag - 
-				// we need to restart this dude!
-				if (_runningParticleSystems[current.uid].isPaused && !_rewindable.IsRewinding)
+				if (!_rewindable.IsRewinding && runningParticleSystem.isPaused)
 				{
-					_runningParticleSystems[current.uid].Play();
+					runningParticleSystem.Play();
 				}
 
 				if (current.elapsedTime >= current.duration)

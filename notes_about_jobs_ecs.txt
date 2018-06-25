@@ -1,0 +1,53 @@
+OK so adding jobs
+
+[ComputeJobOptimization]
+public struct MovementJob : IJobParallelForTransform
+{
+	public float moveSpeed;
+	public float deltaTime;
+	[... etc ...]
+
+	public void Execute(int index, TransformAccess transform)
+	{
+		[...]
+		[... index is not actually used here ...]
+		transform.position = someCalculatedPosition;
+	}	
+}
+
+// IJob: any job with an Execute method
+// IJobParallelFor: a job for iterating through a collection of items
+// IJobParallelForTransform: specifically, we're iterating through transforms
+	-> but since Transforms are ref types, we work with TransformAccess,
+	which basically takes all the value type bits from Transform, and
+	updates Transform therewith
+
+then, whoever is in control:
+public class GameManager : MonoBehaviour
+{
+	private TransformAccessArray _transforms;	// but actually you can add to it
+	private MovementJob _moveJob;
+	private JobHandle _moveHandle;
+
+	OnDisable() { _moveHandle.Complete(); _transform.Dispose(); }	// cleanup
+
+	Update()
+	{
+		_moveHandle.Complete();		// to keep it in sync with update
+		_moveJob = new MovementJob()
+		{
+			moveSpeed = enemySpeed,
+			... etc.		
+		};
+
+		_moveHandle = _moveJob.Schedule(_transforms);
+		JobHandle.ScheduleBatchedJobs();
+	}
+}
+
+// so:
+	- 1. finish job by handle if needed
+	- 2. create new job
+	- 3. schedule new job, get back handle
+	- 4. call JobHandle.ScheduleBatchedJobs();
+

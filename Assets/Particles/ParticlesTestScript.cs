@@ -1,15 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ParticlesTestScript : MonoBehaviour 
 {
 	public ParticleSystem particles;
+	/*
 	float t = 0f;
 	float delta = 0.025f;
 	int randomSeedIndex;
 	
 	private uint[] randomSeeds = new uint[] { 123, 124, 125, 126, 127, 128 };
+	*/
 
 	private void Start()
 	{

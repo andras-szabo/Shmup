@@ -26,6 +26,16 @@ public class InputController : MonoBehaviour
 		Instance = this;
 	}
 
+	private void Start()
+	{
+		RewindableService.Instance.OnGhostDisappeared += ResetDoubleTapRequest;
+	}
+
+	private void ResetDoubleTapRequest()
+	{
+		HasDoubleTapped = false;
+	}
+
 	private void FixedUpdate()
 	{
 		_touchesThisFrame = InputService.Instance.MouseLeftButton ? 1 : 0;
@@ -40,7 +50,7 @@ public class InputController : MonoBehaviour
 		_touchesLastFrame = _touchesThisFrame;
 
 #if UNITY_EDITOR
-		HasDoubleTapped = InputService.Instance.RewindKey;
+		//HasDoubleTapped = InputService.Instance.RewindKey;
 #endif
 	}
 }

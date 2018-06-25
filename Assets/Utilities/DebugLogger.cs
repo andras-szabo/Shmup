@@ -20,6 +20,7 @@ public class DebugLogger : MonoBehaviour
 	public Text fpsLabel;
 	public Text memLabel;
 	public Text entityLabel;
+	public GameObject rewindMarker;
 
 	public Color fpsLowColor, fpsMidColor, fpsHighColor;
 	public Image fpsIndicatorImage;
@@ -52,6 +53,12 @@ public class DebugLogger : MonoBehaviour
 		UpdateFPSLabel();
 		UpdateMemoryLabelIfNeeded();
 		UpdateEntityLabel();
+		UpdateRewindMarker();
+	}
+
+	private void UpdateRewindMarker()
+	{
+		rewindMarker.gameObject.SetActive(RewindableService.Instance.ShouldRewind);
 	}
 
 	private void UpdateEntityLabel()
