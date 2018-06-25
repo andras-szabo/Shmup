@@ -52,6 +52,11 @@ public class ParticleService : MonoBehaviour
 		_rewindable = GetComponent<ParticlesRewindable>();
 	}
 
+	public void Init()
+	{
+		_rewindable.Init(null, null);	
+	}
+
 	// script execution: should happen before rewindable
 	// TODO: really not sure if structs are the way to go
 	private void FixedUpdate()
@@ -65,7 +70,7 @@ public class ParticleService : MonoBehaviour
 			var newInfo = new ParticleSystemInfo(current.uid, current.elapsedTime + deltaTime, current.duration, current.position);
 			_psInfos[i] = newInfo;
 
-			if (_rewindable.IsRewinding)
+			if (_rewindable.IsRewinding && _rewindable.HadSomethingToRewindToAtFrameStart)
 			{
 				_runningParticleSystems[current.uid].Simulate(current.elapsedTime, true, true);
 			}
@@ -75,7 +80,7 @@ public class ParticleService : MonoBehaviour
 
 				//TODO - this is really sub-optimal here; we could mark the flag - 
 				// we need to restart this dude!
-				if (_runningParticleSystems[current.uid].isPaused)
+				if (_runningParticleSystems[current.uid].isPaused && !_rewindable.IsRewinding)
 				{
 					_runningParticleSystems[current.uid].Play();
 				}
@@ -131,7 +136,7 @@ public class ParticleService : MonoBehaviour
 
 	public void SpawnParticles(ParticleSystemSpawnEvent evt)
 	{
-		var newParticleSystem = Instantiate(template, evt.position, Quaternion.identity, particleParent);
+		var newParticleSystem = Instantiate(template, evt.position, template.transform.rotation, particleParent);
 		SaveParticleSystemInfo(evt.uid, 0f, evt.position, newParticleSystem);
 
 		newParticleSystem.randomSeed = evt.uid;

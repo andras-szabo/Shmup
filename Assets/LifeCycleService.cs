@@ -11,6 +11,8 @@ public class LifeCycleService : MonoBehaviour
 		var rewindable = (Rewindable)levelScriptRunner.rewindable;
 		rewindable.Init(null, null);
 		levelScriptRunner.ResetScript();
+		//TODO: na most akkor init() vagy reset()?
 		InputService.Instance.Reset();
+		ParticleService.Instance.Init();
 	}
 }

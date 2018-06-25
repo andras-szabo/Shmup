@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public abstract class AHittable : MonoBehaviour, IHittable
+public abstract class AHittable : MonoWithCachedTransform, IHittable
 {
 	public Collider myCollider;
 	public Collider Collider

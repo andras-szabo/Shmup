@@ -126,6 +126,7 @@ public class Hittable : AHittable
 		TryRemoveFromPendingDamage(damage, isRewind);
 		if (_currentHP <= 0 && !myEntity.IsInGraveyard)
 		{
+			ParticleService.Instance.SpawnParticles(pType: 0, pos: CachedTransform.position);
 			myEntity.GoToGraveyard();
 		}
 	}

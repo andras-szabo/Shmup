@@ -1,15 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ParticlesRewindable : ARewindable<ParticleSystemRewindData>
 {
 	public override void Init(VelocityController velocityController, SpinController spinController)
 	{
+		Reset();
+		RewindableService.Instance.OnGhostDisappeared += Reset;
 	}
 
 	public override void Reset()
 	{
+		_log.Clear();
+		_eventQueue.Clear();
 	}
 
 	protected override void RecordData()
@@ -32,6 +34,13 @@ public class ParticlesRewindable : ARewindable<ParticleSystemRewindData>
 	{
 		if (!_log.IsEmpty)
 		{
+			if (RewindableService.Instance.RewindableFrameCount < 1)
+			{
+				Debug.LogWarning("OK, frame discrepancy; PR has still: " + _log.Count);
+				_log.Clear();
+				return;
+			}
+
 			var prEvent = _log.Pop();
 			if (prEvent != null && prEvent.events != null && prEvent.events.Length > 0)
 			{
