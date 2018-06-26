@@ -2011,11 +2011,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c8da08eb8a06f4ebf0a53445921a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptToRun: {fileID: 4900000, guid: 2b90503aa9f039c468d862880509bf6b, type: 3}
+  scriptToRun: {fileID: 4900000, guid: e998cbacc608e8b498fc5fcd4d7ff4e8, type: 3}
   logToConsole: 0
   replay: 0
   replayStartFrame: 0
-  logToReplay: {fileID: 4900000, guid: f77df0e5f4fefb54da9a5487dbc1be18, type: 3}
+  logToReplay: {fileID: 4900000, guid: e7acc35a667419845a63a2895bc8ce0e, type: 3}
 --- !u!114 &1144996391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2054,6 +2054,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignorePositionUpdates: 0
   ignoreRotationUpdates: 0
+  log: 0
 --- !u!114 &1144996394
 MonoBehaviour:
   m_ObjectHideFlags: 0

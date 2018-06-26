@@ -53,6 +53,52 @@ KP:
 		background script, where that can be set up. but this
 		really is just super nice to have.
 
+2018.06.26. Linked entities
+	- let's have an entity that contains a transform hierarchy, where the children
+	  are also poolable, rewindable, and separately destroyable entities.
+	- children would not have to apply transform on rewind - or, say, only rotation,
+	  if they are linked but allowed to rotate on their own
+		=> so let's expose this nicely
+		=> bounds &c - i think it all could work exactly like now
+		- really the idea is only that some entities happen to be in a hierarchy,
+		  but they are still entities just like that, it's just that they
+		  don't necessarily move independently.
+	
+	o allow entities to not have a script runner
+		=> done; just use PoolableEntity instead of scriptableEntity;
+
+	o allow entities to not do position update
+	o allow entities to not do rotation update
+
+	o make 2 linked entities for proof of concept, then do a couple of enemies this way
+	o then maybe do such that if you blow up the centre, that makes all linked dudes blow up as well.
+		=> so hittable has links to other hittables "explodeOnDeath" =>
+			and that could in theory work in two ways.
+		=> that means that those hittables should be initialized in the beginning
+		-> ok so this doesn't seem to work for some reason - the hit is not processed
+		   properly on the other hittables. why - adding stuff again in the graveyard?
+			-> no, that would not be a problem, because hittables check if they are in the graveyard,
+			   and don't add pending damage if they are.
+
+			-> then what? aaah. so what we need to call is EnqueueHitEvent instead,
+			   i believe, because that's how the replay will take care of it
+		
+			=> in which case "Hit" in "IHittable" is a bit misleading, because you should
+			   never actually call that : /
+
+	o also: allow spawning of enemies such that we pass in some initial velocity and angle velocity,
+	  so that we don't have to have script runners that only do that one command in the beginning,
+	  and then get updated for no reason until the entity is around
+
+	o test all this with big rotating supercube!
+
+	- now fix bugs
+		- like resetting linked hittables, and in general making sure they work
+		- what about rewinding bullets too far? i thought this is fixed already
+		
+
+	- do something about having to type out vector params in scripts the way it has to be done
+
 2018.06.25. Cleanup of particle system
 	o pool particle systems
 	x make _psInfos fixed size, or "only growing", and invalidate previous ones,
@@ -60,8 +106,45 @@ KP:
 	x add info about whether or not we need to restart the ps when returning to forward play
 	o move rewind marker logic out
 
-	- clean up warnings	
+	o clean up warnings	
 	o ignore double taps that happen while the ghost is on screen
+
+	== OK. Then, dynamic zooming.
+	- understand how exactly positions work:
+		-> so for convenience we use viewport space for e.g. setting ship patterns.
+		-> Camera.ViewportToWorldPoint() "transforms an x-y screen position into an x-y-z position
+		   in 3D space. Provide the function with a vector where the x-y components of the vector
+		   are the screen (=viewport) coordinates, and Z component is the distance of the resulting
+	  	   plane from the camera."		
+
+			- so in our case, because we have the action play out at z = 0, and the camera is looking
+			  "down" on it facing in +z direction, the vector would be (vp.x, vp.y, -Camera.position.z).
+
+		-> so this gives us world position from viewport position. But how to get screen position
+		   into viewport position?
+
+		=> Camera.ScreenToWorldPoint(), where, similar to ViewportToWorldPoint, x and y are pixel coordinates
+		   (bottom left is 0,0, because left-handed coordinate system), and z is the position in world units
+		   from the camera.
+
+	=> when the camera moves, we need to recalculate bounds
+		- how about: bounds have a "snap to edge" component, where you can set an edge and a distance (in vp
+		  coordinates) from it- ? and then each of these guys listen to some signal when they need to change
+
+	o  and we also have to make sure to always use the cam's actual z coordinate when checking screen / viewport
+	   coordinates.
+
+	- move bounds accordingly
+	- make camera zoom rewindable. how?
+		- so it's part of levelScript
+		=> somehow execution context could take care of it
+		=> but we now need to record cam's position
+		=> and o.c. make sure that bounds &c react to it when it changes
+
+	o or - we can have a rewindable on the main cam; and whenever it changes, it raises an event
+	ok. but now we need to push the player inwards, if they were out of bounds, but not moving at the moment of zoom;
+	so as not to ge stuck outside the screen.
+	
 
 2018.06.22.
 	- making the player ship hittable.

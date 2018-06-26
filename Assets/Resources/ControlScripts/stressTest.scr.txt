@@ -28,8 +28,10 @@ bgRot -15 1+(secondWaveDelay*20)
 	end
 end
 
+2	spawnAndStart multipartship 0.2 1.5 0 -0.1 -180 90 90
+0.5 spawnAndStart multipartship 0.8 1.5 0 -0.1 180 90 90
 
-0.5 for j = 1 to 2
+10 for j = 1 to 2
 	for i = 1 to 4
 		0.5	spawn shooter 0.1*i y shootTestInverse
 			spawn shooter 1-(i*0.1) y shootTest

@@ -15,6 +15,8 @@ public class Hittable : AHittable
 	public Material normalMaterial;
 	public Material hitMaterial;
 
+	public bool log;
+
 	// Linked hittables: when _this_ dies, it makes other,
 	// linked hittables take a hit as well. This could be
 	// a one-way relationship (if the centre dies, so do
@@ -42,6 +44,14 @@ public class Hittable : AHittable
 		_currentHP = startingHP;
 		RefreshVisuals(hit: false);
 		_pendingDamage.Clear();
+
+		if (linkedHittables != null && linkedHittables.Length > 0)
+		{
+			foreach (var hittable in linkedHittables)
+			{
+				hittable.Init();
+			}
+		}
 	}
 
 	public override void ApplyHitStunOver(int damage, bool isRewind)
@@ -91,6 +101,7 @@ public class Hittable : AHittable
 	{
 		if (!myEntity.IsInGraveyard)
 		{
+			if (log) { Debug.LogWarning("Adding pending damage: " + damage.ToString()); }
 			_pendingDamage.Add(new PendingDamage(timeLeft: _visualHitStunSeconds, damage: damage));
 			RefreshVisuals(hit: true);
 		}
@@ -143,7 +154,7 @@ public class Hittable : AHittable
 			{
 				foreach (var linkedHittable in linkedHittables)
 				{
-					linkedHittable.TryEnqueueHitEvent(damage: 100, isBounds: false);
+					linkedHittable.TryEnqueueHitEvent(damage: 999, isBounds: false);
 				}
 			}
 		}
@@ -161,8 +172,11 @@ public class Hittable : AHittable
 	//		clients can call from the outside
 	public void TryEnqueueHitEvent(int damage, bool isBounds)
 	{
-		var hitEvent = new HitEvent(damage, isBounds, this);
-		myEntity.EnqueueEvent(hitEvent);
+		if (!myEntity.IsInGraveyard)
+		{
+			var hitEvent = new HitEvent(damage, isBounds, this);
+			myEntity.EnqueueEvent(hitEvent);
+		}
 	}
 
 	private void TryEnqueueHitEvent(Damage dmg)

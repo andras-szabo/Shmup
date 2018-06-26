@@ -6,6 +6,8 @@ public class Rewindable : ARewindable<TransformData>
 	public bool ignorePositionUpdates;
 	public bool ignoreRotationUpdates;
 
+	public bool log;
+
 	private void Awake()
 	{
 		AddListeners();
@@ -73,6 +75,7 @@ public class Rewindable : ARewindable<TransformData>
 			{
 				foreach (var evt in trData.events)
 				{
+					if (log) { UnityEngine.Debug.Log("Try to apply event: " + evt.ToString()); }
 					evt.Apply(isRewind: true);
 				}
 			}

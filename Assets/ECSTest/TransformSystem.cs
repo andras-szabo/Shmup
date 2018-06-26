@@ -115,7 +115,7 @@ public class TransformSystem : MonoBehaviour
 			{
 				_transforms[i].SetIsRewind(isRewinding, _components[i].updateCount > 0);
 
-				if (!isRewinding || rewindableFrameCount > 0)
+				if (!isRewinding || rewindableFrameCount >= 0)
 				{
 					_components[i].frameCount = _components[i].frameCount + frameCountDelta;
 					_components[i].updateCount = Clamp(_components[i].updateCount + frameCountDelta);

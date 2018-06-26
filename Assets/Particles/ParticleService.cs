@@ -93,7 +93,8 @@ public class ParticleService : MonoBehaviour
 						particleService = this
 					};
 
-					_rewindable.EnqueueEvent(evt);
+					//TODO: WHY does this need to be immediate == true?
+					_rewindable.EnqueueEvent(evt, true);
 					DespawnParticles(evt);
 				}
 			}
@@ -118,12 +119,21 @@ public class ParticleService : MonoBehaviour
 	{
 		_psInfos.Add(new ParticleSystemInfo(uid, elapsedTime, particleSystem.main.duration, position));
 		_runningParticleSystems.Add(uid, particleSystem);
+		//Debug.Log("Adding ps: " + uid.ToString()+ " / " + Time.frameCount);
 	}
 
 	private void DespawnParticles(uint uid)
 	{
 		//Destroy(_runningParticleSystems[uid].gameObject);
-		pool.ReturnToPool(0, _runningParticleSystems[uid]);
+		//Debug.Log("Trying to return ps: " + uid.ToString() + " / " + Time.frameCount);
+		try
+		{
+			pool.ReturnToPool(0, _runningParticleSystems[uid]);
+		}
+		catch (System.Exception ex)
+		{
+			Debug.LogWarningFormat("Particle system glitch: {0}", ex.Message);
+		}
 		_runningParticleSystems.Remove(uid);
 	}
 
