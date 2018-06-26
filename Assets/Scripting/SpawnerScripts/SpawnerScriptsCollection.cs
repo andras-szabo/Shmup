@@ -21,6 +21,28 @@ public class SpawnerScriptSpawn : ACommand
 	}
 }
 
+public class SpawnerScriptSpawnWithVelocityAndSpin : ACommand
+{
+	private readonly Vector2 _position;
+	private readonly string _shipType;
+	private readonly Vector2 _velocity;
+	private readonly Vector3 _spin;
+
+	public SpawnerScriptSpawnWithVelocityAndSpin(SerializedScriptCommand cmd) : base(cmd)
+	{
+		_shipType = (string)cmd.args[0];
+		_position = new Vector2((float)cmd.args[1], (float)cmd.args[2]);
+		_velocity = new Vector2((float)cmd.args[3], (float)cmd.args[4]);
+		_spin = new Vector3((float)cmd.args[5], (float)cmd.args[6], (float)cmd.args[7]);
+	}
+
+	public override void Execute(IExecutionContext context)
+	{
+		context.MoveControl.SetPosition(_position);
+		context.Spawner.SpawnFromPool(_shipType, context.CurrentCommandUID, _velocity, _spin);
+	}
+}
+
 public class SpawnerScriptBgRot : ACommand
 {
 	protected readonly float _targetRotation;

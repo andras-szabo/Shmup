@@ -13,9 +13,10 @@ public abstract class APoolable : MonoWithCachedTransform, IDespawnable
 	protected GenericPool _pool;
 
 	public abstract void Init(string param);
+	public abstract void Init(Vector2 velocity, Vector3 spin);
 	public abstract void Stop();
 
-	public event Action<bool> OnDespawn;		// Despawn; if true, it was despawned because of rewind
+	public event Action<bool> OnDespawn;        // Despawn; if true, it was despawned because of rewind
 
 	[SerializeField]
 	protected PoolType _poolType;
@@ -61,7 +62,7 @@ public class GenericPool : MonoWithCachedTransform
 		foreach (var poolType in poolTypes)
 		{
 			GameObjectPoolManager.Register(poolType, this);
-			_poolsByType.Add((int) poolType, new Stack<APoolable>());
+			_poolsByType.Add((int)poolType, new Stack<APoolable>());
 		}
 	}
 
@@ -75,6 +76,32 @@ public class GenericPool : MonoWithCachedTransform
 		{
 			return CreateNew(prototype, templateTransform, param);
 		}
+	}
+
+	//TODO: Almost exactly the same as the overload : /
+	public APoolable Spawn(APoolable prototype, Transform templateTransform, Vector2 velocity, Vector3 spin)
+	{
+		if (HasPooled(prototype.PoolTypeAsInt))
+		{
+			return PopFromPool(prototype.PoolTypeAsInt, templateTransform, velocity, spin);
+		}
+		else
+		{
+			return CreateNew(prototype, templateTransform, velocity, spin);
+		}
+	}
+
+	//TODO: almost exactly same as other overload
+	private APoolable PopFromPool(int type, Transform templateTransform, Vector2 velocity, Vector3 spin)
+	{
+		var instance = _poolsByType[type].Pop();
+
+		instance.CachedTransform.SetParent(null);
+		instance.CachedTransform.SetPositionAndRotation(templateTransform.position, templateTransform.rotation);
+		instance.Init(velocity, spin);
+		instance.gameObject.SetActive(true);
+
+		return instance;
 	}
 
 	private APoolable PopFromPool(int type, Transform templateTransform, string param)
@@ -103,8 +130,21 @@ public class GenericPool : MonoWithCachedTransform
 		{
 			_poolsByType[poolable.PoolTypeAsInt] = new Stack<APoolable>();
 		}
-		
+
 		_poolsByType[poolable.PoolTypeAsInt].Push(poolable);
+	}
+
+	//TODO: Almost exactly same as other overload : /
+	private APoolable CreateNew(APoolable prototype, Transform templateTransform, Vector2 velocity, Vector3 spin)
+	{
+		var newObject = Instantiate<APoolable>(prototype, templateTransform.position, templateTransform.rotation, null);
+
+		newObject.AssignToPool(this);
+		newObject.Init(velocity, spin);
+
+		pooledObjectCount++;
+
+		return newObject;
 	}
 
 	private APoolable CreateNew(APoolable prototype, Transform templateTransform, string param)

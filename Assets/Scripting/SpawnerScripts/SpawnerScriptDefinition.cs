@@ -28,9 +28,22 @@ public static class SpawnerScriptDefinition
 			typeof(float)		// duration of the rotation
 		});
 
+		var spawnWithVelocityAndSpinCommand = new ScriptCommandDefinition(4, "spawnAndStart", 8, new List<Type>
+		{
+			typeof(string),		// what
+			typeof(float),		// where.x
+			typeof(float),		// where.y
+			typeof(float),		// vel.x
+			typeof(float),		// vel.y
+			typeof(float),		// spin.x
+			typeof(float),		// spin.y
+			typeof(float),		// spin.z
+		});
+
 		def.Add(spawnCommand);
 		def.Add(bgScrollCommand);
 		def.Add(bgRotCommand);
+		def.Add(spawnWithVelocityAndSpinCommand);
 
 		return def;
 	}

@@ -1,2 +1,2 @@
 var y = 0.9
-1	spawn multipartship 0.5 y simpleSpinner
+1	spawnAndStart multipartship 0.5 y 0 -0.1 -180 25 25

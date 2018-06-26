@@ -28,9 +28,23 @@ public class PoolableEntity : APoolable
 	public bool IsInGraveyard { get; protected set; }
 	public bool IsRewinding { get { return rewindable.IsRewinding; } }
 
+	//TODO: Major cleanup needed. "InitEverythingElse? ...as in, everything
+	//		else than what?! *facepalm*
 	public override void Init(string param)
 	{
-		InitializeTransformControllers(startSpeedViewportPerSecond);
+		var startVelocity = CachedTransform.up * startSpeedViewportPerSecond;
+		InitializeTransformControllers(startVelocity, Vector3.zero);
+		InitEverythingElse();
+	}
+
+	public override void Init(Vector2 velocity, Vector3 spin)
+	{
+		InitializeTransformControllers(velocity, spin);
+		InitEverythingElse();
+	}
+
+	private void InitEverythingElse()
+	{
 		InitializeRewindableAndEventQueue();
 		InitializeGraveyardStatus();
 		InitializeHittable();
@@ -52,15 +66,14 @@ public class PoolableEntity : APoolable
 		}
 	}
 
-	private void InitializeTransformControllers(float startSpeed)
+	private void InitializeTransformControllers(Vector2 velocity, Vector3 spin)
 	{
 		_spinController.Reset();
 		_velocityController.Reset();
 
-		if (startSpeed > 0f)
-		{
-			_velocityController.AccelerateTo(CachedTransform.up * startSpeed, 0f, 0f);
-		}
+
+		_velocityController.AccelerateTo(velocity, 0f, 0f);
+		_spinController.SpinTo(spin, 0f, 0f);
 	}
 
 	private void InitializeHittable()
@@ -161,7 +174,7 @@ public class PoolableEntity : APoolable
 				Despawn(despawnBecauseRewind: false);
 			}
 
-			if (rewindable.IsRewinding 
+			if (rewindable.IsRewinding
 				&& rewindable.HadSomethingToRewindToAtFrameStart
 				&& --_framesSpentInGraveyard == 0)
 			{

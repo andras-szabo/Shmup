@@ -16,6 +16,7 @@
 			case 1: return new SpawnerScriptSpawn(cmd);
 			case 2: return new SpawnerScriptBgVel(cmd);
 			case 3: return new SpawnerScriptBgRot(cmd);
+			case 4: return new SpawnerScriptSpawnWithVelocityAndSpin(cmd);
 		}
 
 		return null;

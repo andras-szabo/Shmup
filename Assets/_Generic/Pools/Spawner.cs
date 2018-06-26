@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public interface ISpawner
 {
 	int SpawnerID { get; }
 	APoolable SpawnFromPool(string typeToSpawn, int spawnedEntityID, string scriptToRun);
+	APoolable SpawnFromPool(string typeToSpawn, int spawnedEntityID, Vector2 velocity, Vector3 spin);
 }
 
 public class Spawner : MonoWithCachedTransform, ISpawner
@@ -32,7 +34,6 @@ public class Spawner : MonoWithCachedTransform, ISpawner
 	{
 		if (spawnedEntityID != DONT_TRACK_SPAWNED_ID && SpawnerUtility.IsAlreadySpawned(SpawnerID, spawnedEntityID))
 		{
-			UnityEngine.Debug.Log("already spawned");
 			return null;
 		}
 
@@ -44,8 +45,42 @@ public class Spawner : MonoWithCachedTransform, ISpawner
 			return null;
 		}
 
-		var pool = GameObjectPoolManager.Get(prototype.PoolType); 
+		var pool = GameObjectPoolManager.Get(prototype.PoolType);
 		var poolable = pool.Spawn(prototype, CachedTransform, scriptToRun);
+
+		if (poolable != null && spawnedEntityID != DONT_TRACK_SPAWNED_ID)
+		{
+			SpawnerUtility.MarkSpawned(SpawnerID, spawnedEntityID, true);
+			poolable.OnDespawn += ((despawnBecauseRewind) =>
+			{
+				if (despawnBecauseRewind)
+				{
+					SpawnerUtility.MarkSpawned(SpawnerID, spawnedEntityID, false);
+				}
+			});
+		}
+
+		return poolable;
+	}
+
+	//TODO: this is almost exactly the same as the other overload : /
+	public APoolable SpawnFromPool(string typeToSpawn, int spawnedEntityID, Vector2 velocity, Vector3 spin)
+	{
+		if (spawnedEntityID != DONT_TRACK_SPAWNED_ID && SpawnerUtility.IsAlreadySpawned(SpawnerID, spawnedEntityID))
+		{
+			return null;
+		}
+
+		APoolable prototype = (prototypes.Length == 1) ? prototypes[0] : null;
+
+		if (prototype == null && !_prototypesByName.TryGetValue(typeToSpawn, out prototype))
+		{
+			UnityEngine.Debug.LogWarning("Couldn't spawn type: " + typeToSpawn);
+			return null;
+		}
+
+		var pool = GameObjectPoolManager.Get(prototype.PoolType);
+		var poolable = pool.Spawn(prototype, CachedTransform, velocity, spin);
 
 		if (poolable != null && spawnedEntityID != DONT_TRACK_SPAWNED_ID)
 		{
