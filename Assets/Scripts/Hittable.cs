@@ -15,6 +15,13 @@ public class Hittable : AHittable
 	public Material normalMaterial;
 	public Material hitMaterial;
 
+	// Linked hittables: when _this_ dies, it makes other,
+	// linked hittables take a hit as well. This could be
+	// a one-way relationship (if the centre dies, so do
+	// the peripheral parts, but the periphery can be blown
+	// away without damaging the centre), or two-way.
+	public Hittable[] linkedHittables;
+
 	private bool _isHit;
 	private const float _visualHitStunSeconds = 0.1f;
 
@@ -53,6 +60,9 @@ public class Hittable : AHittable
 	//			=> but actually maybe with better names,
 	//			that already suggest how getting hit works
 	//			e.g. "HitStartEvent" and "HitFinishEvent"
+	//			Also this should not be part of the interface
+	//			because you should not actually call this from outside
+	//			(unless you intend not to record the event)
 	public override void Hit(int damage, bool wasHitByOutOfBoundsBarrier, bool isRewind)
 	{
 		if (wasHitByOutOfBoundsBarrier)
@@ -128,6 +138,14 @@ public class Hittable : AHittable
 		{
 			ParticleService.Instance.SpawnParticles(pType: 0, pos: CachedTransform.position);
 			myEntity.GoToGraveyard();
+
+			if (linkedHittables != null && linkedHittables.Length > 0)
+			{
+				foreach (var linkedHittable in linkedHittables)
+				{
+					linkedHittable.TryEnqueueHitEvent(damage: 100, isBounds: false);
+				}
+			}
 		}
 	}
 
@@ -139,15 +157,20 @@ public class Hittable : AHittable
 		if (_currentHP > 0 && myEntity.IsInGraveyard) { myEntity.GetOutOfGraveyard(); }
 	}
 
+	//TODO: make this part of the interface, because this is what
+	//		clients can call from the outside
+	public void TryEnqueueHitEvent(int damage, bool isBounds)
+	{
+		var hitEvent = new HitEvent(damage, isBounds, this);
+		myEntity.EnqueueEvent(hitEvent);
+	}
+
 	private void TryEnqueueHitEvent(Damage dmg)
 	{
-		if (dmg == null)
+		if (dmg != null)
 		{
-			return;
+			TryEnqueueHitEvent(dmg.damage, dmg.isBounds);
 		}
-
-		var hitEvent = new HitEvent(dmg.damage, dmg.isBounds, this);
-		myEntity.EnqueueEvent(hitEvent);
 	}
 
 	private void MoveImmediatelyToOrFromGraveyard(int damage, bool isRewind)

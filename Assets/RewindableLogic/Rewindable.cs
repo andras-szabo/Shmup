@@ -3,6 +3,9 @@
 //		transform data, without trying to be clever about it
 public class Rewindable : ARewindable<TransformData>
 {
+	public bool ignorePositionUpdates;
+	public bool ignoreRotationUpdates;
+
 	private void Awake()
 	{
 		AddListeners();
@@ -63,8 +66,8 @@ public class Rewindable : ARewindable<TransformData>
 
 			if (trData == null) { return; }
 
-			CachedTransform.position = trData.position;
-			CachedTransform.rotation = trData.rotation;
+			if (!ignorePositionUpdates) { CachedTransform.position = trData.position; }
+			if (!ignoreRotationUpdates) { CachedTransform.rotation = trData.rotation; }
 
 			if (trData.events != null && trData.events.Length > 0)
 			{

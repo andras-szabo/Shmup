@@ -1463,7 +1463,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2024d7086db0dd648ad9bfd4c7db3035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolTypes: 01000000020000000300000004000000
+  poolTypes: 0100000002000000030000000400000005000000
 --- !u!4 &734225894
 Transform:
   m_ObjectHideFlags: 0
@@ -1999,6 +1999,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prototypes:
   - {fileID: 114658536353282026, guid: 8ac283379cc57c042895261a51eaf068, type: 2}
+  - {fileID: 114658536353282026, guid: 8a2133b757ebcd44fa1a1a372502dd30, type: 2}
 --- !u!114 &1144996390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2010,7 +2011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c8da08eb8a06f4ebf0a53445921a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptToRun: {fileID: 4900000, guid: e998cbacc608e8b498fc5fcd4d7ff4e8, type: 3}
+  scriptToRun: {fileID: 4900000, guid: 2b90503aa9f039c468d862880509bf6b, type: 3}
   logToConsole: 0
   replay: 0
   replayStartFrame: 0
@@ -2051,6 +2052,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbf086636a95dd4282a0f3cc9bc43e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ignorePositionUpdates: 0
+  ignoreRotationUpdates: 0
 --- !u!114 &1144996394
 MonoBehaviour:
   m_ObjectHideFlags: 0
