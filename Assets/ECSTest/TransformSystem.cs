@@ -48,6 +48,7 @@ public class TransformSystem : MonoBehaviour
 
 		_transforms[_inUseCount] = bulletRewindable;
 		_inUseCount++;
+
 		return _inUseCount - 1;
 	}
 
@@ -92,7 +93,6 @@ public class TransformSystem : MonoBehaviour
 		for (int i = 0; i < _inUseCount; ++i)
 		{
 			_components[i].updateCount = 0;
-			_components[i].frameCount = 0;
 		}
 	}
 
@@ -109,31 +109,27 @@ public class TransformSystem : MonoBehaviour
 		var rewindableFrameCount = RewindableService.Instance.RewindableFrameCount;
 		var isRewinding = frameCountDelta < 0;
 
+		var shown = false;
+
 		for (int i = 0; i < _inUseCount; ++i)
 		{
 			if (_components[i].active)
 			{
-				_transforms[i].SetIsRewind(isRewinding, _components[i].updateCount > 0);
+				var hadSomethingToRewind = _components[i].updateCount > 0;
+				_transforms[i].SetIsRewind(isRewinding, hadSomethingToRewind);
 
-				if (!isRewinding || rewindableFrameCount >= 0)
-				{
-					_components[i].frameCount = _components[i].frameCount + frameCountDelta;
-					_components[i].updateCount = Clamp(_components[i].updateCount + frameCountDelta);
-				}
+				_components[i].frameCount = Mathf.Max(0, _components[i].frameCount + frameCountDelta);
+				_components[i].updateCount = Clamp(_components[i].updateCount + frameCountDelta);
 
-				if (isRewinding && rewindableFrameCount >= 0 && _components[i].updateCount >= 0)
+				if (isRewinding && hadSomethingToRewind)
 				{
-					//_components[i].currentPosition = _components[i].startPosition + (_components[i].velocity * _components[i].frameCount);
 					var currentPos = _components[i].startPosition + (_components[i].velocity * _components[i].frameCount);
 
 					_components[i].currentPosition = currentPos;
 					_transforms[i].Position = currentPos;
 
-					if (_components[i].updateCount == 0)
+					if (_components[i].updateCount == 0 && _components[i].frameCount == 0)
 					{
-						//TODO: somehow call despawnonrewind on the affected transform -> well, make it
-						// an ISomething maybe
-						// but also need to set IsRewinding on the transform
 						_transforms[i].CallDespawnOnRewind();
 						_components[i].active = false;
 					}
