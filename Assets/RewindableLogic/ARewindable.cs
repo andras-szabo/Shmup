@@ -17,7 +17,7 @@ public abstract class ABaseRewindable : MonoWithCachedTransform, IRewindable
 
 public abstract class ARewindable<T> : ABaseRewindable
 {
-	public const int LOG_SIZE_FRAMES = 256;
+	public const int LOG_SIZE_FRAMES = 200;
 
 	protected List<IRewindableEvent> _eventQueue = new List<IRewindableEvent>();
 	protected RingBuffer<T> _log = new RingBuffer<T>(LOG_SIZE_FRAMES, cleanupOnPop: true);

@@ -2,13 +2,13 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
-public class PoolableEntity : APoolable, IGraveyardCapable
+public class PoolableBullet : APoolable, IGraveyardCapable
 {
 	public Renderer myRenderer;
 	public Collider myCollider;
 	public AHittable hittable;
 	public SpaceBendingObject myWeight;
-	public ABaseRewindable rewindable;
+	public ECSBulletRewindable rewindable;
 
 	public bool canRotate;
 
@@ -20,12 +20,11 @@ public class PoolableEntity : APoolable, IGraveyardCapable
 	protected SpinController _spinController = new SpinController();
 	protected VelocityController _velocityController = new VelocityController();
 
-	protected int _framesSpentInGraveyard;
 	protected Queue<IRewindableEvent> _eventQueue = new Queue<IRewindableEvent>();
 
+	public bool IsInGraveyard { get; private set; }
 	public bool log;
-	public bool IsInGraveyard { get; protected set; }
-	public bool IsRewinding { get { return rewindable.IsRewinding; } }
+	public bool IsRewinding { get { return rewindable != null && rewindable.IsRewinding; } }
 
 	private int _lifeSpanClientIndex = -1;
 
@@ -87,7 +86,6 @@ public class PoolableEntity : APoolable, IGraveyardCapable
 	private void InitializeGraveyardStatus()
 	{
 		GetOutOfGraveyard();
-		_framesSpentInGraveyard = 0;
 
 		if (hasLimitedLifeSpan)
 		{
@@ -104,6 +102,7 @@ public class PoolableEntity : APoolable, IGraveyardCapable
 
 	private void InitializeRewindableAndEventQueue()
 	{
+		if (rewindable == null) { return; }
 		rewindable.Init(_velocityController, _spinController);
 		rewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);
 		_eventQueue.Clear();
@@ -117,80 +116,30 @@ public class PoolableEntity : APoolable, IGraveyardCapable
 
 	public virtual void GoToGraveyard()
 	{
-		IsInGraveyard = true;
-		_framesSpentInGraveyard = 0;
-
 		//TODO: so this should be unified: either just do the call
 		//		and clients can listen to it, or have the entity
 		//		call all the relevant guys to do their shit.
 		//		also maybe init could be better via signals.
 		EnableVisuals(false);
-		rewindable.Paused = true;
+		IsInGraveyard = true;
+
+		if (rewindable != null)
+		{
+			rewindable.GoToGraveyard();
+		}
 	}
 
 	public virtual void GetOutOfGraveyard()
 	{
-		IsInGraveyard = false;
 		EnableVisuals(true);
-		rewindable.Paused = false;
-	}
-
-	protected virtual void FixedUpdate()
-	{
-		if (!rewindable.IsRewinding && !IsInGraveyard)
-		{
-			UpdateTransform();
-			ProcessEventQueue();
-		}
-
-		UpdateGraveyardStatus();
-	}
-
-	private void UpdateTransform()
-	{
-		if (canRotate)
-		{
-			CachedTransform.Rotate(_spinController.RotationPerFrame);
-		}
-
-		CachedTransform.position += _velocityController.CurrentVelocityUnitsPerFrame;
-	}
-
-	private void UpdateGraveyardStatus()
-	{
-		if (IsInGraveyard)
-		{
-			if (!rewindable.IsRewinding && ++_framesSpentInGraveyard == Rewindable.LOG_SIZE_FRAMES)
-			{
-				Despawn(despawnBecauseRewind: false);
-			}
-
-			if (rewindable.IsRewinding
-				&& rewindable.HadSomethingToRewindToAtFrameStart
-				&& --_framesSpentInGraveyard == 0)
-			{
-				GetOutOfGraveyard();
-			}
-		}
-	}
-
-	private void ProcessEventQueue()
-	{
-		if (_eventQueue.Count > 0)
-		{
-			foreach (var evt in _eventQueue)
-			{
-				evt.Apply(false);
-			}
-
-			_eventQueue.Clear();
-		}
+		IsInGraveyard = false;
 	}
 
 	private void EnableVisuals(bool enable)
 	{
 		myRenderer.enabled = enable;
-		if (hittable != null) { hittable.Collider.enabled = enable; }
+		//TODO fix
+		if (hittable != null) { hittable.Collider.enabled = false; }
 		if (myWeight != null) { myWeight.enabled = enable; }
 	}
 }

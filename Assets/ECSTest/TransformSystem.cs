@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TransformSystem : MonoBehaviour
+public class TransformSystem : MonoBehaviour, ITransformSystem
 {
 	public struct TransformComponent
 	{
@@ -106,10 +106,8 @@ public class TransformSystem : MonoBehaviour
 
 	private void UpdateWithoutJobs(int frameCountDelta)
 	{
-		var rewindableFrameCount = RewindableService.Instance.RewindableFrameCount;
+		//var rewindableFrameCount = RewindableService.Instance.RewindableFrameCount;
 		var isRewinding = frameCountDelta < 0;
-
-		var shown = false;
 
 		for (int i = 0; i < _inUseCount; ++i)
 		{
@@ -140,7 +138,7 @@ public class TransformSystem : MonoBehaviour
 
 	private int Clamp(int a)
 	{
-		return a > 256 ? 256 : a < 1 ? 0 : a;
+		return a > 200 ? 200 : a < 1 ? 0 : a;
 	}
 
 	private void SetupMockData()
@@ -163,4 +161,22 @@ public class TransformSystem : MonoBehaviour
 	{
 		return new Vector3(Random.Range(0f, rangeTop), Random.Range(0f, rangeTop), Random.Range(0f, rangeTop));
 	}
+
+	public void GoToGraveyard(int index)
+	{
+		throw new System.NotImplementedException();
+	}
+
+	public void SetStatusToDespawned(int index)
+	{
+		throw new System.NotImplementedException();
+	}
+}
+
+public interface ITransformSystem
+{
+	int GetNewComponent(ECSBulletRewindable bulletRewindable, Vector3 vel);
+	void GoToGraveyard(int index);
+	void SetStatusToDespawned(int index);
+	void ResetExistingComponent(int index, Vector3 pos, Vector3 vel);
 }

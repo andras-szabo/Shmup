@@ -2,11 +2,27 @@
 
 public class ECSBulletRewindable : ABaseRewindable
 {
+	public const bool USE_JOBS = true;
+
 	private RewindableService _rewindService;
 	protected RewindableService RewindService { get { return _rewindService ?? (_rewindService = RewindableService.Instance); } }
 
-	private TransformSystem _transformSystem;
-	private TransformSystem TransformSystem { get { return _transformSystem ?? (_transformSystem = TransformSystem.Instance); } }
+	private ITransformSystem _transformSystem;
+	private ITransformSystem TRSystem
+	{
+		get
+		{
+			if (_transformSystem == null)
+			{
+				if (USE_JOBS) { _transformSystem = TransformSystemWithJobs.Instance; }
+				else { _transformSystem = TransformSystem.Instance;  }
+			}
+
+			return _transformSystem;
+		}
+	}
+
+	public PoolableBullet myBullet;
 
 	private IRewindableEvent _despawnOnRewindEvent;
 	private int _myIndex = -1;
@@ -15,6 +31,11 @@ public class ECSBulletRewindable : ABaseRewindable
 	{
 		get { return CachedTransform.position; }
 		set { CachedTransform.position = value; }
+	}
+
+	public void GoToGraveyard()
+	{
+		TRSystem.GoToGraveyard(_myIndex);
 	}
 
 	/*
@@ -49,12 +70,22 @@ public class ECSBulletRewindable : ABaseRewindable
 		_despawnOnRewindEvent.Apply(isRewind: true);
 	}
 
-	private int CheckIfRewindingPossible()
+	public void JustCallDespawn()
 	{
-		var updateCount = TransformSystem.UpdateCount(_myIndex);
+		myBullet.Despawn(false);
+	}
+
+	public void GetOutOfGraveyard()
+	{
+		myBullet.GetOutOfGraveyard();
+	}
+
+	/*private int CheckIfRewindingPossible()
+	{
+		var updateCount = TRSystem.UpdateCount(_myIndex);
 		HadSomethingToRewindToAtFrameStart = updateCount > 0;
 		return updateCount;
-	}
+	}*/
 
 	public override void EnqueueEvent(IRewindableEvent evt, bool recordImmediately = false)
 	{
@@ -66,15 +97,16 @@ public class ECSBulletRewindable : ABaseRewindable
 	{
 		if (_myIndex < 0)
 		{
-			_myIndex = TransformSystem.GetNewComponent(this, velocityController.CurrentVelocityUnitsPerFrame);
+			_myIndex = TRSystem.GetNewComponent(this, velocityController.CurrentVelocityUnitsPerFrame);
 		}
 		else
 		{
-			TransformSystem.ResetExistingComponent(_myIndex, CachedTransform.position, velocityController.CurrentVelocityUnitsPerFrame);
+			TRSystem.ResetExistingComponent(_myIndex, CachedTransform.position, velocityController.CurrentVelocityUnitsPerFrame);
 		}
 	}
 
 	public override void Reset()
 	{
+		TRSystem.SetStatusToDespawned(_myIndex);
 	}
 }

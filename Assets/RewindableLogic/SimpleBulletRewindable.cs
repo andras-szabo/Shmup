@@ -54,7 +54,7 @@ public class SimpleBulletRewindable : ABaseRewindable
 		HadSomethingToRewindToAtFrameStart = _recordedUpdateCount > 0;
 	}
 
-	public const int LOG_SIZE_FRAMES = 256;
+	public const int LOG_SIZE_FRAMES = 200;
 
 	private void RecordData()
 	{

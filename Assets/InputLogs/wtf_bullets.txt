@@ -1,0 +1,688 @@
+{
+    "log": [
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 620.0,
+                "y": 442.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 1
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 37.0,
+                "y": -24.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 2
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 19
+        },
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": true,
+            "keyParam": 119,
+            "updateCount": 387
+        },
+        {
+            "type": 3,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 119,
+            "updateCount": 807
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 3.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 841
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 8.0,
+                "y": 5.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 842
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 22.0,
+                "y": 13.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 843
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 17.0,
+                "y": 12.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 844
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 30.0,
+                "y": 22.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 845
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 12.0,
+                "y": 10.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 846
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 27.0,
+                "y": 33.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 847
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 3.0,
+                "y": 5.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 848
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 14.0,
+                "y": 21.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 849
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 6.0,
+                "y": 9.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 850
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 7.0,
+                "y": 14.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 851
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 3.0,
+                "y": 16.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 852
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 2.0,
+                "y": 16.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 853
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 3.0,
+                "y": 29.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 854
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 12.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 855
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 14.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 856
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 6.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 857
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 1.0,
+                "y": 5.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 858
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 3.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 859
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 1.0,
+                "y": 9.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 860
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 3.0,
+                "y": 9.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 861
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 6.0,
+                "y": 16.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 862
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 4.0,
+                "y": 11.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 863
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 4.0,
+                "y": 6.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 864
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 3.0,
+                "y": 5.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 865
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 2.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 866
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 867
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 1.0,
+                "y": 2.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 868
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 1.0,
+                "y": 2.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 869
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 870
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -17.0,
+                "y": -1.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 877
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 2.0,
+                "y": -3.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 878
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": -3.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 879
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": 0.0,
+                "y": -15.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 880
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -7.0,
+                "y": -24.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 881
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -24.0,
+                "y": -46.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 882
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -26.0,
+                "y": -36.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 883
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -21.0,
+                "y": -23.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 884
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -46.0,
+                "y": -41.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 885
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -36.0,
+                "y": -27.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 886
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -12.0,
+                "y": -8.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 887
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -58.0,
+                "y": -28.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 888
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -20.0,
+                "y": -9.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 889
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -40.0,
+                "y": -8.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 890
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -42.0,
+                "y": -7.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 891
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -66.0,
+                "y": -7.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 892
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -33.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 893
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -56.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 894
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -28.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 895
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -15.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 896
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -6.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 897
+        },
+        {
+            "type": 1,
+            "vectorParam": {
+                "x": -5.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "intParam": 0,
+            "boolParam": false,
+            "keyParam": 0,
+            "updateCount": 898
+        }
+    ]
+}

@@ -15,7 +15,6 @@ public class BackgroundController : MonoBehaviour, IBackgroundController
 	private Vector2 _currentScrollVelocity;
 	private float _currentRotAngleInRad;
 
-	private bool _paused;
 	private bool _shouldUpdate;
 	private bool _shouldCalculatePastDisplacement;
 	private Vector2 _desiredVelocity;

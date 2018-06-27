@@ -13,7 +13,6 @@ public class CameraService : MonoWithCachedTransform, IPositionable
 	private SimplePositionRewindable Rewindable { get { return _rewindable ?? (_rewindable = GetComponent<SimplePositionRewindable>()); } }
 
 	private Coroutine _lerpRoutineRunning;
-	private Vector3 _startPosition;
 	private float _elapsedTime;
 
 	public event Action<Vector3> OnCameraPositionChanged;

@@ -15,7 +15,6 @@ public class SpaceBender : MonoBehaviour
 	private Vector4[] _ripples = new Vector4[RIPPLE_MAX_COUNT];
 
 	private int _arrayLength;
-	private int _prevArrayLength;
 	private bool _arrLimitReached;
 	private bool _ripplesChanged;
 
@@ -28,8 +27,6 @@ public class SpaceBender : MonoBehaviour
 	public Color endTintColor;
 	public float colorChangeDurationSecs;
 	private float _elpasedSeconds;
-
-	private bool set;
 
 	private void Awake()
 	{

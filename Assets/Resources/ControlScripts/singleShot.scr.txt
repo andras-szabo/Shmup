@@ -1,0 +1,7 @@
+var deg = -180
+vel 0 0.1 0
+rot 0 0 180
+
+for i = 1 to 5
+	0.5 shoot
+end

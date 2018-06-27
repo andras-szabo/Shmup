@@ -1,2 +1,2 @@
 var y = 0.9
-1	spawnAndStart multipartship 0.5 y 0 -0.1 -180 90 90
+1	spawn shooter 0.5 y singleShot

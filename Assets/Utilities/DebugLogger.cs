@@ -61,12 +61,16 @@ public class DebugLogger : MonoBehaviour
 		rewindMarker.gameObject.SetActive(RewindableService.Instance.ShouldRewind);
 	}
 
+	private int _maxActiveBullets;
 	private void UpdateEntityLabel()
 	{
-		entityLabel.text = string.Format("E: {0} TR: {1} BUL: {2} PS: {3} RFC: {4}", GenericPool.pooledObjectCount,
+		var bulletsCurrentlyActive = TransformSystemWithJobs.Instance.ActiveCount;
+		_maxActiveBullets = bulletsCurrentlyActive > _maxActiveBullets ? bulletsCurrentlyActive : _maxActiveBullets;
+
+		entityLabel.text = string.Format("E: {0} TR: {1} BUL: {2} MAX: {3} RFC: {4}", GenericPool.pooledObjectCount,
 																		DataPoolContainer.Instance.TransformDataPool.AvailableCount,
-																		TransformSystem.Instance.InUseCount,
-																		DataPoolContainer.Instance.PlayerShipDataPool.AvailableCount,
+																		TransformSystemWithJobs.Instance.ActiveCount,
+																		_maxActiveBullets,
 																		RewindableService.Instance.RewindableFrameCount);
 	}
 

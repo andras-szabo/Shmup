@@ -24,9 +24,9 @@ GameObject:
   - component: {fileID: 65636612776729548}
   - component: {fileID: 114971414930872572}
   - component: {fileID: 54825028331685656}
-  - component: {fileID: 114910014097821838}
   - component: {fileID: 114340975246389322}
   - component: {fileID: 114807637638609918}
+  - component: {fileID: 114929282238256228}
   m_Layer: 12
   m_Name: enemybullet
   m_TagString: Untagged
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myCollider: {fileID: 65636612776729548}
-  myEntity: {fileID: 114910014097821838}
+  myBullet: {fileID: 114929282238256228}
 --- !u!114 &114807637638609918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -140,7 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05c32d4237136fb43bcb4cc08f12bd0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114910014097821838
+  myBullet: {fileID: 114929282238256228}
+--- !u!114 &114929282238256228
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,7 +149,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1806366837826752}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69d9bf3bdd4cc1d4fac2db521dd9971e, type: 3}
+  m_Script: {fileID: 11500000, guid: c60af6f7cf12d524999f50a18857dc78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _poolType: 3

@@ -12,8 +12,6 @@ public class InputController : MonoBehaviour
 	private int _touchesThisFrame;
 	private int _touchesLastFrame;
 	private float _elapsedTimeSinceLastTap = 10f;
-	private bool _startedDoubleTap;
-	private float _elapsedTimeDuringPreviousTap;
 
 	public bool IsShooting()
 	{

@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(PoolableEntity))]
+[RequireComponent(typeof(PoolableBullet))]
 public class BulletHittable : AHittable
 {
-	public PoolableEntity myEntity;
+	public PoolableBullet myBullet;
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (!myEntity.IsRewinding && !myEntity.IsInGraveyard)
+		if (!myBullet.IsRewinding && !myBullet.IsInGraveyard)
 		{
 			TryHandleHit();
 		}
@@ -15,7 +15,7 @@ public class BulletHittable : AHittable
 
 	private void TryHandleHit()
 	{
-		myEntity.GoToGraveyard();
+		myBullet.GoToGraveyard();
 	}
 
 	public override void ApplyHitStunOver(int dmg, bool isRewind)

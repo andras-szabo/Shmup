@@ -1,4 +1,152 @@
-OK so adding jobs
+- ok so poolableBullet no longer has a fixedUpdate,
+  but things are not as great as they could be; will try
+  to get rid of all things monobehaviour on the bullets.
+
+- OK so update / transform system seems to work, but now the bottleneck
+  is the FixedUpdate on all PoolableEntities. So let's see if we can get
+  by without them, at least on bullets.
+
+- this is what FixedUpdate does in PoolableEntity:
+protected virtual void FixedUpdate()
+{
+	o update life span
+		-if not in graveyard, and we have a limited lifespan,
+		 - if going forward, increment counter, and maybe go to graveyard
+			- go to graveyard:
+				- set status flag
+				- clear counter of frames in GY
+				- switch off visuals (renderer etc.)
+				
+		 - if going backward, just decrement counter
+
+	- if not rewinding and not in graveyard, update transform and process event queue
+		- apply velocity and spin controller's values to transform
+		- apply events in the event queue (which we won't have for now)		
+			- so this could totally be done by the TransformSystemWithJobs
+
+	- update graveyard status
+		- if not in graveyard, don't do anything, otherwise:
+			- if going forward, increment counter, if max reached, despawn
+			- if _actually_ rewinding, decrement graveyard counter
+				- and if graveyard counter is now zero, get out of it
+					= ... which is the inverse of going to it.
+		
+		- so maybe lifeSpan system can actually handle this too...?
+		- let's do it first with a system on its own, maybe we can
+		  combine later.
+
+			- so we need the same idea as with lifespansystem,
+			  except: we also have status (are we in GY or not?)
+			- which client could query
+
+}			- what about "HadSomethingToRewindtoAtFrameStart?"
+				- kind of related to that, so let's try to
+				  handle it there
+			
+	// BasicBullet lifespan: 0.4, StartSpeed: 3
+	// EnemyBullet lifespan: 1.2, startSpeed: 0.8
+
+	- ok so ghosts for now use nullRewindable, so of course they won't react
+	to transform system.
+	- but enemy bullets :notsureif:
+		- ok so the porlbem seems to be that we rewind bullets too much,
+		  for a change : /
+
+		- so transformSystem so far has no explicit idea of being in the
+		  graveyard.
+			- but this should have nothing to do with graveyard
+
+// so a general problem is - how to handle when we actually have to do some change
+// in the data? Like, we process 1000 states, but then because of that, 54 have to
+// change. how to handle this?, without having to iterate through the thing _again_?	
+// - and considering the fact that we can't have references, so the job can't
+// directly call the affected dudes? 
+
+// ok so LifeSpan system maybe doesn't even need to be parallelised :/
+//	- so let's implement that first. how?
+	- when initialized, the entity asks for an index from the LifeSpanSystem
+		(and submits itself for future reference)
+	- from then on, system takes care of everything, calls dude when lifetime
+		over and can return to the pool.
+	- this is probably simple, but also probably won't bring a massive improvement
+		on its own.
+	- ... but let's test
+--------------------------------------
+so, transformAccessArray example:
+
+1.) let's have a NativeArray<Vec3> _velocities, which is allocated by Allocator.Persistent.
+2.) let's have a TransformAccessArray.
+3.) when we've created the objects to move, fill up the TransformAccessArray.
+4.) PositionUpdateJob is an IJobParallelForTransform,
+    which has a Readonly NativeArray<Vec3> velocity, and a public deltaTime;
+5.) Execute(int i, TransformAccess tr) { tr.position = velocity[i] * deltaTime; }
+
+6.) There's also accelerationJob, which is IJobParallelFor
+8.) It has a public NativeArray<Vector3> velocity;
+9.) and acceleration and accelerationMod (two vector3s)
+10.) Execute(int i) { velocity[i] = (acceleration + i * accelerationMod) * deltaTime; }
+
+	=> So basically this is just updating the NativeArray<Vector3> velocity that is
+	passed into it.
+
+11.) Then:
+	- m_accelJob = new AccelerationJob() {}
+		=> pass in _velocities; delta time; acceleration
+
+	- m_posUpdateJob = new PositionUpdateJob() { }
+	- m_accelJobHandle = m_accelJob.Schedule(objectcount, batchcount);
+	- m_PositionJobHandle = mJob.Schedule(transformAccessArray, m_accelJobHandle);
+
+			=> !!! So we pass in the previous job handle as a dependency
+			to the next job handle.
+
+12.) LateUpdate() { m_positionJobHandle.Complete(); }
+13.) OnDestroy() { m_Velocities.Dispose(); m_TransformAccessArray().Dispose(); }
+
+So in the end the idea is this:
+	- have a persistent vector3 of velocities, and one job takes care of updating these
+	- have a transform access array, and one job takes care of updating these, after
+	  velocities have been calculated.
+
+- similarly, what we could to is this:
+	- TransformSystem has:
+		- a NativeArray for each of the things we keep track of
+			(startPos, velocity, active, frameCount, updateCount)
+			(currentPos probably not needed because the whole idea is
+			that we can calculate it)
+
+		- OR one NativeArray, which contains all the above as a struct
+			(which would probably be less performant but easier on the eye,
+			so let's start with this one)
+				- and the nativeArray should also contain a flag
+				which says whether or not the thing could be cleaned up.
+
+			=> ok so this would probably not work very well, because it would mean
+				that every time we update something, we'd need to
+				recreate the whole struct. 
+				let's do it with separate nativeArrays? 
+					... well, let's see how it actually performs.
+
+		- AND in addition to one of the above, it has a transformAccessArray
+		
+		- on fixedUpdate, we iterate through the Native Array of transform
+		 	components, using a job.
+
+		- then when that job is done, we iterate over the transform access array,
+			and apply positions (if active)
+	
+		- and then we iter through the native array once again, but this time
+			not in parallel, and call cleanup on what needs to be cleaned up
+			(and reset those flags)
+
+	-ok, let's do this shit
+		-OK so the thing is, for the first part of the job doesn't actually
+		 need any reference to positions or velocities. the only thing we
+		 do there is to update frameCount and updateCount, and check if
+		 we have to call despawn. So the struct can be smaller, and a separate
+		 struct with just 2 nativeArrays (speed and velocity) can contain the rest.
+
+
 
 [ComputeJobOptimization]
 public struct MovementJob : IJobParallelForTransform
