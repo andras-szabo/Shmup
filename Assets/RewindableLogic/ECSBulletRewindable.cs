@@ -95,13 +95,18 @@ public class ECSBulletRewindable : ABaseRewindable
 
 	public override void Init(VelocityController velocityController, SpinController spinController)
 	{
+		throw new System.NotImplementedException();
+	}
+
+	public void Init(Vector3 velocityPerFrame)
+	{
 		if (_myIndex < 0)
 		{
-			_myIndex = TRSystem.GetNewComponent(this, velocityController.CurrentVelocityUnitsPerFrame);
+			_myIndex = TRSystem.GetNewComponent(this, velocityPerFrame);
 		}
 		else
 		{
-			TRSystem.ResetExistingComponent(_myIndex, CachedTransform.position, velocityController.CurrentVelocityUnitsPerFrame);
+			TRSystem.ResetExistingComponent(_myIndex, CachedTransform.position, velocityPerFrame);
 		}
 	}
 

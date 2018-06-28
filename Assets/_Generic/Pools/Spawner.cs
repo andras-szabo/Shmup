@@ -51,6 +51,10 @@ public class Spawner : MonoWithCachedTransform, ISpawner
 		if (poolable != null && spawnedEntityID != DONT_TRACK_SPAWNED_ID)
 		{
 			SpawnerUtility.MarkSpawned(SpawnerID, spawnedEntityID, true);
+			poolable.AddSpawnerInfo(SpawnerID, spawnedEntityID);
+
+			// TODO: Re-add this 
+			/*
 			poolable.OnDespawn += ((despawnBecauseRewind) =>
 			{
 				if (despawnBecauseRewind)
@@ -58,6 +62,7 @@ public class Spawner : MonoWithCachedTransform, ISpawner
 					SpawnerUtility.MarkSpawned(SpawnerID, spawnedEntityID, false);
 				}
 			});
+			*/
 		}
 
 		return poolable;

@@ -17,7 +17,7 @@
 	}
 }
 
-public class DespawnOnReplayEvent : IRewindableEvent
+public struct DespawnOnReplayEvent : IRewindableEvent
 {
 	readonly public IDespawnable target;
 	public DespawnOnReplayEvent(IDespawnable target)

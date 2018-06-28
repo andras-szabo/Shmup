@@ -229,6 +229,7 @@ public class TransformSystemWithJobs : MonoBehaviour, ITransformSystem
 						};
 
 						_rewindables[i].GetOutOfGraveyard();
+						ActiveCount++;
 						break;
 					}
 				case 5:
@@ -299,13 +300,14 @@ public class TransformSystemWithJobs : MonoBehaviour, ITransformSystem
 			active = 0,
 			framesSpentInGraveyard = 0
 		};
+
+		ActiveCount--;
 	}
 
 	public void SetStatusToDespawned(int index)
 	{
 		var updateInfo = _updateInfos[index];
 		_updateInfos[index] = new UpdateInfo { active = 5 };
-		ActiveCount--;
 	}
 	#endregion
 

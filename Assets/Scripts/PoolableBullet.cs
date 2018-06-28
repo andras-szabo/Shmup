@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Renderer))]
 public class PoolableBullet : APoolable, IGraveyardCapable
 {
 	public Renderer myRenderer;
@@ -17,8 +16,8 @@ public class PoolableBullet : APoolable, IGraveyardCapable
 
 	public float startSpeedViewportPerSecond;
 
-	protected SpinController _spinController = new SpinController();
-	protected VelocityController _velocityController = new VelocityController();
+	private Vector3 _velocityVPperSecond;
+	private Vector3 _velocityWorldUnitsPerFrame;
 
 	protected Queue<IRewindableEvent> _eventQueue = new Queue<IRewindableEvent>();
 
@@ -28,18 +27,24 @@ public class PoolableBullet : APoolable, IGraveyardCapable
 
 	private int _lifeSpanClientIndex = -1;
 
+	private bool _alreadySignedUpForOnDespawn;
+
 	//TODO: Major cleanup needed. "InitEverythingElse? ...as in, everything
 	//		else than what?! *facepalm*
 	public override void Init(string param)
 	{
-		var startVelocity = CachedTransform.up * startSpeedViewportPerSecond;
-		InitializeTransformControllers(startVelocity, Vector3.zero);
+		_velocityVPperSecond = CachedTransform.up * startSpeedViewportPerSecond;
+		var worldVelocity = ViewportUtility.ViewportToWorldVelocity(_velocityVPperSecond);
+		_velocityWorldUnitsPerFrame = worldVelocity / Consts.IG_FRAMERATE;
 		InitEverythingElse();
 	}
 
 	public override void Init(Vector2 velocity, Vector3 spin)
 	{
-		InitializeTransformControllers(velocity, spin);
+		// TODO - fix dangling spin
+		this._velocityVPperSecond = velocity;
+		_velocityWorldUnitsPerFrame = _velocityVPperSecond / Consts.IG_FRAMERATE;
+
 		InitEverythingElse();
 	}
 
@@ -50,7 +55,12 @@ public class PoolableBullet : APoolable, IGraveyardCapable
 		InitializeHittable();
 
 		//TODO: warning, watch out with multicast delegate call on each
-		OnDespawn += CleanupRewindable;
+		if (!_alreadySignedUpForOnDespawn)
+		{
+			OnDespawn += CleanupRewindable;
+			_alreadySignedUpForOnDespawn = true;
+			_dontRemoveOnDespawnListener = true;
+		}
 	}
 
 	private void CleanupRewindable(bool despawnBecauseRewind)
@@ -64,15 +74,6 @@ public class PoolableBullet : APoolable, IGraveyardCapable
 		{
 			hittable.Stop();
 		}
-	}
-
-	private void InitializeTransformControllers(Vector2 velocity, Vector3 spin)
-	{
-		_spinController.Reset();
-		_velocityController.Reset();
-
-		_velocityController.AccelerateTo(velocity, 0f, 0f);
-		_spinController.SpinTo(spin, 0f, 0f);
 	}
 
 	private void InitializeHittable()
@@ -103,7 +104,7 @@ public class PoolableBullet : APoolable, IGraveyardCapable
 	private void InitializeRewindableAndEventQueue()
 	{
 		if (rewindable == null) { return; }
-		rewindable.Init(_velocityController, _spinController);
+		rewindable.Init(_velocityWorldUnitsPerFrame);
 		rewindable.EnqueueEvent(new DespawnOnReplayEvent(this), recordImmediately: true);
 		_eventQueue.Clear();
 	}
@@ -137,7 +138,7 @@ public class PoolableBullet : APoolable, IGraveyardCapable
 
 	private void EnableVisuals(bool enable)
 	{
-		myRenderer.enabled = enable;
+		if (myRenderer != null) { myRenderer.enabled = enable; }
 		//TODO fix
 		if (hittable != null) { hittable.Collider.enabled = false; }
 		if (myWeight != null) { myWeight.enabled = enable; }

@@ -922,12 +922,12 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1811827714071982}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 1fb6d40430040d54cafb991f0d549226, type: 2}
@@ -1566,7 +1566,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114199364512495692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1619,7 +1619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114212718488612406
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1646,7 +1646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114219745903674566
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1659,7 +1659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114222863658675128
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1708,7 +1708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114260922042449706
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1739,7 +1739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114267434248553638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1752,7 +1752,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114271312047474366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1765,7 +1765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114273259584044436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1998,7 +1998,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114501026373938866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2108,7 +2108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114544513534387250
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2134,7 +2134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114634215119982702
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2417,7 +2417,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114834684771221300
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2457,7 +2457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114862281674335898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2470,7 +2470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114893766468460724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2550,7 +2550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prototypes:
-  - {fileID: 114929282238256228, guid: bcf057c0e69d979429ebc9059fd91ea1, type: 2}
+  - {fileID: 0}
 --- !u!114 &114970239307174836
 MonoBehaviour:
   m_ObjectHideFlags: 1

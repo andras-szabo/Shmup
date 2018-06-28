@@ -23,21 +23,43 @@ public abstract class APoolable : MonoWithCachedTransform, IDespawnable
 	public PoolType PoolType { get { return _poolType; } }
 	public int PoolTypeAsInt { get { return (int)_poolType; } }
 
+	protected int _spawnedBySpawnerID = -1;
+	protected int _entityID = -1;
+
 	public string TypeName { get; protected set; }
+
+	protected bool _dontRemoveOnDespawnListener;
 
 	public virtual void AssignToPool(GenericPool pool)
 	{
 		_pool = pool;
 	}
 
+	public void AddSpawnerInfo(int spawnerID, int entityID)
+	{
+		_spawnedBySpawnerID = spawnerID;
+		_entityID = entityID;
+	}
+
 	public virtual void Despawn(bool despawnBecauseRewind)
 	{
+		if (despawnBecauseRewind && _spawnedBySpawnerID >= 0 && _entityID >= 0)
+		{
+			SpawnerUtility.MarkSpawned(_spawnedBySpawnerID, _entityID, false);
+		}
+
+		_spawnedBySpawnerID = -1;
+		_entityID = -1;
+
 		if (OnDespawn != null)
 		{
 			OnDespawn(despawnBecauseRewind);
 		}
 
-		OnDespawn = null;
+		if (!_dontRemoveOnDespawnListener)
+		{
+			OnDespawn = null;
+		}
 
 		if (_pool != null)
 		{

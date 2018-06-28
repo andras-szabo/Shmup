@@ -27,6 +27,7 @@ public class PoolableEntity : APoolable, IGraveyardCapable
 	public bool IsInGraveyard { get; protected set; }
 	public bool IsRewinding { get { return rewindable.IsRewinding; } }
 
+	private bool _alreadySignedUpForOnDespawn;
 	private int _lifeSpanClientIndex = -1;
 
 	//TODO: Major cleanup needed. "InitEverythingElse? ...as in, everything
@@ -50,8 +51,12 @@ public class PoolableEntity : APoolable, IGraveyardCapable
 		InitializeGraveyardStatus();
 		InitializeHittable();
 
-		//TODO: warning, watch out with multicast delegate call on each
-		OnDespawn += CleanupRewindable;
+		if (!_alreadySignedUpForOnDespawn)
+		{
+			OnDespawn += CleanupRewindable;
+			_alreadySignedUpForOnDespawn = true;
+			_dontRemoveOnDespawnListener = true;
+		}
 	}
 
 	private void CleanupRewindable(bool despawnBecauseRewind)

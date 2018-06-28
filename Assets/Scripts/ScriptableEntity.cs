@@ -23,12 +23,14 @@
 	public override void GoToGraveyard()
 	{
 		base.GoToGraveyard();
-		scriptRunner.Pause(true);
+		scriptRunner.enabled = false;
+		// scriptRunner.Pause(true);
 	}
 
 	public override void GetOutOfGraveyard()
 	{
 		base.GetOutOfGraveyard();
-		scriptRunner.Pause(false);
+		//scriptRunner.Pause(false);
+		scriptRunner.enabled = true;
 	}
 }
